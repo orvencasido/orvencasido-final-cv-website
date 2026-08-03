@@ -69,14 +69,14 @@ export const ExperienceManager: React.FC = () => {
       company: '',
       position: '',
       employment_type: 'Full-time',
-      location: 'San Francisco, CA',
-      start_date: '2024-01',
+      location: '',
+      start_date: '',
       end_date: null,
       is_current: true,
       description: '',
       responsibilities: [],
       achievements: [],
-      technologies: ['Kubernetes', 'AWS', 'Terraform'],
+      technologies: [],
       sort_order: 1,
     });
     setIsModalOpen(true);

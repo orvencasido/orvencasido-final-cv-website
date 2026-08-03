@@ -18,6 +18,7 @@ import { Blog } from '../../../types';
 import { SectionHeader, LoadingSkeleton, EmptyState, StatusBadge } from '../../../components/ui/CommonUI';
 import { Modal, ConfirmModal } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
+import { ImageUploadField } from '../../../components/admin/ImageUploadField';
 
 export const BlogManager: React.FC = () => {
   const { showToast } = useToast();
@@ -51,6 +52,7 @@ export const BlogManager: React.FC = () => {
   });
 
   const watchTags = watch('tags') || [];
+  const watchCoverImageUrl = watch('cover_image_url') || '';
 
   const loadBlogs = async () => {
     setLoading(true);
@@ -75,7 +77,7 @@ export const BlogManager: React.FC = () => {
       slug: '',
       summary: '',
       content: '',
-      cover_image_url: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&q=80&w=1200',
+      cover_image_url: '',
       author: 'Orven Casido',
       tags: ['DevOps', 'Cloud'],
       reading_time: '5 min read',
@@ -397,14 +399,14 @@ export const BlogManager: React.FC = () => {
             {errors.content && <p className="text-xs text-red-500">{errors.content.message}</p>}
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Cover Image URL</label>
-            <input
-              type="text"
-              {...register('cover_image_url')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
-            />
-          </div>
+          <input type="hidden" {...register('cover_image_url')} />
+          <ImageUploadField
+            label="Cover Image"
+            folder="blogs"
+            value={watchCoverImageUrl}
+            onChange={(url) => setValue('cover_image_url', url, { shouldValidate: true })}
+            onError={(message) => showToast('Image upload failed', 'error', message)}
+          />
 
           {/* Tags manager */}
           <div className="space-y-2">

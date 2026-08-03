@@ -17,6 +17,7 @@ import { Project } from '../../../types';
 import { SectionHeader, LoadingSkeleton, EmptyState, StatusBadge } from '../../../components/ui/CommonUI';
 import { Modal, ConfirmModal } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
+import { ImageUploadField } from '../../../components/admin/ImageUploadField';
 
 export const ProjectManager: React.FC = () => {
   const { showToast } = useToast();
@@ -48,6 +49,7 @@ export const ProjectManager: React.FC = () => {
   });
 
   const watchTechs = watch('technologies') || [];
+  const watchCoverImageUrl = watch('cover_image_url') || '';
 
   const loadProjects = async () => {
     setLoading(true);
@@ -72,10 +74,10 @@ export const ProjectManager: React.FC = () => {
       slug: '',
       short_description: '',
       full_description: '',
-      cover_image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200',
-      technologies: ['React', 'TypeScript', 'Tailwind CSS'],
-      github_url: 'https://github.com',
-      live_url: 'https://demo.dev',
+      cover_image_url: '',
+      technologies: [],
+      github_url: '',
+      live_url: '',
       status: 'completed',
       completion_date: '2026-03',
       is_featured: false,
@@ -403,14 +405,14 @@ export const ProjectManager: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Cover Image URL</label>
-            <input
-              type="text"
-              {...register('cover_image_url')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-mono"
-            />
-          </div>
+          <input type="hidden" {...register('cover_image_url')} />
+          <ImageUploadField
+            label="Cover Image"
+            folder="projects"
+            value={watchCoverImageUrl}
+            onChange={(url) => setValue('cover_image_url', url, { shouldValidate: true })}
+            onError={(message) => showToast('Image upload failed', 'error', message)}
+          />
 
           {/* Tech stack tags */}
           <div className="space-y-2">

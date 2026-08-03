@@ -3,7 +3,7 @@
 ## 1. Project Overview
 
 **App Title**: Orven Casido — Senior DevOps & Full-Stack Engineer Portfolio
-**Stack**: React 18, TypeScript, Vite, Tailwind CSS, Lucide React, React Router v6, React Hook Form, Zod
+**Stack**: React 19, TypeScript, Vite, Tailwind CSS, Lucide React, React Router v7, React Hook Form, Zod, Supabase
 
 This application is a full-featured personal developer portfolio and content management system (CMS) tailored for Orven Casido. It contains both a public-facing presentation site and a secure admin management portal (`/orven`).
 
@@ -39,9 +39,18 @@ All public and administrative features are fully developed, compiled, and verifi
 
 ## 3. Supabase Migration Readiness
 
-### Migration Status: **100% Architecture-Ready (Plug & Play)**
+### Migration Status: **Implemented**
 
-The application architecture has been constructed with a **hybrid data service layer** (`src/lib/services.ts`). It automatically operates in **Mock/LocalStorage mode** when credentials are absent and instantly switches to **Live Supabase mode** as soon as environment credentials are provided.
+The application has a **hybrid data service layer** (`src/lib/services.ts`). It operates in Mock/LocalStorage mode when credentials are absent and switches to live Supabase mode when environment credentials are provided.
+
+The backend SQL now lives in [`supabase/schema.sql`](supabase/schema.sql). Run that file in a Supabase project's SQL Editor to create:
+- CMS tables matching `src/types/index.ts`
+- updated-at triggers
+- Row Level Security policies
+- public image Storage and private resume file Storage
+- private resume file delivery through a rate-limited Edge Function
+- admin login attempts through a rate-limited Edge Function
+- authenticated-admin write policies
 
 ### Key Architecture Components
 1. **Supabase Client (`src/lib/supabaseClient.ts`)**:
@@ -50,168 +59,42 @@ The application architecture has been constructed with a **hybrid data service l
 2. **Unified Service API Layer (`src/lib/services.ts`)**:
    - All data operations (`getBlogs()`, `createProject()`, `updateProfile()`, etc.) check `isSupabaseConfigured`.
    - If `true`, calls execute real PostgreSQL queries against your Supabase tables.
-   - If `false`, calls read/write from `localStorage` seeded with rich default portfolio data.
+   - If `false`, calls read/write from `localStorage` with only minimal identity/settings placeholders and empty CMS collections.
 3. **Data Type Parity (`src/types/index.ts`)**:
-   - All TypeScript interfaces match standard Supabase snake_case database schema conventions.
+   - All TypeScript interfaces match the Supabase schema in `supabase/schema.sql`.
+4. **Storage Uploads (`src/lib/storage.ts`)**:
+   - Admin image uploads use Supabase Storage bucket `portfolio-images`.
+   - Supported admin uploads: profile images, blog cover images, project cover images, and certification images.
+   - Local demo mode converts selected files to data URLs so the UI can still be tested without Supabase.
+5. **Resume Download Edge Function (`supabase/functions/resume-download`)**:
+   - Resume PDFs are stored in the private `portfolio-files` bucket.
+   - The public header calls the Edge Function for a short-lived signed URL.
+   - Downloads are limited to 20 per requester/IP per 24-hour window.
+6. **Admin Login Edge Function (`supabase/functions/admin-login`)**:
+   - Supabase-mode admin login is proxied through an Edge Function.
+   - Failed login attempts are limited to 20 per requester/IP per 24-hour window.
 
 ---
 
-## 4. Required Supabase Database Schema (SQL Script)
+## 4. Required Supabase Database Schema
 
-When you are ready to connect a live Supabase project, run the following SQL script in your Supabase **SQL Editor**:
-
-```sql
--- 1. Profiles Table
-CREATE TABLE IF NOT EXISTS profiles (
-  id TEXT PRIMARY KEY DEFAULT 'prof_1',
-  name TEXT NOT NULL,
-  title TEXT NOT NULL,
-  bio TEXT,
-  avatar_url TEXT,
-  email TEXT,
-  location TEXT,
-  available_for_work BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 2. Blogs Table
-CREATE TABLE IF NOT EXISTS blogs (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  summary TEXT,
-  content TEXT NOT NULL,
-  cover_image TEXT,
-  tags TEXT[] DEFAULT '{}',
-  published_at TIMESTAMPTZ DEFAULT NOW(),
-  read_time_minutes INT DEFAULT 5,
-  is_published BOOLEAN DEFAULT true,
-  is_featured BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 3. Projects Table
-CREATE TABLE IF NOT EXISTS projects (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  slug TEXT UNIQUE NOT NULL,
-  short_description TEXT NOT NULL,
-  full_description TEXT NOT NULL,
-  cover_image TEXT,
-  technologies TEXT[] DEFAULT '{}',
-  github_url TEXT,
-  demo_url TEXT,
-  is_featured BOOLEAN DEFAULT false,
-  status TEXT DEFAULT 'Completed',
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 4. Experiences Table
-CREATE TABLE IF NOT EXISTS experiences (
-  id TEXT PRIMARY KEY,
-  company TEXT NOT NULL,
-  role TEXT NOT NULL,
-  location TEXT,
-  start_date TEXT NOT NULL,
-  end_date TEXT,
-  is_current BOOLEAN DEFAULT false,
-  description TEXT,
-  technologies TEXT[] DEFAULT '{}',
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 5. Certifications Table
-CREATE TABLE IF NOT EXISTS certifications (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  issuer TEXT NOT NULL,
-  issue_date TEXT NOT NULL,
-  credential_id TEXT,
-  credential_url TEXT,
-  icon_name TEXT,
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 6. Education Table
-CREATE TABLE IF NOT EXISTS education (
-  id TEXT PRIMARY KEY,
-  institution TEXT NOT NULL,
-  degree TEXT NOT NULL,
-  field_of_study TEXT,
-  start_year TEXT NOT NULL,
-  end_year TEXT,
-  description TEXT,
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 7. Contact Messages Table
-CREATE TABLE IF NOT EXISTS contact_messages (
-  id TEXT PRIMARY KEY,
-  sender_name TEXT NOT NULL,
-  sender_email TEXT NOT NULL,
-  subject TEXT NOT NULL,
-  message TEXT NOT NULL,
-  status TEXT DEFAULT 'unread',
-  is_read BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 8. Skills Table
-CREATE TABLE IF NOT EXISTS skills (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  category TEXT NOT NULL,
-  proficiency INT DEFAULT 80,
-  icon_url TEXT,
-  is_featured BOOLEAN DEFAULT true,
-  sort_order INT DEFAULT 0,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 9. Social Links Table
-CREATE TABLE IF NOT EXISTS social_links (
-  id TEXT PRIMARY KEY,
-  platform TEXT NOT NULL,
-  label TEXT NOT NULL,
-  url TEXT NOT NULL,
-  icon TEXT NOT NULL,
-  sort_order INT DEFAULT 0,
-  is_visible BOOLEAN DEFAULT true,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 10. Site Settings Table
-CREATE TABLE IF NOT EXISTS site_settings (
-  id TEXT PRIMARY KEY DEFAULT 'settings_1',
-  site_title TEXT NOT NULL,
-  meta_description TEXT,
-  maintenance_mode BOOLEAN DEFAULT false,
-  enable_contact_form BOOLEAN DEFAULT true,
-  updated_at TIMESTAMPTZ DEFAULT NOW()
-);
-```
+The SQL is maintained in [`supabase/schema.sql`](supabase/schema.sql). Do not use the older inline schema shape; the live database must match `src/types/index.ts`.
 
 ---
 
 ## 5. How to Activate Supabase
 
 1. **Create a Supabase Project**: Go to [supabase.com](https://supabase.com) and create a new project.
-2. **Execute Table Schema**: Copy and run the SQL script above in your Supabase SQL Editor.
-3. **Configure Environment Variables**:
+2. **Execute Table Schema**: Copy and run [`supabase/schema.sql`](supabase/schema.sql) in your Supabase SQL Editor.
+3. **Deploy Edge Function**:
+   ```bash
+   supabase functions deploy admin-login
+   supabase functions deploy resume-download
+   ```
+4. **Configure Environment Variables**:
    Add your project credentials to `.env` or your hosting provider's environment configuration:
    ```env
    VITE_SUPABASE_URL=https://your-project-ref.supabase.co
    VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
    ```
-4. **Deploy / Restart App**: Once the environment variables are detected, the app automatically connects to live Supabase database tables for all query and mutation operations. No code changes are required!
+5. **Deploy / Restart App**: Once the environment variables are detected, the app automatically connects to live Supabase database tables for all query and mutation operations. No code changes are required!

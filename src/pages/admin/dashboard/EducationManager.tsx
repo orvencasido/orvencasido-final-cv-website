@@ -58,16 +58,16 @@ export const EducationManager: React.FC = () => {
     setEditingEdu(null);
     reset({
       school: '',
-      degree: 'Bachelor of Science',
-      field_of_study: 'Computer Science',
-      location: 'San Francisco, CA',
-      start_date: '2019',
-      end_date: '2023',
-      gpa: '3.8/4.0',
+      degree: '',
+      field_of_study: '',
+      location: '',
+      start_date: '',
+      end_date: '',
+      gpa: '',
       description: '',
-      coursework: ['Distributed Systems', 'Cloud Architectures', 'Operating Systems'],
-      awards: ['Dean\'s Honor List'],
-      activities: ['ACM Chapter Officer'],
+      coursework: [],
+      awards: [],
+      activities: [],
       sort_order: 1,
     });
     setIsModalOpen(true);
