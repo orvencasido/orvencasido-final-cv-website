@@ -13,6 +13,7 @@ import { Certification } from '../../../types';
 import { SectionHeader, LoadingSkeleton, EmptyState } from '../../../components/ui/CommonUI';
 import { Modal, ConfirmModal } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
+import { ImageUploadField } from '../../../components/admin/ImageUploadField';
 
 export const CertificationManager: React.FC = () => {
   const { showToast } = useToast();
@@ -27,6 +28,8 @@ export const CertificationManager: React.FC = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CertificationFormData>({
     resolver: zodResolver(certificationSchema),
@@ -35,6 +38,8 @@ export const CertificationManager: React.FC = () => {
       sort_order: 1,
     },
   });
+
+  const watchCertificateImageUrl = watch('certificate_image_url') || '';
 
   const loadCerts = async () => {
     setLoading(true);
@@ -61,7 +66,7 @@ export const CertificationManager: React.FC = () => {
       expiration_date: '2027-01',
       credential_id: '',
       credential_url: 'https://aws.amazon.com',
-      certificate_image_url: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?auto=format&fit=crop&q=80&w=800',
+      certificate_image_url: '',
       description: '',
       skills: ['AWS', 'Cloud Security'],
       sort_order: 1,
@@ -263,6 +268,15 @@ export const CertificationManager: React.FC = () => {
               className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
             />
           </div>
+
+          <input type="hidden" {...register('certificate_image_url')} />
+          <ImageUploadField
+            label="Certificate Image"
+            folder="certifications"
+            value={watchCertificateImageUrl}
+            onChange={(url) => setValue('certificate_image_url', url, { shouldValidate: true })}
+            onError={(message) => showToast('Image upload failed', 'error', message)}
+          />
 
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
             <button

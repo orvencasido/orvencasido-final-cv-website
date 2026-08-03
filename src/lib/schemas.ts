@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+const imageSourceSchema = z.string();
+
 export const loginSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters long'),
@@ -22,7 +24,7 @@ export const blogSchema = z.object({
   slug: z.string().min(3, 'Slug is required'),
   summary: z.string().min(10, 'Summary must be at least 10 characters'),
   content: z.string().min(20, 'Content must be at least 20 characters'),
-  cover_image_url: z.string(),
+  cover_image_url: imageSourceSchema,
   author: z.string().min(2, 'Author name is required'),
   tags: z.array(z.string()).min(1, 'Add at least one tag'),
   reading_time: z.string().min(1, 'Reading time required (e.g. 5 min read)'),
@@ -38,7 +40,7 @@ export const projectSchema = z.object({
   slug: z.string().min(2, 'Slug is required'),
   short_description: z.string().min(10, 'Short description is required'),
   full_description: z.string().min(20, 'Full description is required'),
-  cover_image_url: z.string(),
+  cover_image_url: imageSourceSchema,
   technologies: z.array(z.string()).min(1, 'Select or add at least one technology'),
   github_url: z.string(),
   live_url: z.string(),
@@ -74,7 +76,7 @@ export const certificationSchema = z.object({
   expiration_date: z.string().nullable(),
   credential_id: z.string(),
   credential_url: z.string(),
-  certificate_image_url: z.string(),
+  certificate_image_url: imageSourceSchema,
   description: z.string(),
   skills: z.array(z.string()),
   sort_order: z.number(),
@@ -103,9 +105,8 @@ export const profileSchema = z.object({
   full_name: z.string().min(2, 'Full name required'),
   professional_title: z.string().min(2, 'Professional title required'),
   introduction: z.string().min(10, 'Introduction required'),
-  biography: z.string().min(20, 'Biography required'),
-  profile_image_url: z.string().url('Valid URL required').or(z.string().length(0)),
-  resume_url: z.string().min(1, 'Resume download URL required'),
+  profile_image_url: imageSourceSchema,
+  resume_url: z.string(),
   email: z.string().email('Valid email required'),
   phone: z.string(),
   location: z.string(),

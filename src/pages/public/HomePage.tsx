@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FileText,
-  Mail,
-  ArrowRight,
-  Github,
-  Linkedin,
-  Twitter,
-  ExternalLink,
   Code2,
-  Cpu,
-  Layers,
   Sparkles,
   Terminal,
 } from 'lucide-react';
@@ -60,6 +51,13 @@ export const HomePage: React.FC = () => {
     );
   }
 
+  const initials = profile.full_name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'OC';
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-16 bg-slate-50 dark:bg-slate-950 min-h-[calc(100vh-8rem)]">
       {/* Top Hero Landing Section */}
@@ -68,15 +66,18 @@ export const HomePage: React.FC = () => {
         <div className="flex-1 space-y-6 lg:space-y-8 w-full">
           <div className="space-y-1">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-slate-900 dark:text-slate-100">
-              Orven Casido
+              {profile.full_name}
             </h1>
             <p className="text-2xl sm:text-3xl text-slate-500 dark:text-slate-400 font-normal">
-              DevOps Engineer
+              {profile.professional_title}
             </p>
+            <div className="pt-3">
+              <StatusBadge status={profile.availability_status} type="availability" />
+            </div>
           </div>
 
           <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-            Welcome to my Tech Journey! A place where I document my growth, showcase my projects, and proudly flex what I've built along the way.
+            {profile.introduction}
           </p>
 
           <div className="pt-2 space-y-3">
@@ -134,7 +135,7 @@ export const HomePage: React.FC = () => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-white font-bold text-6xl">
-                OC
+                {initials}
               </div>
             )}
           </div>

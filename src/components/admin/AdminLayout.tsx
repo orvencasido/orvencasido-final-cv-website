@@ -18,7 +18,6 @@ import {
   ExternalLink,
   Menu,
   X,
-  Shield,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ThemeToggle } from '../public/ThemeToggle';
@@ -72,18 +71,22 @@ export const AdminLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col md:flex-row font-sans">
+    <div className="min-h-screen md:h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col md:flex-row font-sans md:overflow-hidden">
       {/* Sidebar - Desktop */}
       <aside
-        className={`hidden md:flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 transition-all duration-300 relative ${
+        className={`hidden md:flex flex-col border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/90 transition-all duration-300 sticky top-0 h-screen shrink-0 ${
           collapsed ? 'w-20' : 'w-64'
         }`}
       >
         {/* Sidebar Header */}
         <div className="h-16 flex items-center justify-between px-4 border-b border-zinc-200 dark:border-zinc-800">
           <Link to="/orven/dashboard" className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-xl bg-emerald-500 text-zinc-950 flex items-center justify-center font-bold text-sm shrink-0">
-              <Shield className="w-4 h-4" />
+            <div className="w-8 h-8 rounded-xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center shrink-0 overflow-hidden">
+              <img
+                src="/orbs-icon.png"
+                alt="Orven CMS"
+                className="w-full h-full object-cover"
+              />
             </div>
             {!collapsed && (
               <span className="font-extrabold text-sm tracking-tight truncate">
@@ -151,7 +154,7 @@ export const AdminLayout: React.FC = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 md:h-screen md:overflow-hidden">
         {/* Top Header */}
         <header className="h-16 border-b border-zinc-200 dark:border-zinc-800 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between sticky top-0 z-30">
           <div className="flex items-center gap-3">
@@ -224,8 +227,10 @@ export const AdminLayout: React.FC = () => {
         )}
 
         {/* Nested Dashboard Route Content */}
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full overflow-y-auto">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
+            <Outlet />
+          </div>
         </main>
       </div>
 

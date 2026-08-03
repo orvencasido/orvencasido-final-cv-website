@@ -5,7 +5,6 @@ export interface Profile {
   full_name: string;
   professional_title: string;
   introduction: string;
-  biography: string;
   profile_image_url: string;
   resume_url: string;
   email: string;

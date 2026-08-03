@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Phone, MapPin, Send, CheckCircle2, Clock } from 'lucide-react';
 import { contactSchema, ContactFormData } from '../../lib/schemas';
-import { createContactMessage } from '../../lib/services';
+import { createContactMessage, getProfile } from '../../lib/services';
+import { Profile } from '../../types';
 import { SectionHeader, StatusBadge } from '../../components/ui/CommonUI';
 import { useToast } from '../../components/ui/Toast';
 
 export const ContactPage: React.FC = () => {
   const { showToast } = useToast();
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    async function loadProfile() {
+      try {
+        const data = await getProfile();
+        setProfile(data);
+      } catch (err) {
+        console.error('Failed to load contact profile:', err);
+      }
+    }
+    loadProfile();
+  }, []);
 
   const {
     register,
@@ -62,39 +76,47 @@ export const ContactPage: React.FC = () => {
                 <Mail className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs text-zinc-400">Email</p>
-                  <a
-                    href="mailto:orvencasidop@gmail.com"
-                    className="font-medium text-zinc-800 dark:text-zinc-200 hover:underline"
-                  >
-                    orvencasidop@gmail.com
-                  </a>
+                  {profile?.email ? (
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="font-medium text-zinc-800 dark:text-zinc-200 hover:underline"
+                    >
+                      {profile.email}
+                    </a>
+                  ) : (
+                    <span className="font-medium text-zinc-500">Not configured</span>
+                  )}
                 </div>
               </div>
 
-              <div className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs text-zinc-400">Phone</p>
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
-                    +1 (555) 234-5678
-                  </span>
+              {profile?.phone && (
+                <div className="flex items-start gap-3">
+                  <Phone className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-zinc-400">Phone</p>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                      {profile.phone}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs text-zinc-400">Location</p>
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200">
-                    San Francisco, CA / Remote
-                  </span>
+              {profile?.location && (
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-zinc-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs text-zinc-400">Location</p>
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">
+                      {profile.location}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800 space-y-2">
               <p className="text-xs text-zinc-400 font-medium">Availability Status</p>
-              <StatusBadge status="available" type="availability" />
+              <StatusBadge status={profile?.availability_status || 'available'} type="availability" />
             </div>
           </div>
 

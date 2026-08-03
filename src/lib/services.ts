@@ -573,6 +573,27 @@ export async function getSkills(): Promise<Skill[]> {
 }
 
 export async function updateSkills(skills: Skill[]): Promise<Skill[]> {
+  if (isSupabaseConfigured && supabase) {
+    const { data: existing, error: readError } = await supabase.from('skills').select('id');
+    if (readError) throw new Error(readError.message);
+
+    const existingIds = (existing || []).map((item) => item.id);
+    const nextIds = skills.map((skill) => skill.id);
+    const staleIds = existingIds.filter((id) => !nextIds.includes(id));
+
+    if (skills.length > 0) {
+      const { error: upsertError } = await supabase.from('skills').upsert(skills).select();
+      if (upsertError) throw new Error(upsertError.message);
+    }
+
+    await Promise.all(
+      staleIds.map(async (id) => {
+        const { error } = await supabase.from('skills').delete().eq('id', id);
+        if (error) throw new Error(error.message);
+      })
+    );
+  }
+
   setStorageItem('skills', skills);
   return skills;
 }
@@ -592,6 +613,27 @@ export async function getSocialLinks(): Promise<SocialLink[]> {
 }
 
 export async function updateSocialLinks(links: SocialLink[]): Promise<SocialLink[]> {
+  if (isSupabaseConfigured && supabase) {
+    const { data: existing, error: readError } = await supabase.from('social_links').select('id');
+    if (readError) throw new Error(readError.message);
+
+    const existingIds = (existing || []).map((item) => item.id);
+    const nextIds = links.map((link) => link.id);
+    const staleIds = existingIds.filter((id) => !nextIds.includes(id));
+
+    if (links.length > 0) {
+      const { error: upsertError } = await supabase.from('social_links').upsert(links).select();
+      if (upsertError) throw new Error(upsertError.message);
+    }
+
+    await Promise.all(
+      staleIds.map(async (id) => {
+        const { error } = await supabase.from('social_links').delete().eq('id', id);
+        if (error) throw new Error(error.message);
+      })
+    );
+  }
+
   setStorageItem('social_links', links);
   return links;
 }

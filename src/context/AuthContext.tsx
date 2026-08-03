@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { supabase, isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from '../lib/supabaseClient';
 
 interface User {
   id: string;
@@ -54,14 +54,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password: pass,
+        const response = await fetch(`${supabaseUrl}/functions/v1/admin-login`, {
+          method: 'POST',
+          headers: {
+            apikey: supabaseAnonKey,
+            Authorization: `Bearer ${supabaseAnonKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password: pass }),
+        });
+
+        const payload = await response.json().catch(() => ({}));
+
+        if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+          setIsLoading(false);
+          const resetText = payload.resetAt
+            ? ` Try again after ${new Date(payload.resetAt).toLocaleString()}.`
+            : '';
+          const remainingText =
+            typeof payload.remaining === 'number' && payload.remaining > 0
+              ? ` ${payload.remaining} attempts remaining.`
+              : '';
+          return {
+            success: false,
+            error: `${payload.error || 'Invalid credentials.'}${remainingText}${resetText}`,
+          };
+        }
+
+        const { data, error } = await supabase.auth.setSession({
+          access_token: payload.session.access_token,
+          refresh_token: payload.session.refresh_token,
         });
 
         if (error || !data.user) {
           setIsLoading(false);
-          return { success: false, error: error?.message || 'Invalid credentials' };
+          return { success: false, error: error?.message || 'Unable to establish admin session.' };
         }
 
         const adminUser: User = {

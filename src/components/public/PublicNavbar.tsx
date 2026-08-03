@@ -1,11 +1,37 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Download, Menu, X } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
+import { getProfile } from '../../lib/services';
+import { getRateLimitedResumeDownloadUrl } from '../../lib/storage';
 
 export const PublicNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState('');
   const location = useLocation();
+
+  useEffect(() => {
+    async function loadResumeUrl() {
+      try {
+        const profile = await getProfile();
+        setResumeUrl(profile.resume_url || '');
+      } catch (err) {
+        console.error('Failed to load resume URL:', err);
+      }
+    }
+
+    loadResumeUrl();
+  }, []);
+
+  const handleResumeDownload = async () => {
+    try {
+      const downloadUrl = await getRateLimitedResumeDownloadUrl(resumeUrl);
+      window.location.assign(downloadUrl);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Resume download failed.';
+      alert(message);
+    }
+  };
 
   const navItems = [
     { label: 'Home', path: '/' },
@@ -56,6 +82,17 @@ export const PublicNavbar: React.FC = () => {
 
         {/* Actions (Theme Toggle) */}
         <div className="flex items-center gap-4">
+          {resumeUrl && (
+            <button
+              type="button"
+              aria-label="Download resume"
+              title="Download Resume"
+              onClick={handleResumeDownload}
+              className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+          )}
           <ThemeToggle />
 
           {/* Mobile Menu Toggle */}

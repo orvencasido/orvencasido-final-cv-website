@@ -8,6 +8,8 @@ import { getProfile, updateProfile } from '../../../lib/services';
 import { Profile } from '../../../types';
 import { SectionHeader, LoadingSkeleton } from '../../../components/ui/CommonUI';
 import { useToast } from '../../../components/ui/Toast';
+import { ImageUploadField } from '../../../components/admin/ImageUploadField';
+import { FileUploadField } from '../../../components/admin/FileUploadField';
 
 export const HomeContentManager: React.FC = () => {
   const { showToast } = useToast();
@@ -19,10 +21,15 @@ export const HomeContentManager: React.FC = () => {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   });
+
+  const watchProfileImageUrl = watch('profile_image_url') || '';
+  const watchResumeUrl = watch('resume_url') || '';
 
   useEffect(() => {
     async function loadData() {
@@ -33,7 +40,6 @@ export const HomeContentManager: React.FC = () => {
           full_name: data.full_name,
           professional_title: data.professional_title,
           introduction: data.introduction,
-          biography: data.biography,
           profile_image_url: data.profile_image_url,
           resume_url: data.resume_url,
           email: data.email,
@@ -154,15 +160,14 @@ export const HomeContentManager: React.FC = () => {
               </select>
             </div>
 
-            {/* Profile Image URL */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-                Profile Image URL
-              </label>
-              <input
-                type="text"
-                {...register('profile_image_url')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 font-mono text-xs"
+              <input type="hidden" {...register('profile_image_url')} />
+              <ImageUploadField
+                label="Profile Image"
+                folder="profiles"
+                value={watchProfileImageUrl}
+                onChange={(url) => setValue('profile_image_url', url, { shouldValidate: true })}
+                onError={(message) => showToast('Image upload failed', 'error', message)}
               />
             </div>
           </div>
@@ -182,20 +187,6 @@ export const HomeContentManager: React.FC = () => {
             )}
           </div>
 
-          {/* Biography */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              Full Biography
-            </label>
-            <textarea
-              rows={4}
-              {...register('biography')}
-              className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
-            />
-            {errors.biography && (
-              <p className="text-xs text-red-500">{errors.biography.message}</p>
-            )}
-          </div>
         </div>
 
         {/* Contact & Links */}
@@ -240,13 +231,13 @@ export const HomeContentManager: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-              Résumé Download URL
-            </label>
-            <input
-              type="text"
-              {...register('resume_url')}
-              className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 font-mono text-xs"
+            <input type="hidden" {...register('resume_url')} />
+            <FileUploadField
+              label="Resume PDF"
+              folder="resumes"
+              value={watchResumeUrl}
+              onChange={(url) => setValue('resume_url', url, { shouldValidate: true })}
+              onError={(message) => showToast('Resume upload failed', 'error', message)}
             />
           </div>
         </div>
