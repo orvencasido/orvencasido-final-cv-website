@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, pass: string, rememberMe?: boolean) => Promise<{ success: boolean; error?: string }>;
+  login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -29,18 +29,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (data.session?.user) {
           setUser({
             id: data.session.user.id,
-            email: data.session.user.email || 'admin@orven.dev',
+            email: data.session.user.email || 'Admin',
             role: 'admin',
           });
         }
       } else {
         // Mock Auth check
-        const storedUser = localStorage.getItem('orven_admin_session');
+        localStorage.removeItem('orven_admin_session');
+        const storedUser = sessionStorage.getItem('orven_admin_session');
         if (storedUser) {
           try {
             setUser(JSON.parse(storedUser));
           } catch {
-            localStorage.removeItem('orven_admin_session');
+            sessionStorage.removeItem('orven_admin_session');
           }
         }
       }
@@ -50,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
 
-  const login = async (email: string, pass: string, rememberMe: boolean = false) => {
+  const login = async (email: string, pass: string) => {
     setIsLoading(true);
     try {
       if (isSupabaseConfigured && supabase) {
@@ -100,8 +101,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoading(false);
         return { success: true };
       } else {
-        // Local Demo Mode Authentication
-        // Accepts admin@orven.dev, orvencasidop@gmail.com, or any valid email in demo mode
+        // Local demo mode authentication accepts any valid email with a minimum-length password.
         if (!email || pass.length < 5) {
           setIsLoading(false);
           return { success: false, error: 'Password must be at least 6 characters' };
@@ -114,11 +114,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
 
         setUser(adminUser);
-        if (rememberMe) {
-          localStorage.setItem('orven_admin_session', JSON.stringify(adminUser));
-        } else {
-          sessionStorage.setItem('orven_admin_session', JSON.stringify(adminUser));
-        }
+        localStorage.removeItem('orven_admin_session');
+        sessionStorage.setItem('orven_admin_session', JSON.stringify(adminUser));
 
         setIsLoading(false);
         return { success: true };

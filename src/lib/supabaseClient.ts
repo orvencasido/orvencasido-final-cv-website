@@ -10,7 +10,13 @@ export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
 // Supabase client instance (initialized if credentials are present, otherwise null fallback)
 export const supabase = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storage: typeof window !== 'undefined' ? window.sessionStorage : undefined,
+        persistSession: true,
+        autoRefreshToken: true,
+      },
+    })
   : null;
 
 /**
