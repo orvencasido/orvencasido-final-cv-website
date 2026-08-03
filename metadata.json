@@ -1,0 +1,6 @@
+{
+  "name": "Orven - Portfolio & Admin",
+  "description": "Minimalist personal resume, portfolio, and secret admin CMS platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
