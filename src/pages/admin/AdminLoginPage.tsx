@@ -28,9 +28,8 @@ export const AdminLoginPage: React.FC = () => {
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: 'orvencasidop@gmail.com',
+      email: '',
       password: '',
-      rememberMe: true,
     },
   });
 
@@ -38,7 +37,7 @@ export const AdminLoginPage: React.FC = () => {
     setLoading(true);
     setAuthError(null);
 
-    const result = await login(data.email, data.password, data.rememberMe);
+    const result = await login(data.email, data.password);
 
     if (result.success) {
       showToast('Welcome back, Administrator!', 'success');
@@ -74,7 +73,7 @@ export const AdminLoginPage: React.FC = () => {
                 <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
                 <input
                   type="email"
-                  placeholder="admin@orven.dev"
+                  placeholder="Enter administrator email"
                   {...register('email')}
                   className="w-full pl-10 pr-4 py-2.5 text-sm bg-zinc-950 border border-zinc-800 rounded-xl text-zinc-100 placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition"
                 />
@@ -102,18 +101,6 @@ export const AdminLoginPage: React.FC = () => {
                 </button>
               </div>
               {errors.password && <p className="text-xs text-red-400">{errors.password.message}</p>}
-            </div>
-
-            {/* Remember Me */}
-            <div className="flex items-center justify-between text-xs pt-1">
-              <label className="flex items-center gap-2 cursor-pointer text-zinc-400 hover:text-zinc-200">
-                <input
-                  type="checkbox"
-                  {...register('rememberMe')}
-                  className="rounded border-zinc-800 bg-zinc-950 text-emerald-500 focus:ring-emerald-500"
-                />
-                <span>Remember session</span>
-              </label>
             </div>
 
             {/* Submit */}
