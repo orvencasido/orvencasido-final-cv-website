@@ -35,7 +35,7 @@ export const BlogDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-12 space-y-6">
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-16 space-y-6">
         <LoadingSkeleton count={3} />
       </div>
     );
@@ -43,14 +43,14 @@ export const BlogDetailPage: React.FC = () => {
 
   if (!blog) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16">
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-20">
         <EmptyState
           title="Article Not Found"
           description="The requested blog post could not be located or has been moved."
           action={
             <Link
               to="/blogs"
-              className="px-4 py-2 text-xs font-semibold bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl"
+              className="px-6 py-3 text-sm font-bold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 transition"
             >
               Back to all blogs
             </Link>
@@ -61,48 +61,48 @@ export const BlogDetailPage: React.FC = () => {
   }
 
   return (
-    <article className="max-w-3xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+    <article className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       {/* Back button */}
       <button
         onClick={() => navigate('/blogs')}
-        className="inline-flex items-center gap-1.5 text-xs font-semibold text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100 transition"
+        className="inline-flex items-center gap-2 text-sm font-bold text-matcha-700 hover:text-matcha-950 transition cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Articles
       </button>
 
-      {/* Header */}
-      <header className="space-y-4 border-b border-zinc-200/80 dark:border-zinc-800/80 pb-6">
+      {/* Article Header */}
+      <header className="space-y-6 border-b border-beige-300 pb-8">
         <div className="flex flex-wrap items-center gap-2">
           {blog.tags.map((tag) => (
             <span
               key={tag}
-              className="text-xs font-mono uppercase font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300"
+              className="text-xs font-mono font-bold uppercase tracking-wider px-3.5 py-1 rounded-full bg-matcha-100 text-matcha-950 border border-matcha-200"
             >
               #{tag}
             </span>
           ))}
         </div>
 
-        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50 leading-tight">
+        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-matcha-950 leading-tight">
           {blog.title}
         </h1>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-zinc-500 dark:text-zinc-400 font-mono">
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-1">
-              <User className="w-3.5 h-3.5" /> {blog.author}
+        <div className="flex flex-wrap items-center justify-between gap-6 text-xs text-matcha-600 font-mono font-medium pt-2">
+          <div className="flex flex-wrap items-center gap-6">
+            <span className="flex items-center gap-1.5">
+              <User className="w-4 h-4" /> {blog.author}
             </span>
-            <span className="flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5" /> {blog.published_at}
+            <span className="flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" /> {blog.published_at}
             </span>
-            <span className="flex items-center gap-1">
-              <Clock className="w-3.5 h-3.5" /> {blog.reading_time}
+            <span className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4" /> {blog.reading_time}
             </span>
           </div>
 
           <button
             onClick={handleShare}
-            className="inline-flex items-center gap-1.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-beige-50 border border-beige-300 text-matcha-900 hover:bg-beige-200 transition cursor-pointer font-sans font-bold"
           >
             <Share2 className="w-3.5 h-3.5" /> Share
           </button>
@@ -111,7 +111,7 @@ export const BlogDetailPage: React.FC = () => {
 
       {/* Cover Image if available */}
       {blog.cover_image_url && (
-        <div className="rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 aspect-video bg-zinc-100 dark:bg-zinc-800">
+        <div className="rounded-3xl overflow-hidden border border-beige-300 aspect-video bg-beige-200 shadow-md">
           <img
             src={blog.cover_image_url}
             alt={blog.title}
@@ -121,21 +121,21 @@ export const BlogDetailPage: React.FC = () => {
       )}
 
       {/* Article Body */}
-      <div className="prose dark:prose-invert max-w-none text-zinc-800 dark:text-zinc-200 leading-relaxed text-sm sm:text-base space-y-4 whitespace-pre-line">
+      <div className="prose max-w-none text-matcha-900 leading-relaxed text-base sm:text-lg space-y-6 whitespace-pre-line font-normal">
         {blog.content}
       </div>
 
       {/* Author Footer Bio */}
-      <div className="pt-8 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+      <div className="pt-10 border-t border-beige-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div className="space-y-1">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Written by</p>
-          <p className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{blog.author}</p>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">Senior DevOps & Software Engineer</p>
+          <p className="text-xs font-extrabold text-matcha-700 uppercase tracking-widest">Written by</p>
+          <p className="text-lg font-extrabold text-matcha-950">{blog.author}</p>
+          <p className="text-sm text-matcha-700">Software & Cloud Platform Engineer</p>
         </div>
 
         <Link
           to="/contact"
-          className="px-4 py-2 text-xs font-semibold bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl hover:opacity-90 transition"
+          className="px-8 py-3.5 text-sm font-extrabold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 transition shadow-xs"
         >
           Get in Touch
         </Link>

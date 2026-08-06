@@ -24,64 +24,64 @@ export const EducationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-16">
         <LoadingSkeleton count={2} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-10">
+    <div className="max-w-5xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
-        title="Education & Academic Background"
-        description="Degrees, academic honors, specialized coursework, and university engineering involvement."
+        title="I Studied Computers"
+        description="Ever since I was young, I've been fascinated by technology. That curiosity led me to pursue a career in tech—and I'm just getting started."
       />
 
       {educationList.length === 0 ? (
         <EmptyState title="No education records found" />
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-10">
           {educationList.map((edu) => (
             <div
               key={edu.id}
-              className="p-6 sm:p-8 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/50 space-y-6 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition"
+              className="p-8 sm:p-10 rounded-3xl border border-beige-300 bg-beige-50 space-y-8 shadow-xs hover:border-matcha-400 hover:shadow-md transition-all"
             >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/80 pb-4">
-                <div className="space-y-1">
-                  <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                    <GraduationCap className="w-5 h-5 text-indigo-500" />
-                    {edu.degree} in {edu.field_of_study}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-beige-200 pb-6">
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-extrabold text-matcha-950 flex items-center gap-3">
+                    <GraduationCap className="w-6 h-6 text-matcha-600" />
+                    <span>{edu.degree} in {edu.field_of_study}</span>
                   </h2>
-                  <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+                  <p className="text-base font-bold text-matcha-800">
                     {edu.school}
                   </p>
                 </div>
 
-                <div className="flex flex-col sm:items-end text-xs text-zinc-500 font-mono gap-1">
-                  <span className="flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" /> {edu.start_date} — {edu.end_date}
+                <div className="flex flex-col sm:items-end text-xs text-matcha-700 font-mono gap-1.5">
+                  <span className="flex items-center gap-1.5 font-semibold">
+                    <Calendar className="w-4 h-4 text-matcha-600" /> {edu.start_date} — {edu.end_date}
                   </span>
-                  <span className="flex items-center gap-1 text-zinc-400">
-                    <MapPin className="w-3.5 h-3.5" /> {edu.location}
+                  <span className="flex items-center gap-1.5 text-matcha-600">
+                    <MapPin className="w-4 h-4" /> {edu.location}
                   </span>
                 </div>
               </div>
 
-              <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              <p className="text-base text-matcha-800 leading-relaxed font-normal">
                 {edu.description}
               </p>
 
               {/* Coursework */}
               {edu.coursework && edu.coursework.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <BookOpen className="w-3.5 h-3.5" /> Key Coursework
+                <div className="space-y-3">
+                  <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-700 flex items-center gap-2">
+                    <BookOpen className="w-4 h-4" /> Key Coursework
                   </h3>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     {edu.coursework.map((course) => (
                       <span
                         key={course}
-                        className="text-xs px-2.5 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/50 dark:border-zinc-700/50"
+                        className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-950 border border-matcha-200"
                       >
                         {course}
                       </span>
@@ -92,13 +92,13 @@ export const EducationPage: React.FC = () => {
 
               {/* Awards */}
               {edu.awards && edu.awards.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-500 flex items-center gap-1.5">
-                    <Award className="w-3.5 h-3.5" /> Awards & Honors
+                <div className="space-y-3 pt-4 border-t border-beige-200">
+                  <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-900 flex items-center gap-2">
+                    <Award className="w-4 h-4 text-matcha-600" /> Awards & Academic Honors
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="space-y-2">
                     {edu.awards.map((award, i) => (
-                      <li key={i} className="text-xs sm:text-sm text-zinc-700 dark:text-zinc-300">
+                      <li key={i} className="text-sm sm:text-base font-semibold text-matcha-950">
                         • {award}
                       </li>
                     ))}
@@ -108,15 +108,15 @@ export const EducationPage: React.FC = () => {
 
               {/* Activities */}
               {edu.activities && edu.activities.length > 0 && (
-                <div className="space-y-2">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5" /> Campus Activities & Societies
+                <div className="space-y-3">
+                  <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-700 flex items-center gap-2">
+                    <Users className="w-4 h-4" /> Campus Involvement
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-3">
                     {edu.activities.map((act) => (
                       <span
                         key={act}
-                        className="text-xs font-medium text-zinc-600 dark:text-zinc-400"
+                        className="text-sm font-semibold text-matcha-900 bg-beige-200/70 px-4 py-1.5 rounded-full border border-beige-300"
                       >
                         • {act}
                       </span>

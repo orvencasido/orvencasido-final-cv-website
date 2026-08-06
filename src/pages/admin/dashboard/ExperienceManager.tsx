@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Edit2, Trash2, Briefcase, Calendar, MapPin } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { experienceSchema, ExperienceFormData } from '../../../lib/schemas';
 import {
   getExperiences,
@@ -45,7 +45,6 @@ export const ExperienceManager: React.FC = () => {
   });
 
   const watchResps = watch('responsibilities') || [];
-  const watchAchs = watch('achievements') || [];
 
   const loadData = async () => {
     setLoading(true);
@@ -108,13 +107,6 @@ export const ExperienceManager: React.FC = () => {
     }
   };
 
-  const handleAddAchieve = () => {
-    if (achieveInput.trim()) {
-      setValue('achievements', [...watchAchs, achieveInput.trim()]);
-      setAchieveInput('');
-    }
-  };
-
   const onSubmit = async (data: ExperienceFormData) => {
     try {
       if (editingExp) {
@@ -153,7 +145,7 @@ export const ExperienceManager: React.FC = () => {
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 rounded-xl hover:opacity-90 transition shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Experience
           </button>
@@ -169,23 +161,23 @@ export const ExperienceManager: React.FC = () => {
           {experiences.map((exp) => (
             <div
               key={exp.id}
-              className="p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+              className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
             >
               <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                <div className="flex items-center gap-3">
+                  <h3 className="text-base font-extrabold text-matcha-950">
                     {exp.position}
                   </h3>
                   {exp.is_current && (
-                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
+                    <span className="text-[10px] font-extrabold px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 font-mono">
                       Current
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                <p className="text-xs font-bold text-matcha-800">
                   {exp.company} • {exp.employment_type} ({exp.location})
                 </p>
-                <p className="text-xs text-zinc-500 font-mono">
+                <p className="text-xs text-matcha-600 font-mono font-medium">
                   {exp.start_date} — {exp.is_current ? 'Present' : exp.end_date}
                 </p>
               </div>
@@ -193,14 +185,14 @@ export const ExperienceManager: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => openEditModal(exp)}
-                  className="p-2 text-zinc-500 hover:text-sky-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2.5 text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200 cursor-pointer transition"
                   title="Edit"
                 >
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setDeletingId(exp.id)}
-                  className="p-2 text-zinc-500 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2.5 text-matcha-700 hover:text-red-700 rounded-2xl hover:bg-beige-200 cursor-pointer transition"
                   title="Delete"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -218,35 +210,35 @@ export const ExperienceManager: React.FC = () => {
         title={editingExp ? 'Edit Experience' : 'Add Experience'}
         maxWidth="2xl"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs sm:text-sm">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Company Name</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Company Name</label>
               <input
                 type="text"
                 {...register('company')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
-              {errors.company && <p className="text-xs text-red-500">{errors.company.message}</p>}
+              {errors.company && <p className="text-xs text-red-600 font-medium">{errors.company.message}</p>}
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Position Title</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Position Title</label>
               <input
                 type="text"
                 {...register('position')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
-              {errors.position && <p className="text-xs text-red-500">{errors.position.message}</p>}
+              {errors.position && <p className="text-xs text-red-600 font-medium">{errors.position.message}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Employment Type</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Employment Type</label>
               <select
                 {...register('employment_type')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="Full-time">Full-time</option>
                 <option value="Part-time">Part-time</option>
@@ -255,79 +247,79 @@ export const ExperienceManager: React.FC = () => {
               </select>
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Start Date</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Start Date</label>
               <input
                 type="text"
                 placeholder="2023-04"
                 {...register('start_date')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">End Date</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">End Date</label>
               <input
                 type="text"
                 placeholder="2024-05"
                 {...register('end_date')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3 pt-1">
             <input
               type="checkbox"
               id="is_current_check"
               {...register('is_current')}
-              className="rounded"
+              className="w-4 h-4 rounded text-matcha-900 focus:ring-matcha-500"
             />
-            <label htmlFor="is_current_check" className="font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="is_current_check" className="font-bold text-xs text-matcha-950 cursor-pointer">
               I currently work in this role
             </label>
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Location</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Location</label>
             <input
               type="text"
               {...register('location')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Short Description</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Short Description</label>
             <textarea
               rows={2}
               {...register('description')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
           {/* Key Responsibilities */}
           <div className="space-y-2">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Key Responsibilities</label>
-            <div className="flex items-center gap-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Key Responsibilities</label>
+            <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={respInput}
                 onChange={(e) => setRespInput(e.target.value)}
                 placeholder="Add responsibility item..."
-                className="flex-1 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 font-medium"
               />
               <button
                 type="button"
                 onClick={handleAddResp}
-                className="px-3 py-1.5 bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 rounded-xl text-xs font-semibold"
+                className="px-5 py-2.5 bg-matcha-900 text-beige-50 rounded-full text-xs font-bold hover:bg-matcha-800 cursor-pointer"
               >
                 Add Item
               </button>
             </div>
-            <ul className="space-y-1 pt-1">
+            <ul className="space-y-1.5 pt-2">
               {watchResps.map((resp, i) => (
-                <li key={i} className="flex items-center justify-between text-xs p-2 bg-zinc-50 dark:bg-zinc-800 rounded-lg">
+                <li key={i} className="flex items-center justify-between text-xs p-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 font-medium">
                   <span>• {resp}</span>
                   <button
                     type="button"
@@ -337,7 +329,7 @@ export const ExperienceManager: React.FC = () => {
                         watchResps.filter((_, idx) => idx !== i)
                       )
                     }
-                    className="text-red-500 font-bold ml-2"
+                    className="text-red-600 font-extrabold ml-2 cursor-pointer"
                   >
                     ×
                   </button>
@@ -346,17 +338,17 @@ export const ExperienceManager: React.FC = () => {
             </ul>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-beige-200">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-zinc-600 dark:text-zinc-400 font-medium"
+              className="px-5 py-2.5 text-xs font-bold text-matcha-800 hover:text-matcha-950 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl font-semibold shadow-sm"
+              className="px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs hover:bg-matcha-800 cursor-pointer shadow-xs"
             >
               Save Experience
             </button>

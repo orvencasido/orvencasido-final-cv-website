@@ -12,7 +12,6 @@ export const ExperiencePage: React.FC = () => {
     async function loadExperiences() {
       try {
         const data = await getExperiences();
-        // Sort from newest to oldest by start_date or sort_order
         setExperiences(data);
       } catch (err) {
         console.error('Error fetching experiences:', err);
@@ -25,77 +24,77 @@ export const ExperiencePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-16">
         <LoadingSkeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-10">
+    <div className="max-w-5xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
-        title="Professional Experience"
-        description="A timeline of engineering positions, cloud architecture achievements, and platform operations."
+        title="My Journey, My Career"
+        description="From internships to production environments—here's how I've grown as a DevOps and System Architect."
       />
 
       {experiences.length === 0 ? (
         <EmptyState title="No experience records found" />
       ) : (
-        <div className="relative border-l-2 border-zinc-200 dark:border-zinc-800 ml-3 sm:ml-6 space-y-12">
+        <div className="relative border-l-2 border-beige-300 ml-4 sm:ml-8 space-y-14">
           {experiences.map((exp) => (
-            <div key={exp.id} className="relative pl-6 sm:pl-8 group">
+            <div key={exp.id} className="relative pl-8 sm:pl-12 group">
               {/* Timeline Marker Dot */}
-              <div className="absolute -left-[9px] top-1.5 w-4 h-4 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-900 dark:bg-zinc-100 group-hover:scale-125 transition-transform" />
+              <div className="absolute -left-[9px] top-2 w-4 h-4 rounded-full border-2 border-beige-100 bg-matcha-900 group-hover:scale-125 transition-transform" />
 
-              <div className="p-6 sm:p-8 rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/50 space-y-6 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition">
+              <div className="p-8 sm:p-10 rounded-3xl border border-beige-300 bg-beige-50 space-y-8 shadow-xs hover:border-matcha-400 hover:shadow-md transition-all">
                 {/* Header info */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-100 dark:border-zinc-800/80 pb-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-beige-200 pb-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <h2 className="text-2xl font-extrabold text-matcha-950">
                         {exp.position}
                       </h2>
                       {exp.is_current && (
-                        <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
+                        <span className="text-xs font-bold px-3 py-1 rounded-full bg-matcha-900 text-beige-50">
                           Current Role
                         </span>
                       )}
                     </div>
-                    <p className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-zinc-400" /> {exp.company}
-                      <span className="text-xs text-zinc-400">({exp.employment_type})</span>
+                    <p className="text-base font-bold text-matcha-800 flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-matcha-600" /> {exp.company}
+                      <span className="text-xs text-matcha-600 font-normal">({exp.employment_type})</span>
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:items-end gap-1 text-xs text-zinc-500 font-mono">
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5" />
+                  <div className="flex flex-col sm:items-end gap-1.5 text-xs text-matcha-700 font-mono">
+                    <span className="flex items-center gap-1.5 font-semibold">
+                      <Calendar className="w-4 h-4 text-matcha-600" />
                       {exp.start_date} — {exp.is_current ? 'Present' : exp.end_date}
                     </span>
-                    <span className="flex items-center gap-1 text-zinc-400">
-                      <MapPin className="w-3.5 h-3.5" /> {exp.location}
+                    <span className="flex items-center gap-1.5 text-matcha-600">
+                      <MapPin className="w-4 h-4" /> {exp.location}
                     </span>
                   </div>
                 </div>
 
                 {/* Job Description */}
-                <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                <p className="text-base text-matcha-800 leading-relaxed font-normal">
                   {exp.description}
                 </p>
 
                 {/* Key Responsibilities */}
                 {exp.responsibilities && exp.responsibilities.length > 0 && (
-                  <div className="space-y-2">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                  <div className="space-y-3">
+                    <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-700">
                       Key Responsibilities
                     </h3>
-                    <ul className="space-y-1.5">
+                    <ul className="space-y-2.5">
                       {exp.responsibilities.map((resp, i) => (
                         <li
                           key={i}
-                          className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 flex items-start gap-2"
+                          className="text-sm sm:text-base text-matcha-800 flex items-start gap-3"
                         >
-                          <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                          <CheckCircle className="w-5 h-5 text-matcha-600 shrink-0 mt-0.5" />
                           <span>{resp}</span>
                         </li>
                       ))}
@@ -105,15 +104,15 @@ export const ExperiencePage: React.FC = () => {
 
                 {/* Major Achievements */}
                 {exp.achievements && exp.achievements.length > 0 && (
-                  <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
-                    <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-500 flex items-center gap-1">
-                      <Award className="w-3.5 h-3.5" /> Key Impact & Achievements
+                  <div className="space-y-3 pt-4 border-t border-beige-200">
+                    <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-900 flex items-center gap-2">
+                      <Award className="w-4 h-4 text-matcha-600" /> Key Impact & Achievements
                     </h3>
-                    <ul className="space-y-1">
+                    <ul className="space-y-2">
                       {exp.achievements.map((ach, i) => (
                         <li
                           key={i}
-                          className="text-xs sm:text-sm font-medium text-zinc-800 dark:text-zinc-200"
+                          className="text-sm sm:text-base font-semibold text-matcha-950"
                         >
                           • {ach}
                         </li>
@@ -124,11 +123,11 @@ export const ExperiencePage: React.FC = () => {
 
                 {/* Tech Stack */}
                 {exp.technologies && exp.technologies.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 pt-2">
+                  <div className="flex flex-wrap gap-2 pt-2">
                     {exp.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="text-[11px] font-mono px-2.5 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400"
+                        className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-950 border border-matcha-200"
                       >
                         {tech}
                       </span>

@@ -129,7 +129,7 @@ export const CertificationManager: React.FC = () => {
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 rounded-xl hover:opacity-90 transition shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Certification
           </button>
@@ -145,16 +145,16 @@ export const CertificationManager: React.FC = () => {
           {certs.map((cert) => (
             <div
               key={cert.id}
-              className="p-5 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+              className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
             >
               <div className="space-y-1">
-                <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-                  <Award className="w-4 h-4 text-amber-500" /> {cert.name}
+                <h3 className="text-base font-extrabold text-matcha-950 flex items-center gap-2">
+                  <Award className="w-4 h-4 text-matcha-600" /> {cert.name}
                 </h3>
-                <p className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
+                <p className="text-xs font-bold text-matcha-800">
                   {cert.issuing_organization} | ID: {cert.credential_id || 'N/A'}
                 </p>
-                <p className="text-xs text-zinc-500 font-mono">
+                <p className="text-xs text-matcha-600 font-mono font-medium">
                   Issued: {cert.issue_date} {cert.expiration_date ? `| Expires: ${cert.expiration_date}` : ''}
                 </p>
               </div>
@@ -165,20 +165,20 @@ export const CertificationManager: React.FC = () => {
                     href={cert.credential_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-lg"
+                    className="p-2.5 text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200"
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>
                 )}
                 <button
                   onClick={() => openEditModal(cert)}
-                  className="p-2 text-zinc-500 hover:text-sky-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2.5 text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200 cursor-pointer"
                 >
                   <Edit2 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setDeletingId(cert.id)}
-                  className="p-2 text-zinc-500 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  className="p-2.5 text-matcha-700 hover:text-red-700 rounded-2xl hover:bg-beige-200 cursor-pointer"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -195,77 +195,77 @@ export const CertificationManager: React.FC = () => {
         title={editingCert ? 'Edit Certification' : 'Add Certification'}
         maxWidth="lg"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs sm:text-sm">
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Certification Name</label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Certification Name</label>
             <input
               type="text"
               {...register('name')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
-            {errors.name && <p className="text-xs text-red-500">{errors.name.message}</p>}
+            {errors.name && <p className="text-xs text-red-600 font-medium">{errors.name.message}</p>}
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Issuing Organization</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Issuing Organization</label>
             <input
               type="text"
               {...register('issuing_organization')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.issuing_organization && (
-              <p className="text-xs text-red-500">{errors.issuing_organization.message}</p>
+              <p className="text-xs text-red-600 font-medium">{errors.issuing_organization.message}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Issue Date</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Issue Date</label>
               <input
                 type="text"
                 placeholder="2024-05"
                 {...register('issue_date')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Expiration Date</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Expiration Date</label>
               <input
                 type="text"
                 placeholder="2027-05"
                 {...register('expiration_date')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Credential ID</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Credential ID</label>
               <input
                 type="text"
                 {...register('credential_id')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Verification URL</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Verification URL</label>
               <input
                 type="text"
                 {...register('credential_url')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Description</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Description</label>
             <textarea
               rows={2}
               {...register('description')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
@@ -278,17 +278,17 @@ export const CertificationManager: React.FC = () => {
             onError={(message) => showToast('Image upload failed', 'error', message)}
           />
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-beige-200">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-zinc-600 dark:text-zinc-400 font-medium"
+              className="px-5 py-2.5 text-xs font-bold text-matcha-800 hover:text-matcha-950 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl font-semibold shadow-sm"
+              className="px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs hover:bg-matcha-800 cursor-pointer shadow-xs"
             >
               Save Certification
             </button>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Download, Menu, X } from 'lucide-react';
-import { ThemeToggle } from './ThemeToggle';
 import { getProfile } from '../../lib/services';
 import { getRateLimitedResumeDownloadUrl } from '../../lib/storage';
 
@@ -44,20 +43,31 @@ export const PublicNavbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 dark:bg-slate-950/90 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800/80 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+    <header className="sticky top-0 z-40 bg-beige-100/90 backdrop-blur-md border-b border-beige-200 transition-colors">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 h-20 flex items-center justify-between">
         {/* Logo / Name */}
         <Link
           to="/"
-          className="font-bold text-slate-900 dark:text-slate-100"
+          className="group flex items-center gap-2.5 text-matcha-950 font-extrabold tracking-tight"
         >
-          <span className="font-bold tracking-tight text-xl text-slate-900 dark:text-slate-100">
-            Orven Casido
-          </span>
+          <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center bg-matcha-900 shadow-2xs">
+            <img
+              src="/orbs-icon.png"
+              alt="Orven Casido"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div className="h-7 w-[1px] bg-matcha-300/60 mx-1"></div>
+          <div className="flex flex-col justify-center leading-none">
+            <span className="font-extrabold text-lg text-matcha-950">Orven Casido</span>
+            <span className="text-[9px] font-bold font-mono tracking-[0.18em] text-matcha-600/70 mt-1 uppercase">
+              AI · CLOUD · DEVOPS
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-2 text-sm font-medium">
           {navItems.map((item) => {
             const isActive =
               item.path === '/'
@@ -68,10 +78,10 @@ export const PublicNavbar: React.FC = () => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                className={`py-1 px-1 transition-colors ${
+                className={`px-4 py-2 rounded-full transition-all ${
                   isActive
-                    ? 'text-blue-600 dark:text-blue-400 font-semibold border-b-2 border-blue-600 dark:border-blue-400'
-                    : 'text-slate-600 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400'
+                    ? 'bg-matcha-100 text-matcha-950 font-semibold shadow-xs'
+                    : 'text-matcha-700 hover:text-matcha-950 hover:bg-beige-200/60'
                 }`}
               >
                 {item.label}
@@ -80,7 +90,7 @@ export const PublicNavbar: React.FC = () => {
           })}
         </nav>
 
-        {/* Actions (Theme Toggle) */}
+        {/* Actions (Resume Download Button) */}
         <div className="flex items-center gap-4">
           {resumeUrl && (
             <button
@@ -88,37 +98,37 @@ export const PublicNavbar: React.FC = () => {
               aria-label="Download resume"
               title="Download Resume"
               onClick={handleResumeDownload}
-              className="p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-full bg-matcha-900 text-beige-50 hover:bg-matcha-800 transition-all shadow-sm cursor-pointer"
             >
-              <Download className="w-4 h-4" />
+              <Download className="w-3.5 h-3.5" />
+              <span>Resume</span>
             </button>
           )}
-          <ThemeToggle />
 
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            className="md:hidden p-2 text-matcha-800 hover:text-matcha-950 rounded-xl hover:bg-beige-200 transition cursor-pointer"
             aria-label="Toggle navigation menu"
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-4 space-y-1 animate-in slide-in-from-top-2 duration-200">
+        <div className="md:hidden border-b border-beige-200 bg-beige-100 px-6 py-6 space-y-2 animate-in slide-in-from-top-2 duration-200">
           {navItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}
               onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
-                `block px-3 py-2 text-sm font-medium rounded-lg transition ${
+                `block px-4 py-3 text-sm font-medium rounded-xl transition ${
                   isActive
-                    ? 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400 font-semibold'
-                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-900'
+                    ? 'bg-matcha-100 text-matcha-950 font-bold'
+                    : 'text-matcha-800 hover:bg-beige-200'
                 }`
               }
             >

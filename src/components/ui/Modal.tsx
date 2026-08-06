@@ -42,20 +42,20 @@ export const Modal: React.FC<ModalProps> = ({
   }[maxWidth];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-matcha-950/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div
-        className={`w-full ${maxWidthClass} bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden`}
+        className={`w-full ${maxWidthClass} bg-beige-50 border border-beige-300 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-100 dark:border-zinc-800">
-          <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+        <div className="flex items-center justify-between px-6 py-5 border-b border-beige-200">
+          <h3 className="text-lg font-extrabold text-matcha-950">{title}</h3>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+            className="p-2 text-matcha-700 hover:text-matcha-950 rounded-xl hover:bg-beige-200 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto">{children}</div>
+        <div className="p-6 sm:p-8 overflow-y-auto">{children}</div>
       </div>
     </div>
   );
@@ -82,12 +82,12 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} maxWidth="sm">
-      <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-6">{message}</p>
+      <p className="text-sm text-matcha-800 mb-6 font-medium leading-relaxed">{message}</p>
       <div className="flex items-center justify-end gap-3">
         <button
           type="button"
           onClick={onClose}
-          className="px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-xl transition"
+          className="px-5 py-2.5 text-xs font-bold text-matcha-800 hover:bg-beige-200 rounded-full transition cursor-pointer"
         >
           Cancel
         </button>
@@ -97,10 +97,10 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = ({
             onConfirm();
             onClose();
           }}
-          className={`px-4 py-2 text-sm font-medium text-white rounded-xl transition shadow-sm ${
+          className={`px-6 py-2.5 text-xs font-extrabold text-beige-50 rounded-full transition shadow-xs cursor-pointer ${
             isDestructive
-              ? 'bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600'
-              : 'bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-white'
+              ? 'bg-red-700 hover:bg-red-800'
+              : 'bg-matcha-900 hover:bg-matcha-800'
           }`}
         >
           {confirmText}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, User, Globe, Shield, RefreshCw, Cpu, ArrowRight } from 'lucide-react';
+import { Save, User, Globe, RefreshCw, Cpu, ArrowRight } from 'lucide-react';
 import { profileSchema, ProfileFormData } from '../../../lib/schemas';
 import { getProfile, updateProfile } from '../../../lib/services';
 import { Profile } from '../../../types';
@@ -83,75 +83,75 @@ export const HomeContentManager: React.FC = () => {
       />
 
       {/* Tech Stack Banner */}
-      <div className="p-4 rounded-2xl bg-blue-50/50 dark:bg-blue-950/30 border border-blue-200/60 dark:border-blue-900/50 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-6 rounded-3xl bg-beige-50 border border-beige-300 flex flex-wrap items-center justify-between gap-4 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-blue-600 text-white">
+          <div className="p-3 rounded-2xl bg-matcha-100 text-matcha-900">
             <Cpu className="w-5 h-5" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+            <h4 className="text-base font-extrabold text-matcha-950">
               Manage Tech Stack Icons
             </h4>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-matcha-700 font-medium">
               Add, edit, or re-order tech icons with hover effects and tooltips on the home page.
             </p>
           </div>
         </div>
         <Link
           to="/orven/dashboard/tech-stack"
-          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+          className="px-5 py-2.5 bg-matcha-900 text-beige-50 hover:bg-matcha-800 text-xs font-bold rounded-full transition flex items-center gap-1.5 cursor-pointer shadow-xs"
         >
-          Manage Tech Icons <ArrowRight className="w-3.5 h-3.5" />
+          Manage Tech Icons <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="p-6 sm:p-8 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 space-y-6 shadow-xs">
-          <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <User className="w-4 h-4 text-emerald-500" /> Basic Identity
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+            <User className="w-5 h-5 text-matcha-600" /> Basic Identity
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Full Name */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Full Name
               </label>
               <input
                 type="text"
                 {...register('full_name')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.full_name && (
-                <p className="text-xs text-red-500">{errors.full_name.message}</p>
+                <p className="text-xs text-red-600 font-medium">{errors.full_name.message}</p>
               )}
             </div>
 
             {/* Professional Title */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Professional Title
               </label>
               <input
                 type="text"
                 {...register('professional_title')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.professional_title && (
-                <p className="text-xs text-red-500">{errors.professional_title.message}</p>
+                <p className="text-xs text-red-600 font-medium">{errors.professional_title.message}</p>
               )}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Availability Status */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Availability Status
               </label>
               <select
                 {...register('availability_status')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="available">Available for opportunities</option>
                 <option value="open_to_offers">Open to offers</option>
@@ -160,7 +160,7 @@ export const HomeContentManager: React.FC = () => {
               </select>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <input type="hidden" {...register('profile_image_url')} />
               <ImageUploadField
                 label="Profile Image"
@@ -173,64 +173,63 @@ export const HomeContentManager: React.FC = () => {
           </div>
 
           {/* Short Introduction */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
               Hero Introduction
             </label>
             <textarea
-              rows={2}
+              rows={3}
               {...register('introduction')}
-              className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 resize-none"
+              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium"
             />
             {errors.introduction && (
-              <p className="text-xs text-red-500">{errors.introduction.message}</p>
+              <p className="text-xs text-red-600 font-medium">{errors.introduction.message}</p>
             )}
           </div>
-
         </div>
 
         {/* Contact & Links */}
-        <div className="p-6 sm:p-8 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 space-y-6 shadow-xs">
-          <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <Globe className="w-4 h-4 text-sky-500" /> Contact & Links
+        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+            <Globe className="w-5 h-5 text-matcha-600" /> Contact & Links
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Email
               </label>
               <input
                 type="email"
                 {...register('email')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Phone
               </label>
               <input
                 type="text"
                 {...register('phone')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Location
               </label>
               <input
                 type="text"
                 {...register('location')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <input type="hidden" {...register('resume_url')} />
             <FileUploadField
               label="Resume PDF"
@@ -243,11 +242,11 @@ export const HomeContentManager: React.FC = () => {
         </div>
 
         {/* Save CTA */}
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex items-center justify-end gap-4">
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white rounded-xl shadow-sm transition disabled:opacity-50 flex items-center gap-2"
+            className="px-8 py-3.5 text-sm font-extrabold text-beige-50 bg-matcha-900 hover:bg-matcha-800 rounded-full shadow-md transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
           >
             {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Profile Changes
