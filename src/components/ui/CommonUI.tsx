@@ -6,13 +6,13 @@ export const SectionHeader: React.FC<{
   description?: string;
   action?: React.ReactNode;
 }> = ({ title, description, action }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-    <div>
-      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-beige-300/80">
+    <div className="space-y-2">
+      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-matcha-950">
         {title}
       </h1>
       {description && (
-        <p className="mt-1.5 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
+        <p className="text-base sm:text-lg text-matcha-700 max-w-3xl leading-relaxed font-normal">
           {description}
         </p>
       )}
@@ -32,22 +32,22 @@ export const EmptyState: React.FC<{
   icon: Icon = FolderOpen,
   action,
 }) => (
-  <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/40">
-    <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-400 mb-4">
-      <Icon className="w-6 h-6" />
+  <div className="flex flex-col items-center justify-center py-20 px-6 text-center border-2 border-dashed border-beige-300 rounded-3xl bg-beige-50">
+    <div className="w-14 h-14 rounded-full bg-matcha-100 flex items-center justify-center text-matcha-900 mb-5">
+      <Icon className="w-7 h-7" />
     </div>
-    <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100 mb-1">{title}</h3>
-    <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-sm mb-6">{description}</p>
+    <h3 className="text-lg font-extrabold text-matcha-950 mb-2">{title}</h3>
+    <p className="text-sm text-matcha-700 max-w-sm mb-8 leading-relaxed">{description}</p>
     {action}
   </div>
 );
 
 export const LoadingSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => (
-  <div className="space-y-4">
+  <div className="space-y-6">
     {Array.from({ length: count }).map((_, i) => (
       <div
         key={i}
-        className="animate-pulse bg-zinc-100 dark:bg-zinc-800/60 rounded-2xl h-28 w-full border border-zinc-200/50 dark:border-zinc-800"
+        className="animate-pulse bg-beige-200/80 rounded-3xl h-36 w-full border border-beige-300"
       />
     ))}
   </div>
@@ -57,52 +57,52 @@ export const StatusBadge: React.FC<{
   status: string;
   type?: 'availability' | 'content' | 'project' | 'message';
 }> = ({ status, type = 'content' }) => {
-  let color = 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
+  let color = 'bg-matcha-100 text-matcha-900 border border-matcha-200';
   let label = status;
 
   if (type === 'availability') {
     if (status === 'available') {
-      color = 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50';
+      color = 'bg-matcha-900 text-beige-50 font-bold border border-matcha-800 shadow-xs';
       label = 'Available for opportunities';
     } else if (status === 'open_to_offers') {
-      color = 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50';
+      color = 'bg-matcha-100 text-matcha-950 font-bold border border-matcha-300';
       label = 'Open to offers';
     } else {
-      color = 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400';
+      color = 'bg-beige-200 text-matcha-700 border border-beige-300';
       label = 'Currently unavailable';
     }
   } else if (type === 'content') {
     if (status === 'published') {
-      color = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
+      color = 'bg-matcha-100 text-matcha-950 border border-matcha-300 font-semibold';
     } else {
-      color = 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300';
+      color = 'bg-beige-200 text-matcha-800 border border-beige-300 font-semibold';
     }
   } else if (type === 'project') {
     if (status === 'completed') {
-      color = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
+      color = 'bg-matcha-900 text-beige-50 font-semibold';
     } else if (status === 'in_progress') {
-      color = 'bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300';
+      color = 'bg-matcha-100 text-matcha-950 font-semibold border border-matcha-300';
     } else if (status === 'maintained') {
-      color = 'bg-purple-100 text-purple-800 dark:bg-purple-900/40 dark:text-purple-300';
+      color = 'bg-matcha-50 text-matcha-900 font-semibold border border-matcha-200';
     } else {
-      color = 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400';
+      color = 'bg-beige-200 text-matcha-700';
     }
   } else if (type === 'message') {
     if (status === 'unread') {
-      color = 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300';
+      color = 'bg-matcha-900 text-beige-50 font-bold';
     } else if (status === 'read') {
-      color = 'bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300';
+      color = 'bg-beige-200 text-matcha-700';
     } else {
-      color = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300';
+      color = 'bg-matcha-100 text-matcha-900';
     }
   }
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${color}`}
+      className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs tracking-wide capitalize ${color}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current opacity-75" />
-      {label.replace('_', ' ')}
+      <span className="w-2 h-2 rounded-full bg-current opacity-80" />
+      {label.replace(/_/g, ' ')}
     </span>
   );
 };

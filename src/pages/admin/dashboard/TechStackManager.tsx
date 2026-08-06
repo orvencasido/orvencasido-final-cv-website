@@ -6,9 +6,7 @@ import {
   EyeOff,
   Cpu,
   Save,
-  Check,
   RefreshCw,
-  Sparkles,
   ArrowUp,
   ArrowDown,
   Edit2,
@@ -154,7 +152,6 @@ export const TechStackManager: React.FC = () => {
     const [moved] = newSkills.splice(index, 1);
     newSkills.splice(targetIndex, 0, moved);
 
-    // re-assign sort order
     const reordered = newSkills.map((s, idx) => ({ ...s, sort_order: idx + 1 }));
     setSkills(reordered);
     await updateSkills(reordered);
@@ -170,27 +167,27 @@ export const TechStackManager: React.FC = () => {
       />
 
       {/* Add / Edit Form Box */}
-      <div className="p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-          <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Cpu className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+      <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs space-y-6">
+        <div className="flex items-center justify-between border-b border-beige-200 pb-4">
+          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-matcha-600" />
             {editingId ? 'Edit Tech Icon' : 'Add New Tech Icon'}
           </h2>
           {editingId && (
             <button
               onClick={resetForm}
-              className="text-xs font-semibold text-slate-500 hover:text-slate-900 dark:hover:text-slate-200 flex items-center gap-1"
+              className="text-xs font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1 cursor-pointer"
             >
-              <X className="w-3.5 h-3.5" /> Cancel Edit
+              <X className="w-4 h-4" /> Cancel Edit
             </button>
           )}
         </div>
 
-        <form onSubmit={handleSaveSkill} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <form onSubmit={handleSaveSkill} className="space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Tech Name */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Tech Name *
               </label>
               <input
@@ -198,14 +195,14 @@ export const TechStackManager: React.FC = () => {
                 placeholder="e.g. Kubernetes, Docker, React"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
                 required
               />
             </div>
 
             {/* Icon Slug or Image URL */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Icon Slug or URL
               </label>
               <input
@@ -213,22 +210,22 @@ export const TechStackManager: React.FC = () => {
                 placeholder="e.g. docker OR https://..."
                 value={icon}
                 onChange={(e) => setIcon(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-xs"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
-              <p className="text-[10px] text-slate-400">
-                Leave empty for auto-matching based on name, or type a SimpleIcons slug (e.g. kubernetes, python).
+              <p className="text-[11px] text-matcha-700 font-medium">
+                Leave empty for auto-matching, or type a SimpleIcons slug (e.g. kubernetes, python).
               </p>
             </div>
 
             {/* Category */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Category
               </label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as Skill['category'])}
-                className="w-full px-3.5 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="DevOps & Cloud">DevOps & Cloud</option>
                 <option value="Backend & APIs">Backend & APIs</option>
@@ -240,10 +237,10 @@ export const TechStackManager: React.FC = () => {
           </div>
 
           {/* Live Icon Preview & Options */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-slate-100 dark:border-slate-800">
+          <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t border-beige-200">
             <div className="flex items-center gap-4">
-              <span className="text-xs font-semibold text-slate-500">Live Icon Preview:</span>
-              <div className="flex items-center gap-3 p-2 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span className="text-xs font-bold text-matcha-700">Live Preview:</span>
+              <div className="flex items-center gap-3 p-3 bg-beige-100 rounded-2xl border border-beige-300">
                 {name ? (
                   <div className="flex items-center gap-3">
                     <img
@@ -254,23 +251,23 @@ export const TechStackManager: React.FC = () => {
                         (e.currentTarget as HTMLElement).style.display = 'none';
                       }}
                     />
-                    <span className="text-xs font-bold font-mono text-slate-700 dark:text-slate-300">
+                    <span className="text-xs font-extrabold font-mono text-matcha-950">
                       {name}
                     </span>
                   </div>
                 ) : (
-                  <span className="text-xs text-slate-400 italic">Type name above to preview</span>
+                  <span className="text-xs text-matcha-600 italic font-medium">Type name above to preview</span>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-6">
+              <label className="inline-flex items-center gap-2.5 cursor-pointer text-xs font-bold text-matcha-900">
                 <input
                   type="checkbox"
                   checked={isVisible}
                   onChange={(e) => setIsVisible(e.target.checked)}
-                  className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500"
+                  className="w-4 h-4 rounded text-matcha-900 focus:ring-matcha-500"
                 />
                 Show on Home Page
               </label>
@@ -278,14 +275,14 @@ export const TechStackManager: React.FC = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="px-5 py-2 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-xs font-bold rounded-xl hover:bg-slate-800 dark:hover:bg-white transition flex items-center gap-2 disabled:opacity-50"
+                className="px-8 py-3.5 bg-matcha-900 text-beige-50 text-xs font-extrabold rounded-full hover:bg-matcha-800 transition flex items-center gap-2 disabled:opacity-50 shadow-xs cursor-pointer"
               >
                 {saving ? (
-                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <RefreshCw className="w-4 h-4 animate-spin" />
                 ) : editingId ? (
-                  <Save className="w-3.5 h-3.5" />
+                  <Save className="w-4 h-4" />
                 ) : (
-                  <Plus className="w-3.5 h-3.5" />
+                  <Plus className="w-4 h-4" />
                 )}
                 {editingId ? 'Update Item' : 'Add Tech Icon'}
               </button>
@@ -295,86 +292,86 @@ export const TechStackManager: React.FC = () => {
       </div>
 
       {/* Tech Stack List Grid */}
-      <div className="p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xs space-y-6">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-4">
-          <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+      <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs space-y-6">
+        <div className="flex items-center justify-between border-b border-beige-200 pb-4">
+          <h3 className="text-lg font-extrabold text-matcha-950">
             Active Tech Stack Items ({skills.length})
           </h3>
-          <p className="text-xs text-slate-400">
-            Hover preview: 30% default opacity &rarr; 100% hover opacity + tooltip.
+          <p className="text-xs text-matcha-700 font-medium">
+            40% opacity &rarr; 100% hover opacity + tooltip.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {skills.map((skill, index) => {
             const iconUrl = getTechIconUrl(skill);
             return (
               <div
                 key={skill.id}
-                className={`p-3 rounded-xl border flex flex-col justify-between transition-all group/item ${
+                className={`p-4 rounded-2xl border flex flex-col justify-between transition-all group/item ${
                   skill.is_visible
-                    ? 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40'
-                    : 'border-slate-200 dark:border-slate-800 opacity-40 bg-slate-100 dark:bg-slate-900'
+                    ? 'border-beige-300 bg-beige-100'
+                    : 'border-beige-300 opacity-40 bg-beige-200'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono text-slate-400 font-bold">
+                  <span className="text-[10px] font-mono text-matcha-600 font-bold">
                     #{index + 1}
                   </span>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => moveSkill(index, 'up')}
                       disabled={index === 0}
-                      className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20"
+                      className="p-1 text-matcha-600 hover:text-matcha-950 disabled:opacity-20 cursor-pointer"
                       title="Move up"
                     >
-                      <ArrowUp className="w-3 h-3" />
+                      <ArrowUp className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => moveSkill(index, 'down')}
                       disabled={index === skills.length - 1}
-                      className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 disabled:opacity-20"
+                      className="p-1 text-matcha-600 hover:text-matcha-950 disabled:opacity-20 cursor-pointer"
                       title="Move down"
                     >
-                      <ArrowDown className="w-3 h-3" />
+                      <ArrowDown className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                {/* Icon Preview with 30% -> 100% opacity effect */}
-                <div className="relative group/tech flex items-center justify-center h-12 my-1 cursor-pointer">
+                {/* Icon Preview */}
+                <div className="relative group/tech flex items-center justify-center h-12 my-2 cursor-pointer">
                   <img
                     src={iconUrl}
                     alt={skill.name}
-                    className="w-8 h-8 object-contain opacity-30 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
+                    className="w-8 h-8 object-contain opacity-40 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
                     onError={(e) => {
                       (e.currentTarget as HTMLElement).style.display = 'none';
                     }}
                   />
                   {/* Tooltip */}
                   <div className="absolute bottom-full mb-1 hidden group-hover/tech:flex flex-col items-center pointer-events-none z-30">
-                    <span className="px-2 py-0.5 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-[10px] font-bold rounded shadow-md whitespace-nowrap">
+                    <span className="px-2.5 py-1 bg-matcha-950 text-beige-50 text-[10px] font-bold rounded-lg shadow-md whitespace-nowrap">
                       {skill.name}
                     </span>
                   </div>
                 </div>
 
                 <div className="text-center mt-1">
-                  <p className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
+                  <p className="text-xs font-extrabold text-matcha-950 truncate">
                     {skill.name}
                   </p>
-                  <p className="text-[10px] text-slate-400 truncate">{skill.category}</p>
+                  <p className="text-[10px] font-semibold text-matcha-700 truncate">{skill.category}</p>
                 </div>
 
                 {/* Actions */}
-                <div className="mt-3 pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
+                <div className="mt-3 pt-2 border-t border-beige-200 flex items-center justify-between">
                   <button
                     onClick={() => toggleVisibility(skill.id)}
-                    className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
+                    className="p-1 text-matcha-700 hover:text-matcha-950 cursor-pointer"
                     title={skill.is_visible ? 'Hide from home' : 'Show on home'}
                   >
                     {skill.is_visible ? (
-                      <Eye className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                      <Eye className="w-3.5 h-3.5 text-matcha-800" />
                     ) : (
                       <EyeOff className="w-3.5 h-3.5" />
                     )}
@@ -383,14 +380,14 @@ export const TechStackManager: React.FC = () => {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => startEdit(skill)}
-                      className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400"
+                      className="p-1 text-matcha-700 hover:text-matcha-950 cursor-pointer"
                       title="Edit item"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDelete(skill.id)}
-                      className="p-1 text-slate-400 hover:text-red-600"
+                      className="p-1 text-matcha-700 hover:text-red-700 cursor-pointer"
                       title="Delete item"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

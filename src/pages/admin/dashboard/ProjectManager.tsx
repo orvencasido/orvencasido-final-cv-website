@@ -8,8 +8,6 @@ import {
   Trash2,
   Eye,
   Star,
-  ExternalLink,
-  Github,
 } from 'lucide-react';
 import { projectSchema, ProjectFormData } from '../../../lib/schemas';
 import { getProjects, createProject, updateProject, deleteProject } from '../../../lib/services';
@@ -169,7 +167,7 @@ export const ProjectManager: React.FC = () => {
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2.5 text-xs sm:text-sm font-semibold text-white bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 rounded-xl hover:opacity-90 transition shadow-sm"
+            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add New Project
           </button>
@@ -177,18 +175,18 @@ export const ProjectManager: React.FC = () => {
       />
 
       {/* Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs">
         <div className="relative flex-1 w-full max-w-md">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
           <input
             type="text"
             placeholder="Search projects by title or tech..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs sm:text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+            className="w-full pl-11 pr-4 py-2.5 text-xs sm:text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
           />
         </div>
-        <div className="text-xs text-zinc-500 font-mono">
+        <div className="text-xs text-matcha-700 font-mono font-bold">
           Showing {filteredProjects.length} of {projects.length} projects
         </div>
       </div>
@@ -199,42 +197,42 @@ export const ProjectManager: React.FC = () => {
       ) : filteredProjects.length === 0 ? (
         <EmptyState title="No projects found" />
       ) : (
-        <div className="border border-zinc-200 dark:border-zinc-800 rounded-2xl bg-white dark:bg-zinc-900/50 overflow-hidden shadow-xs">
+        <div className="border border-beige-300 rounded-3xl bg-beige-50 overflow-hidden shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-zinc-50 dark:bg-zinc-800/60 text-zinc-500 border-b border-zinc-200 dark:border-zinc-800 font-medium">
+              <thead className="bg-beige-200/80 text-matcha-900 border-b border-beige-300 font-extrabold uppercase tracking-wider text-[11px]">
                 <tr>
-                  <th className="px-4 py-3">Project Title</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Featured</th>
-                  <th className="px-4 py-3">Technologies</th>
-                  <th className="px-4 py-3">Date</th>
-                  <th className="px-4 py-3 text-right">Actions</th>
+                  <th className="px-6 py-4">Project Title</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Featured</th>
+                  <th className="px-6 py-4">Technologies</th>
+                  <th className="px-6 py-4">Date</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/80">
+              <tbody className="divide-y divide-beige-200">
                 {filteredProjects.map((proj) => (
-                  <tr key={proj.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30 transition">
-                    <td className="px-4 py-3 max-w-xs">
-                      <p className="font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                  <tr key={proj.id} className="hover:bg-beige-100/70 transition">
+                    <td className="px-6 py-4 max-w-xs">
+                      <p className="font-extrabold text-matcha-950 truncate">
                         {proj.title}
                       </p>
-                      <p className="text-[11px] text-zinc-400 font-mono truncate">
+                      <p className="text-[11px] text-matcha-700 font-mono truncate">
                         /projects/{proj.slug}
                       </p>
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <StatusBadge status={proj.status} type="project" />
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <button
                         onClick={() => handleToggleFeatured(proj)}
-                        className={`p-1 rounded-lg transition ${
+                        className={`p-1.5 rounded-xl transition cursor-pointer ${
                           proj.is_featured
-                            ? 'text-amber-500 hover:text-amber-600'
-                            : 'text-zinc-300 dark:text-zinc-600 hover:text-amber-400'
+                            ? 'text-amber-600 hover:text-amber-700'
+                            : 'text-matcha-400 hover:text-amber-600'
                         }`}
                         title="Toggle featured state"
                       >
@@ -242,12 +240,12 @@ export const ProjectManager: React.FC = () => {
                       </button>
                     </td>
 
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">
                       <div className="flex flex-wrap gap-1 max-w-xs">
                         {proj.technologies.map((t) => (
                           <span
                             key={t}
-                            className="text-[10px] px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-mono"
+                            className="text-[10px] px-2.5 py-1 rounded-full bg-matcha-100/80 text-matcha-900 font-mono font-bold"
                           >
                             {t}
                           </span>
@@ -255,31 +253,31 @@ export const ProjectManager: React.FC = () => {
                       </div>
                     </td>
 
-                    <td className="px-4 py-3 text-zinc-500 font-mono text-xs">
+                    <td className="px-6 py-4 text-matcha-700 font-mono text-xs font-medium">
                       {proj.completion_date}
                     </td>
 
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <a
                           href={`/projects/${proj.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          className="p-2 text-matcha-700 hover:text-matcha-950 rounded-xl hover:bg-beige-200"
                           title="Preview"
                         >
                           <Eye className="w-4 h-4" />
                         </a>
                         <button
                           onClick={() => openEditModal(proj)}
-                          className="p-1.5 text-zinc-400 hover:text-sky-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          className="p-2 text-matcha-700 hover:text-matcha-950 rounded-xl hover:bg-beige-200 cursor-pointer"
                           title="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => setDeletingId(proj.id)}
-                          className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                          className="p-2 text-matcha-700 hover:text-red-700 rounded-xl hover:bg-beige-200 cursor-pointer"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -301,10 +299,10 @@ export const ProjectManager: React.FC = () => {
         title={editingProject ? 'Edit Project' : 'Add New Project'}
         maxWidth="2xl"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-xs sm:text-sm">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Project Title</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Project Title</label>
               <input
                 type="text"
                 {...register('title')}
@@ -320,28 +318,28 @@ export const ProjectManager: React.FC = () => {
                     );
                   }
                 }}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
-              {errors.title && <p className="text-xs text-red-500">{errors.title.message}</p>}
+              {errors.title && <p className="text-xs text-red-600 font-medium">{errors.title.message}</p>}
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Slug</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Slug</label>
               <input
                 type="text"
                 {...register('slug')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
-              {errors.slug && <p className="text-xs text-red-500">{errors.slug.message}</p>}
+              {errors.slug && <p className="text-xs text-red-600 font-medium">{errors.slug.message}</p>}
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Project Status</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Project Status</label>
               <select
                 {...register('status')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="completed">Completed</option>
                 <option value="in_progress">In Progress</option>
@@ -350,57 +348,57 @@ export const ProjectManager: React.FC = () => {
               </select>
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Completion Date</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Completion Date</label>
               <input
                 type="text"
                 placeholder="e.g. 2026-03"
                 {...register('completion_date')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Short Summary</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Short Summary</label>
             <textarea
               rows={2}
               {...register('short_description')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.short_description && (
-              <p className="text-xs text-red-500">{errors.short_description.message}</p>
+              <p className="text-xs text-red-600 font-medium">{errors.short_description.message}</p>
             )}
           </div>
 
-          <div className="space-y-1">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Full Description</label>
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Full Description</label>
             <textarea
               rows={4}
               {...register('full_description')}
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl font-mono text-xs"
+              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
             />
             {errors.full_description && (
-              <p className="text-xs text-red-500">{errors.full_description.message}</p>
+              <p className="text-xs text-red-600 font-medium">{errors.full_description.message}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">GitHub Repository URL</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">GitHub Repository URL</label>
               <input
                 type="text"
                 {...register('github_url')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-mono"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
             </div>
 
-            <div className="space-y-1">
-              <label className="font-semibold text-zinc-700 dark:text-zinc-300">Live Demo URL</label>
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Live Demo URL</label>
               <input
                 type="text"
                 {...register('live_url')}
-                className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl text-xs font-mono"
+                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
             </div>
           </div>
@@ -416,34 +414,34 @@ export const ProjectManager: React.FC = () => {
 
           {/* Tech stack tags */}
           <div className="space-y-2">
-            <label className="font-semibold text-zinc-700 dark:text-zinc-300">Technologies Used</label>
-            <div className="flex items-center gap-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Technologies Used</label>
+            <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
                 placeholder="Add technology (e.g. Kubernetes)..."
-                className="flex-1 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl"
+                className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none font-medium"
               />
               <button
                 type="button"
                 onClick={handleAddTech}
-                className="px-3 py-1.5 bg-zinc-800 text-white dark:bg-zinc-200 dark:text-zinc-900 rounded-xl font-semibold text-xs"
+                className="px-5 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-bold text-xs hover:bg-matcha-800 cursor-pointer"
               >
                 Add Tech
               </button>
             </div>
-            <div className="flex flex-wrap gap-1.5 pt-1">
+            <div className="flex flex-wrap gap-2 pt-2">
               {watchTechs.map((t) => (
                 <span
                   key={t}
-                  className="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 text-xs flex items-center gap-1 font-mono"
+                  className="px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 text-xs flex items-center gap-1.5 font-mono font-bold"
                 >
                   {t}
                   <button
                     type="button"
                     onClick={() => handleRemoveTech(t)}
-                    className="hover:text-red-500 ml-1 font-bold"
+                    className="hover:text-red-700 ml-1 font-extrabold cursor-pointer"
                   >
                     ×
                   </button>
@@ -452,29 +450,29 @@ export const ProjectManager: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 pt-2">
+          <div className="flex items-center gap-3 pt-2">
             <input
               type="checkbox"
               id="is_featured_proj"
               {...register('is_featured')}
-              className="rounded border-zinc-300 dark:border-zinc-700"
+              className="w-4 h-4 rounded text-matcha-900 focus:ring-matcha-500"
             />
-            <label htmlFor="is_featured_proj" className="font-medium text-zinc-700 dark:text-zinc-300">
+            <label htmlFor="is_featured_proj" className="font-bold text-xs text-matcha-950 cursor-pointer">
               Feature this project on home page
             </label>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-beige-200">
             <button
               type="button"
               onClick={() => setIsModalOpen(false)}
-              className="px-4 py-2 text-zinc-600 dark:text-zinc-400 font-medium"
+              className="px-5 py-2.5 text-xs font-bold text-matcha-800 hover:text-matcha-950 cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl font-semibold shadow-sm"
+              className="px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs hover:bg-matcha-800 cursor-pointer shadow-xs"
             >
               Save Project
             </button>

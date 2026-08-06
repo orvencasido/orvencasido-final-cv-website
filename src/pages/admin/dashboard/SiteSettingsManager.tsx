@@ -59,25 +59,25 @@ export const SiteSettingsManager: React.FC = () => {
       />
 
       {/* Supabase Status Banner */}
-      <div className="p-5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
         <div className="flex items-start gap-3">
           <div
-            className={`p-2 rounded-xl text-white ${
-              isSupabaseConfigured ? 'bg-emerald-500' : 'bg-amber-500'
+            className={`p-3 rounded-2xl text-beige-50 ${
+              isSupabaseConfigured ? 'bg-matcha-900' : 'bg-amber-700'
             }`}
           >
             <Database className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
+            <h3 className="text-base font-extrabold text-matcha-950 flex items-center gap-2">
               Database Mode:{' '}
               {isSupabaseConfigured ? (
-                <span className="text-emerald-500">Supabase Connected</span>
+                <span className="text-matcha-800">Supabase Connected</span>
               ) : (
-                <span className="text-amber-500">Local Repository Mode</span>
+                <span className="text-amber-800">Local Repository Mode</span>
               )}
             </h3>
-            <p className="text-xs text-zinc-500 mt-0.5">
+            <p className="text-xs text-matcha-700 font-medium mt-0.5">
               {isSupabaseConfigured
                 ? 'Your website is actively synchronizing data with live Supabase PostgreSQL tables.'
                 : 'Running on local persistent storage repository. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env to enable Supabase cloud DB.'}
@@ -86,94 +86,94 @@ export const SiteSettingsManager: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="p-6 sm:p-8 rounded-2xl border border-zinc-200/80 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 space-y-6 shadow-xs">
-          <h2 className="text-base font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2 border-b border-zinc-100 dark:border-zinc-800 pb-3">
-            <Settings className="w-4 h-4 text-emerald-500" /> General SEO & Branding
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+            <Settings className="w-5 h-5 text-matcha-600" /> General SEO & Branding
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Website Title
               </label>
               <input
                 type="text"
                 {...register('website_title')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.website_title && (
-                <p className="text-xs text-red-500">{errors.website_title.message}</p>
+                <p className="text-xs text-red-600 font-medium">{errors.website_title.message}</p>
               )}
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Primary Contact Email
               </label>
               <input
                 type="email"
                 {...register('contact_email')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Navbar Initials Logo
               </label>
               <input
                 type="text"
                 {...register('logo_initials')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 font-mono"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 SEO Keywords
               </label>
               <input
                 type="text"
                 {...register('seo_keywords')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="space-y-2">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
               Website Meta Description
             </label>
             <textarea
               rows={3}
               {...register('website_description')}
-              className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 resize-none"
+              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium"
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Footer Copyright Notice
               </label>
               <input
                 type="text"
                 {...register('footer_text')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <div className="space-y-2">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Resume Download URL
               </label>
               <input
                 type="text"
                 {...register('resume_download_url')}
-                className="w-full px-3.5 py-2 text-sm bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 font-mono text-xs"
+                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
@@ -183,7 +183,7 @@ export const SiteSettingsManager: React.FC = () => {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 text-sm font-semibold text-white bg-zinc-900 dark:bg-zinc-100 dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-white rounded-xl shadow-sm transition flex items-center gap-2"
+            className="px-8 py-3.5 text-sm font-extrabold text-beige-50 bg-matcha-900 hover:bg-matcha-800 rounded-full shadow-md transition flex items-center gap-2 cursor-pointer"
           >
             <Save className="w-4 h-4" /> {saving ? 'Saving...' : 'Save Global Settings'}
           </button>

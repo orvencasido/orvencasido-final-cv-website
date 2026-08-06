@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Mail, Check, Trash2, Eye, Filter, Reply, CheckCircle2 } from 'lucide-react';
+import { Trash2, Eye, Filter, Reply, CheckCircle2 } from 'lucide-react';
 import {
   getContactMessages,
   updateContactMessageStatus,
@@ -83,16 +83,16 @@ export const ContactMessagesManager: React.FC = () => {
       />
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-zinc-200 dark:border-zinc-800">
-        <Filter className="w-4 h-4 text-zinc-400 shrink-0" />
+      <div className="flex items-center gap-3 overflow-x-auto pb-2 border-b border-beige-300">
+        <Filter className="w-4 h-4 text-matcha-700 shrink-0" />
         {['all', 'unread', 'read', 'resolved'].map((st) => (
           <button
             key={st}
             onClick={() => setStatusFilter(st)}
-            className={`px-3 py-1.5 text-xs font-semibold capitalize rounded-xl transition shrink-0 ${
+            className={`px-4 py-2 text-xs font-extrabold capitalize rounded-full transition shrink-0 cursor-pointer ${
               statusFilter === st
-                ? 'bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900'
-                : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200'
+                ? 'bg-matcha-900 text-beige-50 shadow-xs'
+                : 'bg-beige-200 text-matcha-900 hover:bg-beige-300'
             }`}
           >
             {st} ({st === 'all' ? messages.length : messages.filter((m) => m.status === st).length})
@@ -105,46 +105,46 @@ export const ContactMessagesManager: React.FC = () => {
       ) : filteredMessages.length === 0 ? (
         <EmptyState title="No messages in this filter" />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredMessages.map((msg) => (
             <div
               key={msg.id}
               onClick={() => handleOpenMessage(msg)}
-              className={`p-4 sm:p-5 rounded-2xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+              className={`p-6 rounded-3xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs ${
                 msg.status === 'unread'
-                  ? 'border-indigo-300 dark:border-indigo-800 bg-indigo-50/30 dark:bg-indigo-950/20 font-medium'
-                  : 'border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50'
+                  ? 'border-matcha-400 bg-matcha-100/50 font-medium'
+                  : 'border-beige-300 bg-beige-50'
               }`}
             >
               <div className="space-y-1 min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100 truncate">
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-extrabold text-matcha-950 truncate">
                     {msg.name}
                   </span>
-                  <span className="text-xs text-zinc-500 font-mono">({msg.email})</span>
+                  <span className="text-xs text-matcha-700 font-mono">({msg.email})</span>
                   <StatusBadge status={msg.status} type="message" />
                 </div>
-                <p className="text-xs font-semibold text-zinc-800 dark:text-zinc-200 truncate">
+                <p className="text-xs font-extrabold text-matcha-900 truncate">
                   {msg.subject}
                 </p>
-                <p className="text-xs text-zinc-500 line-clamp-1">{msg.message}</p>
+                <p className="text-xs text-matcha-700 font-medium line-clamp-1">{msg.message}</p>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0">
-                <span className="text-xs font-mono text-zinc-400">
+              <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+                <span className="text-xs font-mono text-matcha-600 font-medium">
                   {new Date(msg.created_at).toLocaleDateString()}
                 </span>
                 <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => handleOpenMessage(msg)}
-                    className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    className="p-2.5 text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200 cursor-pointer"
                     title="View Message"
                   >
                     <Eye className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setDeletingId(msg.id)}
-                    className="p-1.5 text-zinc-400 hover:text-red-600 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    className="p-2.5 text-matcha-700 hover:text-red-700 rounded-2xl hover:bg-beige-200 cursor-pointer"
                     title="Delete Message"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -165,15 +165,15 @@ export const ContactMessagesManager: React.FC = () => {
       >
         {activeMessage && (
           <div className="space-y-6 text-xs sm:text-sm">
-            <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/60 border border-zinc-200 dark:border-zinc-700 space-y-2">
+            <div className="p-6 rounded-3xl bg-beige-100 border border-beige-300 space-y-2">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100">
+                  <h3 className="text-base font-extrabold text-matcha-950">
                     {activeMessage.name}
                   </h3>
                   <a
                     href={`mailto:${activeMessage.email}`}
-                    className="text-xs text-indigo-600 dark:text-indigo-400 underline font-mono"
+                    className="text-xs text-matcha-800 font-bold underline font-mono"
                   >
                     {activeMessage.email}
                   </a>
@@ -181,38 +181,38 @@ export const ContactMessagesManager: React.FC = () => {
                 <StatusBadge status={activeMessage.status} type="message" />
               </div>
 
-              <div className="text-xs text-zinc-500 font-mono">
+              <div className="text-xs text-matcha-600 font-mono font-medium">
                 Received: {new Date(activeMessage.created_at).toLocaleString()}
               </div>
             </div>
 
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-zinc-400 uppercase">Subject</p>
-              <p className="font-bold text-zinc-900 dark:text-zinc-100 text-sm">
+            <div className="space-y-2">
+              <p className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Subject</p>
+              <p className="font-extrabold text-matcha-950 text-sm">
                 {activeMessage.subject}
               </p>
             </div>
 
-            <div className="space-y-1">
-              <p className="text-xs font-semibold text-zinc-400 uppercase">Body</p>
-              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 leading-relaxed whitespace-pre-wrap font-sans">
+            <div className="space-y-2">
+              <p className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Body</p>
+              <div className="p-5 rounded-2xl bg-beige-100 border border-beige-300 text-matcha-950 leading-relaxed whitespace-pre-wrap font-medium">
                 {activeMessage.message}
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-beige-200">
               <div className="flex items-center gap-2">
                 {activeMessage.status !== 'resolved' ? (
                   <button
                     onClick={() => handleUpdateStatus(activeMessage.id, 'resolved')}
-                    className="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold text-xs flex items-center gap-1"
+                    className="px-5 py-2.5 rounded-full bg-matcha-100 text-matcha-900 font-extrabold text-xs flex items-center gap-1.5 cursor-pointer"
                   >
-                    <CheckCircle2 className="w-3.5 h-3.5" /> Mark Resolved
+                    <CheckCircle2 className="w-4 h-4" /> Mark Resolved
                   </button>
                 ) : (
                   <button
                     onClick={() => handleUpdateStatus(activeMessage.id, 'read')}
-                    className="px-3 py-1.5 rounded-xl bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 font-semibold text-xs"
+                    className="px-5 py-2.5 rounded-full bg-beige-200 text-matcha-950 font-bold text-xs cursor-pointer"
                   >
                     Reopen
                   </button>
@@ -224,9 +224,9 @@ export const ContactMessagesManager: React.FC = () => {
                   href={`mailto:${activeMessage.email}?subject=Re: ${encodeURIComponent(
                     activeMessage.subject
                   )}`}
-                  className="px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl font-semibold text-xs flex items-center gap-1.5"
+                  className="px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs flex items-center gap-2 shadow-xs cursor-pointer"
                 >
-                  <Reply className="w-3.5 h-3.5" /> Reply Email
+                  <Reply className="w-4 h-4" /> Reply Email
                 </a>
               </div>
             </div>
