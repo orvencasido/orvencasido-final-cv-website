@@ -1,3 +1,98 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Lora", "Outfit", Georgia, serif;
+}
+
+:root {
+  --bg-paper: #F4F1EA;
+  --bg-card: #FAF8F5;
+  --text-ink: #111F24;
+  --text-muted: #5C6A70;
+  --text-muted-subtle: #8A989E;
+  --border-line: #E2DDD5;
+  --border-line-strong: #C8C2B7;
+  --color-copper: #F0862E;
+  --color-amber-light: #F0A959;
+  --bg-navy: #0F1D24;
+  --text-paper: #FAF8F5;
+}
+
+.dark {
+  --bg-paper: #090F12;
+  --bg-card: #0F171C;
+  --text-ink: #F1F5F9;
+  --text-muted: #94A3B8;
+  --text-muted-subtle: #64748B;
+  --border-line: #1E293B;
+  --border-line-strong: #334155;
+  --color-copper: #F0862E;
+  --color-amber-light: #F0A959;
+  --bg-navy: #060B0E;
+  --text-paper: #F1F5F9;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-paper);
+  color: var(--text-ink);
+  transition: background-color 0.25s ease, color 0.25s ease;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--color-copper);
+}
+
+.bg-paper {
+  background-color: var(--bg-paper);
+}
+
+.bg-card {
+  background-color: var(--bg-card);
+}
+
+.text-ink {
+  color: var(--text-ink);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-muted-subtle {
+  color: var(--text-muted-subtle);
+}
+
+.border-line {
+  border-color: var(--border-line);
+}
+
+.border-line-strong {
+  border-color: var(--border-line-strong);
+}
+
+.bg-copper {
+  background-color: var(--color-copper);
+}
+
+.text-copper {
+  color: var(--color-copper);
+}
+
+/* Custom amber copper linear gradient */
+.bg-copper-gradient {
+  background: linear-gradient(135deg, var(--color-amber-light) 0%, var(--color-copper) 100%);
+}

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Github, ExternalLink, ArrowRight, Code } from 'lucide-react';
+import { Search, Github, ExternalLink, ArrowRight } from 'lucide-react';
 import { getProjects } from '../../lib/services';
 import { Project } from '../../types';
-import { SectionHeader, EmptyState, LoadingSkeleton, StatusBadge } from '../../components/ui/CommonUI';
+import { EmptyState, LoadingSkeleton, StatusBadge } from '../../components/ui/CommonUI';
 
 export const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -36,29 +36,35 @@ export const ProjectsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-16">
         <LoadingSkeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12 space-y-10">
-      <SectionHeader
-        title="Software & Cloud Projects"
-        description="A showcase of infrastructure automation tools, enterprise dashboards, and open-source applications."
-      />
+    <div className="mx-auto max-w-6xl px-6 py-12 space-y-12">
+      {/* Header */}
+      <div>
+        <p className="eyebrow mb-3">Portfolio</p>
+        <h1 className="font-display font-semibold text-3xl sm:text-4xl text-ink">
+          Featured Projects & Case Studies
+        </h1>
+        <p className="mt-4 text-base text-muted max-w-2xl leading-relaxed">
+          A showcase of full-stack web applications, cloud infrastructure pipelines, and interactive developer tools.
+        </p>
+      </div>
 
-      {/* Full Width Search Bar */}
-      <div className="py-2 border-y border-zinc-200/80 dark:border-zinc-800/80">
+      {/* Search Bar */}
+      <div className="pt-2">
         <div className="relative w-full">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400" />
+          <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-subtle" />
           <input
             type="text"
-            placeholder="Search projects by name, description, or stack..."
+            placeholder="Search projects by name, technology, or stack..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-400 dark:focus:ring-zinc-600 transition shadow-xs"
+            className="w-full pl-11 pr-4 py-3 text-sm bg-card border border-line rounded-full focus:outline-none focus:border-copper transition-colors text-ink placeholder:text-muted-subtle"
           />
         </div>
       </div>
@@ -70,10 +76,8 @@ export const ProjectsPage: React.FC = () => {
           description="Try adjusting your search query."
           action={
             <button
-              onClick={() => {
-                setSearchQuery('');
-              }}
-              className="px-4 py-2 text-xs font-semibold bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900 rounded-xl"
+              onClick={() => setSearchQuery('')}
+              className="px-5 py-2.5 text-xs font-semibold bg-[#111F24] dark:bg-[#FAF8F5] text-[#FAF8F5] dark:text-[#111F24] rounded-full hover:bg-copper transition-colors"
             >
               Clear Search
             </button>
@@ -84,56 +88,62 @@ export const ProjectsPage: React.FC = () => {
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="group flex flex-col rounded-2xl border border-zinc-200/80 dark:border-zinc-800/80 bg-white dark:bg-zinc-900/50 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition shadow-sm"
+              className="group flex flex-col rounded-3xl border border-line bg-card overflow-hidden hover:border-copper/40 transition-all shadow-xs"
             >
-              <div className="aspect-video w-full overflow-hidden bg-zinc-100 dark:bg-zinc-800 relative">
-                <img
-                  src={project.cover_image_url}
-                  alt={project.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 right-3">
+              <div className="aspect-video w-full overflow-hidden bg-paper relative border-b border-line">
+                {project.cover_image_url ? (
+                  <img
+                    src={project.cover_image_url}
+                    alt={project.title}
+                    className="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center font-display text-muted text-lg">
+                    {project.title}
+                  </div>
+                )}
+                <div className="absolute top-4 right-4">
                   <StatusBadge status={project.status} type="project" />
                 </div>
               </div>
 
-              <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                <div className="space-y-2">
-                  <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition">
+              <div className="p-7 flex-1 flex flex-col justify-between space-y-6">
+                <div className="space-y-3">
+                  <h2 className="font-display text-xl font-semibold text-ink group-hover:text-copper transition-colors">
                     <Link to={`/projects/${project.slug}`}>{project.title}</Link>
                   </h2>
-                  <p className="text-xs sm:text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+                  <p className="text-sm text-muted leading-relaxed line-clamp-3">
                     {project.short_description}
                   </p>
                 </div>
 
-                <div className="space-y-4 pt-2">
-                  <div className="flex flex-wrap gap-1.5">
+                <div className="space-y-5 pt-2">
+                  <div className="flex flex-wrap gap-2">
                     {project.technologies.map((tech) => (
                       <span
                         key={tech}
-                        className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+                        className="text-xs font-medium px-3 py-1 rounded-full bg-paper text-muted border border-line"
                       >
                         {tech}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-3 border-t border-zinc-100 dark:border-zinc-800/60">
+                  <div className="flex items-center justify-between text-xs pt-4 border-t border-line">
                     <Link
                       to={`/projects/${project.slug}`}
-                      className="font-semibold text-zinc-900 dark:text-zinc-100 hover:underline flex items-center gap-1"
+                      className="font-semibold text-copper hover:underline flex items-center gap-1"
                     >
-                      View Case Study <ArrowRight className="w-3.5 h-3.5" />
+                      Case Study <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       {project.github_url && (
                         <a
                           href={project.github_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200 flex items-center gap-1"
+                          className="text-muted hover:text-ink transition-colors flex items-center gap-1"
                           title="Source Code"
                         >
                           <Github className="w-4 h-4" />
@@ -144,9 +154,9 @@ export const ProjectsPage: React.FC = () => {
                           href={project.live_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-emerald-600 dark:text-emerald-400 hover:underline flex items-center gap-1 font-semibold"
+                          className="text-copper hover:underline flex items-center gap-1 font-semibold"
                         >
-                          Live <ExternalLink className="w-3.5 h-3.5" />
+                          Live App <ExternalLink className="w-3.5 h-3.5" />
                         </a>
                       )}
                     </div>

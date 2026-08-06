@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import {
   Code2,
   Sparkles,
+  ArrowRight,
   Terminal,
 } from 'lucide-react';
-import { getProfile, getProjects, getBlogs, getSkills, getSocialLinks } from '../../lib/services';
-import { Profile, Project, Blog, Skill, SocialLink } from '../../types';
+import { getProfile, getProjects, getBlogs, getSkills } from '../../lib/services';
+import { Profile, Project, Blog, Skill } from '../../types';
 import { StatusBadge, LoadingSkeleton } from '../../components/ui/CommonUI';
 import { getTechIconUrl } from '../../lib/techIcons';
 
@@ -15,25 +16,22 @@ export const HomePage: React.FC = () => {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [featuredBlogs, setFeaturedBlogs] = useState<Blog[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
-  const [socials, setSocials] = useState<SocialLink[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
-        const [profData, projData, blogData, skillData, socialData] = await Promise.all([
+        const [profData, projData, blogData, skillData] = await Promise.all([
           getProfile(),
           getProjects(),
           getBlogs(),
           getSkills(),
-          getSocialLinks(),
         ]);
 
         setProfile(profData);
         setFeaturedProjects(projData.filter((p) => p.is_featured).slice(0, 2));
         setFeaturedBlogs(blogData.filter((b) => b.is_featured && b.status === 'published').slice(0, 2));
         setSkills(skillData.filter((s) => s.is_visible));
-        setSocials(socialData.filter((s) => s.is_visible));
       } catch (err) {
         console.error('Failed to load home data:', err);
       } finally {
@@ -45,7 +43,7 @@ export const HomePage: React.FC = () => {
 
   if (loading || !profile) {
     return (
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-12">
+      <div className="max-w-6xl mx-auto px-6 py-16">
         <LoadingSkeleton count={4} />
       </div>
     );
@@ -58,75 +56,77 @@ export const HomePage: React.FC = () => {
     .map((part) => part[0]?.toUpperCase())
     .join('') || 'OC';
 
+  const focusAreas = [
+    {
+      title: 'Full-Stack Web Engineering',
+      description: 'Building modern, high-performance web platforms with React, TypeScript, and Node.js.',
+    },
+    {
+      title: 'Cloud & Database Architecture',
+      description: 'Designing scalable PostgreSQL schemas, serverless infrastructure, and cloud APIs.',
+    },
+    {
+      title: 'UI/UX & Modern Design Systems',
+      description: 'Crafting pixel-perfect, accessible interfaces with rich micro-animations and clean layouts.',
+    },
+    {
+      title: 'API Engineering & Integrations',
+      description: 'Developing secure REST and GraphQL endpoints backed by robust authentication & type safety.',
+    },
+    {
+      title: 'Performance & Optimization',
+      description: 'Auditing and optimizing load speeds, asset delivery, and bundle sizes for maximum throughput.',
+    },
+    {
+      title: 'DevSecOps & CI/CD Pipelines',
+      description: 'Automating testing, linting, and continuous deployments with GitHub Actions and Vercel.',
+    },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-8 py-8 sm:py-12 space-y-16 bg-slate-50 dark:bg-slate-950 min-h-[calc(100vh-8rem)]">
-      {/* Top Hero Landing Section */}
-      <section className="flex flex-col-reverse lg:flex-row items-center justify-between gap-10 lg:gap-12 pt-4 pb-12 border-b border-slate-200/80 dark:border-slate-800/80">
-        {/* Left Column: Identity, Intro & Tech Stack */}
-        <div className="flex-1 space-y-6 lg:space-y-8 w-full">
-          <div className="space-y-1">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-normal tracking-tight text-slate-900 dark:text-slate-100">
-              {profile.full_name}
-            </h1>
-            <p className="text-2xl sm:text-3xl text-slate-500 dark:text-slate-400 font-normal">
-              {profile.professional_title}
-            </p>
-            <div className="pt-3">
+    <div className="space-y-24">
+      {/* 1. Hero Landing Section */}
+      <section className="mx-auto max-w-6xl px-6 pt-12 pb-16 md:pt-20 md:pb-24">
+        <div className="grid md:grid-cols-[1fr_auto] gap-12 items-center">
+          {/* Left Hero Content */}
+          <div className="order-2 md:order-1">
+            <div className="flex items-center gap-3 mb-5">
+              <p className="eyebrow">Full-Stack · Cloud · Web Architect</p>
               <StatusBadge status={profile.availability_status} type="availability" />
             </div>
-          </div>
 
-          <p className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-            {profile.introduction}
-          </p>
+            <h1 className="font-display font-semibold text-4xl sm:text-5xl md:text-6xl tracking-tight leading-[1.08] text-ink">
+              Building resilient web systems, and the experiences behind them.
+            </h1>
 
-          <div className="pt-2 space-y-3">
-            <h3 className="text-xs sm:text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-              These are my Tech Stack
-            </h3>
-            <div className="flex flex-wrap gap-3 sm:gap-4 items-center">
-              {skills
-                .filter((s) => s && s.name && s.name.trim().length > 0 && s.name !== ',')
-                .map((skill) => {
-                  const iconUrl = getTechIconUrl(skill);
-                  return (
-                    <div
-                      key={skill.id}
-                      className="relative group/tech flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 shrink-0 cursor-pointer"
-                    >
-                      <img
-                        src={iconUrl}
-                        alt={skill.name}
-                        className="w-7 h-7 sm:w-8 sm:h-8 object-contain select-none opacity-30 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLElement).style.display = 'none';
-                          const parent = (e.currentTarget as HTMLElement).parentElement;
-                          if (parent && !parent.querySelector('.fallback-text')) {
-                            const span = document.createElement('span');
-                            span.className =
-                              'fallback-text text-[11px] font-bold font-mono text-slate-600 dark:text-slate-400 opacity-30 group-hover/tech:opacity-100 transition-all duration-200';
-                            span.innerText = skill.name;
-                            parent.appendChild(span);
-                          }
-                        }}
-                      />
-                      {/* Tooltip */}
-                      <div className="absolute bottom-full mb-2 hidden group-hover/tech:flex flex-col items-center pointer-events-none z-30">
-                        <span className="px-2.5 py-1 bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 text-[11px] font-bold rounded shadow-lg whitespace-nowrap">
-                          {skill.name}
-                        </span>
-                        <span className="w-2 h-2 bg-slate-900 dark:bg-slate-100 rotate-45 -mt-1"></span>
-                      </div>
-                    </div>
-                  );
-                })}
+            <p className="mt-7 text-lg text-muted max-w-2xl leading-relaxed">
+              I'm {profile.full_name}, a {profile.professional_title}. {profile.introduction}
+            </p>
+
+            <div className="mt-9 flex flex-wrap items-center gap-4">
+              <Link
+                to="/projects"
+                className="px-6 py-3.5 rounded-full bg-[#111F24] dark:bg-[#FAF8F5] text-[#FAF8F5] dark:text-[#111F24] text-sm font-semibold hover:bg-copper dark:hover:bg-copper dark:hover:text-white transition-colors"
+              >
+                View Featured Work
+              </Link>
+              <Link
+                to="/contact"
+                className="px-6 py-3.5 rounded-full border border-line-strong text-ink text-sm font-semibold hover:border-copper hover:text-copper transition-colors"
+              >
+                Get in touch
+              </Link>
+              <Link
+                to="/blogs"
+                className="px-6 py-3.5 rounded-full border border-line-strong text-ink text-sm font-semibold hover:border-copper hover:text-copper transition-colors"
+              >
+                Read the blog
+              </Link>
             </div>
           </div>
-        </div>
 
-        {/* Right Column: Circular Avatar with Red Backdrop */}
-        <div className="shrink-0 flex items-center justify-center">
-          <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[360px] lg:h-[360px] rounded-full bg-[#c81127] dark:bg-[#a30b1e] overflow-hidden flex items-center justify-center shadow-xl transition-transform hover:scale-102">
+          {/* Right Hero Image Card */}
+          <div className="order-1 md:order-2 relative w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 shrink-0 mx-auto md:mx-0 rounded-3xl overflow-hidden border border-line shadow-sm bg-card flex items-center justify-center">
             {profile.profile_image_url ? (
               <img
                 src={profile.profile_image_url}
@@ -134,7 +134,7 @@ export const HomePage: React.FC = () => {
                 className="w-full h-full object-cover object-top"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-white font-bold text-6xl">
+              <div className="w-full h-full bg-[#0F1D24] text-[#FAF8F5] flex items-center justify-center font-display font-bold text-6xl border border-copper/30">
                 {initials}
               </div>
             )}
@@ -142,133 +142,236 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Work Section */}
-      <section className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            Featured Work
+      {/* 2. Core Focus Areas ("What I Focus On") */}
+      <section className="bg-card border-y border-line">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <p className="eyebrow mb-3">What I focus on</p>
+          <h2 className="font-display font-semibold text-2xl md:text-3xl text-ink mb-12 max-w-2xl">
+            Core expertise across full-stack engineering, cloud, and database design
           </h2>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {focusAreas.map((area, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-2xl border border-line bg-paper/60 hover:border-copper/40 transition-colors"
+              >
+                <div className="w-2.5 h-2.5 rounded-full bg-copper-gradient mb-4"></div>
+                <h3 className="font-semibold text-ink mb-2 text-base">{area.title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{area.description}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Tech Stack Icons Bar */}
+          {skills.length > 0 && (
+            <div className="mt-14 pt-10 border-t border-line">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted mb-6">
+                Technologies & Tools I Work With
+              </p>
+              <div className="flex flex-wrap gap-4 items-center">
+                {skills
+                  .filter((s) => s && s.name && s.name.trim().length > 0)
+                  .map((skill) => {
+                    const iconUrl = getTechIconUrl(skill);
+                    return (
+                      <div
+                        key={skill.id}
+                        className="relative group/tech px-4 py-2.5 rounded-full border border-line bg-paper/80 hover:border-copper/60 transition-all flex items-center gap-2"
+                      >
+                        <img
+                          src={iconUrl}
+                          alt={skill.name}
+                          className="w-5 h-5 object-contain select-none opacity-70 group-hover/tech:opacity-100 transition-opacity"
+                          onError={(e) => {
+                            (e.currentTarget as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                        <span className="text-xs font-medium text-ink">
+                          {skill.name}
+                        </span>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 3. Dual Persona Callouts ("Who I Work With") */}
+      <section className="mx-auto max-w-6xl px-6">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="p-8 rounded-2xl bg-[#0F1D24] text-[#FAF8F5] border border-line">
+            <h3 className="font-display font-semibold text-xl mb-3 text-white">
+              For teams & engineering leads
+            </h3>
+            <p className="text-sm text-[#FAF8F5]/70 leading-relaxed">
+              Delivering modular full-stack web solutions, clean REST/GraphQL microservices, and reliable database architectures with high test coverage and strict TypeScript safety.
+            </p>
+          </div>
+          <div className="p-8 rounded-2xl border border-line bg-card">
+            <h3 className="font-display font-semibold text-xl mb-3 text-ink">
+              For founders & collaborators
+            </h3>
+            <p className="text-sm text-muted leading-relaxed">
+              Transforming ambitious product ideas into production-ready web platforms, crafted with modern UX aesthetics, responsive layouts, and lightning-fast page speeds.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Featured Work Section */}
+      <section className="mx-auto max-w-6xl px-6">
+        <div className="flex items-end justify-between mb-12">
+          <div>
+            <p className="eyebrow mb-3">Portfolio</p>
+            <h2 className="font-display font-semibold text-2xl md:text-3xl text-ink">
+              Featured Work & Projects
+            </h2>
+          </div>
           <Link
             to="/projects"
-            className="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1"
+            className="text-sm font-semibold text-copper hover:underline flex items-center gap-1"
           >
-            View all projects &rarr;
+            View all projects <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid sm:grid-cols-2 gap-8">
           {featuredProjects.map((proj) => (
             <div
               key={proj.id}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs hover:border-blue-400 dark:hover:border-blue-600 group flex flex-col transition-all"
+              className="group block bg-card border border-line rounded-2xl p-7 hover:border-copper/50 hover:shadow-sm transition-all flex flex-col justify-between"
             >
-              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <Code2 className="w-5 h-5" />
+              <div>
+                <div className="w-10 h-10 rounded-xl bg-paper border border-line text-copper flex items-center justify-center mb-5 group-hover:bg-copper group-hover:text-white transition-colors">
+                  <Code2 className="w-5 h-5" />
+                </div>
+                <h3 className="font-display text-xl font-semibold text-ink group-hover:text-copper transition-colors">
+                  <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
+                </h3>
+                <p className="mt-3 text-sm text-muted leading-relaxed line-clamp-3">
+                  {proj.short_description}
+                </p>
               </div>
-              <h4 className="font-bold text-lg text-slate-900 dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
-              </h4>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">
-                {proj.short_description}
-              </p>
-              <div className="mt-auto pt-4 flex items-center gap-2 flex-wrap">
-                {proj.technologies.slice(0, 4).map((tech) => (
-                  <span
-                    key={tech}
-                    className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase font-mono"
-                  >
-                    {tech}
-                  </span>
-                ))}
+
+              <div className="mt-6 pt-5 border-t border-line flex items-center justify-between">
+                <div className="flex flex-wrap gap-2">
+                  {proj.technologies.slice(0, 3).map((tech) => (
+                    <span
+                      key={tech}
+                      className="text-xs font-medium px-2.5 py-1 rounded-full bg-paper text-muted border border-line"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+                <Link
+                  to={`/projects/${proj.slug}`}
+                  className="text-xs font-semibold text-copper hover:underline"
+                >
+                  Details &rarr;
+                </Link>
               </div>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* CTA Banner Section */}
-        <div className="bg-slate-900 dark:bg-slate-900 border border-slate-800 rounded-2xl p-8 sm:p-10 flex flex-col justify-center text-white relative overflow-hidden shadow-md mt-6">
+      {/* 5. Featured Writing Section */}
+      <section className="bg-card border-y border-line">
+        <div className="mx-auto max-w-6xl px-6 py-20">
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="eyebrow mb-3">Writing</p>
+              <h2 className="font-display font-semibold text-2xl md:text-3xl text-ink">
+                Latest from the blog
+              </h2>
+            </div>
+            <Link
+              to="/blogs"
+              className="text-sm font-semibold text-copper hover:underline flex items-center gap-1"
+            >
+              View all posts <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-8">
+            {featuredBlogs.map((blog) => (
+              <div
+                key={blog.id}
+                className="group block bg-paper border border-line rounded-2xl p-7 hover:border-copper/50 hover:shadow-sm transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center gap-3 text-xs text-muted-subtle mb-3 font-medium">
+                    <time>{blog.published_at}</time>
+                    <span>·</span>
+                    <span>{blog.reading_time}</span>
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-ink group-hover:text-copper transition-colors">
+                    <Link to={`/blogs/${blog.slug}`}>{blog.title}</Link>
+                  </h3>
+                  <p className="mt-3 text-sm text-muted leading-relaxed line-clamp-3">
+                    {blog.summary}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-5 border-t border-line flex items-center justify-between">
+                  <div className="flex flex-wrap gap-2">
+                    {blog.tags.slice(0, 3).map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-xs font-medium px-2.5 py-1 rounded-full bg-card text-muted border border-line"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                  <Link
+                    to={`/blogs/${blog.slug}`}
+                    className="text-xs font-semibold text-copper hover:underline"
+                  >
+                    Read article &rarr;
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. CTA Banner Section */}
+      <section className="mx-auto max-w-6xl px-6 pb-12">
+        <div className="bg-[#0F1D24] text-[#FAF8F5] rounded-3xl p-10 md:p-14 relative overflow-hidden border border-line shadow-md">
           <div className="relative z-10 max-w-xl">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3 text-white">
-              Let's build something scalable.
-            </h2>
-            <p className="text-slate-400 text-sm sm:text-base mb-6 leading-relaxed">
-              I'm currently seeking high-impact roles or specialized engineering opportunities in cloud architectures and modern full-stack web platforms.
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-copper mb-3">
+              Ready to collaborate?
             </p>
-            <div className="flex flex-wrap gap-3">
+            <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4 text-white">
+              Let's build something scalable & reliable.
+            </h2>
+            <p className="text-[#FAF8F5]/70 text-base mb-8 leading-relaxed">
+              Whether you need a full-stack engineer for a production application, cloud modernization, or technical consultation, feel free to reach out.
+            </p>
+            <div className="flex flex-wrap gap-4">
               <Link
                 to="/contact"
-                className="px-6 py-3 bg-white text-slate-900 font-bold text-xs rounded-xl hover:bg-slate-100 transition shadow-xs"
+                className="px-6 py-3.5 rounded-full bg-copper text-white text-sm font-semibold hover:bg-opacity-90 transition-colors"
               >
-                Start a Project
+                Get in touch
               </Link>
               <a
                 href={`mailto:${profile.email}`}
-                className="px-6 py-3 border border-slate-700 text-slate-300 font-bold text-xs rounded-xl hover:bg-slate-800 transition"
+                className="px-6 py-3.5 rounded-full border border-white/20 text-white text-sm font-semibold hover:border-white transition-colors"
               >
                 Send Email
               </a>
             </div>
           </div>
-          {/* Background Pattern */}
-          <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none hidden sm:block">
-            <Terminal className="w-56 h-56 text-white" />
+          <div className="absolute top-0 right-0 p-12 opacity-10 pointer-events-none hidden md:block">
+            <Terminal className="w-64 h-64 text-white" />
           </div>
-        </div>
-      </section>
-
-      {/* Featured Writing Section */}
-      <section className="space-y-6 pt-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-slate-100 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" /> Latest Writing & Insights
-          </h2>
-          <Link
-            to="/blogs"
-            className="text-sm text-blue-600 dark:text-blue-400 font-semibold hover:underline flex items-center gap-1"
-          >
-            Read all articles &rarr;
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {featuredBlogs.map((blog) => (
-            <article
-              key={blog.id}
-              className="p-6 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xs hover:border-blue-300 dark:hover:border-blue-700 transition flex flex-col justify-between"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
-                  <span>{blog.published_at}</span>
-                  <span>{blog.reading_time}</span>
-                </div>
-                <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  <Link to={`/blogs/${blog.slug}`}>{blog.title}</Link>
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                  {blog.summary}
-                </p>
-              </div>
-
-              <div className="flex items-center justify-between pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex flex-wrap gap-1.5">
-                  {blog.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-                <Link
-                  to={`/blogs/${blog.slug}`}
-                  className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                >
-                  Read &rarr;
-                </Link>
-              </div>
-            </article>
-          ))}
         </div>
       </section>
     </div>
