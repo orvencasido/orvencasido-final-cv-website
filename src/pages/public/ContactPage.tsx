@@ -68,7 +68,7 @@ export const ContactPage: React.FC = () => {
         <div className="space-y-6 md:col-span-1">
           <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
             <h2 className="text-xl font-extrabold text-matcha-950 border-b border-beige-200 pb-4">
-              Direct Contact
+              Contact
             </h2>
 
             <div className="space-y-5 text-sm">
@@ -114,16 +114,16 @@ export const ContactPage: React.FC = () => {
               )}
             </div>
 
-            <div className="pt-6 border-t border-beige-200 space-y-3">
+            {/* <div className="pt-6 border-t border-beige-200 space-y-3">
               <p className="text-xs font-extrabold text-matcha-700 uppercase tracking-widest">Availability</p>
               <StatusBadge status={profile?.availability_status || 'available'} type="availability" />
-            </div>
+            </div> */}
           </div>
 
-          <div className="p-6 rounded-2xl border border-beige-300 bg-beige-50 text-xs font-semibold text-matcha-700 flex items-center gap-3">
+          {/* <div className="p-6 rounded-2xl border border-beige-300 bg-beige-50 text-xs font-semibold text-matcha-700 flex items-center gap-3">
             <Clock className="w-5 h-5 text-matcha-600 shrink-0" />
             <span>Average response time: &lt; 24 hours</span>
-          </div>
+          </div> */}
         </div>
 
         {/* Form area */}
@@ -150,7 +150,6 @@ export const ContactPage: React.FC = () => {
                   </label>
                   <input
                     type="text"
-                    placeholder="e.g. Orven Casido"
                     {...register('name')}
                     className="w-full px-4 py-3.5 text-sm bg-beige-100 border border-beige-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-matcha-500 transition shadow-2xs font-medium text-matcha-950 placeholder:text-matcha-700/60"
                   />
@@ -166,7 +165,6 @@ export const ContactPage: React.FC = () => {
                   </label>
                   <input
                     type="email"
-                    placeholder="e.g. orvencasidop@gmail.com"
                     {...register('email')}
                     className="w-full px-4 py-3.5 text-sm bg-beige-100 border border-beige-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-matcha-500 transition shadow-2xs font-medium text-matcha-950 placeholder:text-matcha-700/60"
                   />
@@ -183,7 +181,7 @@ export const ContactPage: React.FC = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Project Discussion"
+                  // placeholder="Project Discussion"
                   {...register('subject')}
                   className="w-full px-4 py-3.5 text-sm bg-beige-100 border border-beige-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-matcha-500 transition shadow-2xs font-medium text-matcha-950 placeholder:text-matcha-700/60"
                 />
