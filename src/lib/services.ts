@@ -10,6 +10,7 @@ import {
   Education,
   ContactMessage,
   SiteSettings,
+  PublicNavItem,
 } from '../types';
 import {
   initialProfile,
@@ -42,6 +43,26 @@ function setStorageItem<T>(key: string, value: T): void {
   } catch (err) {
     console.error(`Error saving ${key} to localStorage:`, err);
   }
+}
+
+export const defaultPublicNavItems: PublicNavItem[] = [
+  'home',
+  'blogs',
+  'projects',
+  'experience',
+  'certifications',
+  'education',
+  'contact',
+];
+
+function normalizeSiteSettings(settings: SiteSettings): SiteSettings {
+  return {
+    ...settings,
+    visible_nav_items:
+      Array.isArray(settings.visible_nav_items) && settings.visible_nav_items.length > 0
+        ? settings.visible_nav_items
+        : defaultPublicNavItems,
+  };
 }
 
 /* ==========================================================================
@@ -532,9 +553,9 @@ export async function deleteContactMessage(id: string): Promise<boolean> {
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (isSupabaseConfigured && supabase) {
     const { data, error } = await supabase.from('site_settings').select('*').single();
-    if (!error && data) return data as SiteSettings;
+    if (!error && data) return normalizeSiteSettings(data as SiteSettings);
   }
-  return getStorageItem<SiteSettings>('site_settings', initialSiteSettings);
+  return normalizeSiteSettings(getStorageItem<SiteSettings>('site_settings', initialSiteSettings));
 }
 
 export async function updateSiteSettings(settingsData: Partial<SiteSettings>): Promise<SiteSettings> {
@@ -552,6 +573,7 @@ export async function updateSiteSettings(settingsData: Partial<SiteSettings>): P
   const updated: SiteSettings = {
     ...current,
     ...settingsData,
+    visible_nav_items: settingsData.visible_nav_items || current.visible_nav_items || defaultPublicNavItems,
     updated_at: new Date().toISOString(),
   };
   setStorageItem('site_settings', updated);

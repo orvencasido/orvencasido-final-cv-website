@@ -1,25 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Download, Menu, X } from 'lucide-react';
-import { getProfile } from '../../lib/services';
+import { defaultPublicNavItems, getProfile, getSiteSettings } from '../../lib/services';
 import { getRateLimitedResumeDownloadUrl } from '../../lib/storage';
+import { PublicNavItem } from '../../types';
 
 export const PublicNavbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [resumeUrl, setResumeUrl] = useState('');
+  const [visibleNavItems, setVisibleNavItems] = useState<PublicNavItem[]>(defaultPublicNavItems);
   const location = useLocation();
 
   useEffect(() => {
-    async function loadResumeUrl() {
+    async function loadNavbarData() {
       try {
-        const profile = await getProfile();
+        const [profile, settings] = await Promise.all([getProfile(), getSiteSettings()]);
         setResumeUrl(profile.resume_url || '');
+        setVisibleNavItems(settings.visible_nav_items || defaultPublicNavItems);
       } catch (err) {
-        console.error('Failed to load resume URL:', err);
+        console.error('Failed to load navbar data:', err);
       }
     }
 
-    loadResumeUrl();
+    loadNavbarData();
   }, []);
 
   const handleResumeDownload = async () => {
@@ -33,14 +36,14 @@ export const PublicNavbar: React.FC = () => {
   };
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Blogs', path: '/blogs' },
-    { label: 'Projects', path: '/projects' },
-    { label: 'Experience', path: '/experience' },
-    { label: 'Certifications', path: '/certifications' },
-    { label: 'Education', path: '/education' },
-    { label: 'Contact', path: '/contact' },
-  ];
+    { id: 'home' as const, label: 'Home', path: '/' },
+    { id: 'blogs' as const, label: 'Blogs', path: '/blogs' },
+    { id: 'projects' as const, label: 'Projects', path: '/projects' },
+    { id: 'experience' as const, label: 'Experience', path: '/experience' },
+    { id: 'certifications' as const, label: 'Certifications', path: '/certifications' },
+    { id: 'education' as const, label: 'Education', path: '/education' },
+    { id: 'contact' as const, label: 'Contact', path: '/contact' },
+  ].filter((item) => item.id === 'home' || visibleNavItems.includes(item.id));
 
   return (
     <header className="sticky top-0 z-40 bg-beige-100/90 backdrop-blur-md border-b border-beige-200 transition-colors">
