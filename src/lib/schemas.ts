@@ -123,6 +123,9 @@ export const siteSettingsSchema = z.object({
   contact_email: z.string().email(),
   resume_download_url: z.string(),
   theme_preference: z.enum(['light', 'dark', 'system']),
+  visible_nav_items: z.array(
+    z.enum(['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'])
+  ),
 });
 
 export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;

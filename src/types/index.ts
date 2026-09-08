@@ -140,6 +140,7 @@ export interface Education {
 }
 
 export type MessageStatus = 'unread' | 'read' | 'resolved';
+export type PublicNavItem = 'home' | 'blogs' | 'projects' | 'experience' | 'certifications' | 'education' | 'contact';
 
 export interface ContactMessage {
   id: string;
@@ -164,6 +165,7 @@ export interface SiteSettings {
   contact_email: string;
   resume_download_url: string;
   theme_preference: 'light' | 'dark' | 'system';
+  visible_nav_items: PublicNavItem[];
   created_at: string;
   updated_at: string;
 }

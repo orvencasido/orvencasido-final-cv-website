@@ -111,6 +111,7 @@ export const initialSiteSettings: SiteSettings = {
   contact_email: 'orvencasidop@gmail.com',
   resume_download_url: '',
   theme_preference: 'system',
+  visible_nav_items: ['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'],
   created_at: now,
   updated_at: now,
 };

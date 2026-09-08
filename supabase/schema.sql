@@ -30,6 +30,12 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+alter table public.profiles
+add column if not exists biography text not null default '';
+
+alter table public.profiles
+alter column biography set default '';
+
 create table if not exists public.social_links (
   id text primary key,
   platform text not null,
@@ -176,9 +182,14 @@ create table if not exists public.site_settings (
   contact_email text not null,
   resume_download_url text default '',
   theme_preference text not null default 'system' check (theme_preference in ('light', 'dark', 'system')),
+  visible_nav_items text[] not null default array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'],
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.site_settings
+add column if not exists visible_nav_items text[] not null
+default array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'];
 
 create table if not exists public.resume_download_limits (
   identifier text primary key,
@@ -434,6 +445,7 @@ insert into public.profiles (
   full_name,
   professional_title,
   introduction,
+  biography,
   profile_image_url,
   resume_url,
   email,
@@ -445,6 +457,7 @@ insert into public.profiles (
   'Orven Casido',
   'DevOps Engineer',
   'Welcome to my tech journey.',
+  '',
   '',
   '',
   'orvencasidop@gmail.com',
@@ -463,7 +476,8 @@ insert into public.site_settings (
   footer_text,
   contact_email,
   resume_download_url,
-  theme_preference
+  theme_preference,
+  visible_nav_items
 ) values (
   'settings_1',
   'Orven Casido | Portfolio',
@@ -474,7 +488,8 @@ insert into public.site_settings (
   '(c) 2026 Orven Casido. Built with React, Tailwind CSS, and Supabase.',
   'orvencasidop@gmail.com',
   '',
-  'system'
+  'system',
+  array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact']
 ) on conflict (id) do nothing;
 
 notify pgrst, 'reload schema';
