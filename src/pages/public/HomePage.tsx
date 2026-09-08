@@ -156,7 +156,6 @@ export const HomePage: React.FC = () => {
               className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
             >
               <span>View all projects</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
@@ -241,7 +240,6 @@ export const HomePage: React.FC = () => {
               className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
             >
               <span>Read all articles</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
 
