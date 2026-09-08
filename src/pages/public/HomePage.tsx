@@ -122,7 +122,7 @@ export const HomePage: React.FC = () => {
 
           {/* Right Column: Avatar */}
           <div className="shrink-0 flex items-center justify-center">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[360px] lg:h-[360px] rounded-full overflow-hidden flex items-center justify-center shadow-xl transition-transform hover:scale-[1.02]">
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[360px] lg:h-[360px] rounded-full overflow-hidden flex items-center justify-center shadow-xl">
               {profile.profile_image_url ? (
                 <img
                   src={profile.profile_image_url}

@@ -11,10 +11,12 @@ import {
   ArrowDown,
   Edit2,
   X,
+  ImagePlus,
 } from 'lucide-react';
 import { getSkills, updateSkills } from '../../../lib/services';
 import { Skill } from '../../../types';
 import { getTechIconUrl } from '../../../lib/techIcons';
+import { uploadPortfolioImage } from '../../../lib/storage';
 import { SectionHeader, LoadingSkeleton } from '../../../components/ui/CommonUI';
 import { useToast } from '../../../components/ui/Toast';
 
@@ -23,6 +25,7 @@ export const TechStackManager: React.FC = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingIcon, setUploadingIcon] = useState(false);
 
   // Form State for Adding / Editing
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -157,6 +160,25 @@ export const TechStackManager: React.FC = () => {
     await updateSkills(reordered);
   };
 
+  const handleIconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setUploadingIcon(true);
+    try {
+      const uploadedUrl = await uploadPortfolioImage(file, 'misc');
+      setIcon(uploadedUrl);
+      showToast('Custom tech icon uploaded.', 'success');
+    } catch (err) {
+      console.error('Failed to upload tech icon:', err);
+      const message = err instanceof Error ? err.message : 'Icon upload failed.';
+      showToast(message, 'error');
+    } finally {
+      setUploadingIcon(false);
+    }
+  };
+
   if (loading) return <LoadingSkeleton count={3} />;
 
   return (
@@ -205,15 +227,32 @@ export const TechStackManager: React.FC = () => {
               <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
                 Icon Slug or URL
               </label>
-              <input
-                type="text"
-                placeholder="e.g. docker OR https://..."
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. docker OR https://..."
+                  value={icon}
+                  onChange={(e) => setIcon(e.target.value)}
+                  className="min-w-0 flex-1 px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                />
+                <label className="shrink-0 inline-flex items-center justify-center gap-2 px-4 py-3 text-xs font-extrabold text-beige-50 bg-matcha-900 rounded-2xl hover:bg-matcha-800 transition cursor-pointer disabled:opacity-50">
+                  {uploadingIcon ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <ImagePlus className="w-4 h-4" />
+                  )}
+                  <span className="hidden sm:inline">{uploadingIcon ? 'Uploading' : 'Upload'}</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleIconUpload}
+                    disabled={uploadingIcon}
+                    className="sr-only"
+                  />
+                </label>
+              </div>
               <p className="text-[11px] text-matcha-700 font-medium">
-                Leave empty for auto-matching, or type a SimpleIcons slug (e.g. kubernetes, python).
+                Leave empty for auto-matching, type a SimpleIcons slug, paste an image URL, or upload a custom icon.
               </p>
             </div>
 
@@ -243,14 +282,16 @@ export const TechStackManager: React.FC = () => {
               <div className="flex items-center gap-3 p-3 bg-beige-100 rounded-2xl border border-beige-300">
                 {name ? (
                   <div className="flex items-center gap-3">
-                    <img
-                      src={getTechIconUrl({ name, icon })}
-                      alt={name}
-                      className="w-8 h-8 object-contain"
-                      onError={(e) => {
-                        (e.currentTarget as HTMLElement).style.display = 'none';
-                      }}
-                    />
+                    <div className="w-8 h-8 flex items-center justify-center shrink-0">
+                      <img
+                        src={getTechIconUrl({ name, icon })}
+                        alt={name}
+                        className="max-w-8 max-h-8 w-full h-full object-contain"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
                     <span className="text-xs font-extrabold font-mono text-matcha-950">
                       {name}
                     </span>
@@ -343,7 +384,7 @@ export const TechStackManager: React.FC = () => {
                   <img
                     src={iconUrl}
                     alt={skill.name}
-                    className="w-8 h-8 object-contain opacity-40 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
+                    className="max-w-8 max-h-8 w-8 h-8 object-contain opacity-40 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
                     onError={(e) => {
                       (e.currentTarget as HTMLElement).style.display = 'none';
                     }}

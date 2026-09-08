@@ -60,11 +60,8 @@ export const AdminLoginPage: React.FC = () => {
         <div className="text-center space-y-3">
 
           <h1 className="text-2xl font-extrabold tracking-tight text-matcha-950">
-            Admin CMS Authentication
+            CMS Orven Casido Login
           </h1>
-          <p className="text-xs font-semibold text-matcha-700">
-            Sign in to manage portfolio content
-          </p>
         </div>
 
         {/* Login Form Box */}
@@ -79,12 +76,12 @@ export const AdminLoginPage: React.FC = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Email Field */}
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Administrator Email</label>
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Email</label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
                 <input
                   type="email"
-                  placeholder="Enter administrator email"
+                  placeholder="Enter Email"
                   {...register('email')}
                   className="w-full pl-11 pr-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 placeholder:text-matcha-700/60 focus:outline-none focus:ring-2 focus:ring-matcha-500 transition font-medium"
                 />
@@ -94,12 +91,12 @@ export const AdminLoginPage: React.FC = () => {
 
             {/* Password Field */}
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Master Password</label>
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Password</label>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••••••"
+                  placeholder="Enter Password"
                   {...register('password')}
                   className="w-full pl-11 pr-11 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 placeholder:text-matcha-700/60 focus:outline-none focus:ring-2 focus:ring-matcha-500 transition font-medium"
                 />
@@ -124,7 +121,7 @@ export const AdminLoginPage: React.FC = () => {
                 <span>Verifying credentials...</span>
               ) : (
                 <>
-                  Authenticate <ArrowRight className="w-4 h-4" />
+                  Login
                 </>
               )}
             </button>
@@ -137,7 +134,7 @@ export const AdminLoginPage: React.FC = () => {
             href="/"
             className="text-xs font-bold text-matcha-700 hover:text-matcha-950 transition inline-flex items-center gap-1.5"
           >
-            ← Return to Public Portfolio
+            Return to Public Portfolio
           </a>
         </div>
       </div>
