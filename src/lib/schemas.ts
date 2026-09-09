@@ -126,6 +126,9 @@ export const siteSettingsSchema = z.object({
   visible_nav_items: z.array(
     z.enum(['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'])
   ),
+  show_featured_projects: z.boolean().optional(),
+  show_featured_blogs: z.boolean().optional(),
+  show_contact_cta: z.boolean().optional(),
 });
 
 export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;

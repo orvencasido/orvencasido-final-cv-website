@@ -183,6 +183,9 @@ create table if not exists public.site_settings (
   resume_download_url text default '',
   theme_preference text not null default 'system' check (theme_preference in ('light', 'dark', 'system')),
   visible_nav_items text[] not null default array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'],
+  show_featured_projects boolean not null default true,
+  show_featured_blogs boolean not null default true,
+  show_contact_cta boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -190,6 +193,15 @@ create table if not exists public.site_settings (
 alter table public.site_settings
 add column if not exists visible_nav_items text[] not null
 default array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'];
+
+alter table public.site_settings
+add column if not exists show_featured_projects boolean not null default true;
+
+alter table public.site_settings
+add column if not exists show_featured_blogs boolean not null default true;
+
+alter table public.site_settings
+add column if not exists show_contact_cta boolean not null default true;
 
 create table if not exists public.resume_download_limits (
   identifier text primary key,
@@ -477,7 +489,10 @@ insert into public.site_settings (
   contact_email,
   resume_download_url,
   theme_preference,
-  visible_nav_items
+  visible_nav_items,
+  show_featured_projects,
+  show_featured_blogs,
+  show_contact_cta
 ) values (
   'settings_1',
   'Orven Casido | Portfolio',
@@ -489,7 +504,75 @@ insert into public.site_settings (
   'orvencasidop@gmail.com',
   '',
   'system',
-  array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact']
-) on conflict (id) do nothing;
+  array['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'],
+  true,
+  true,
+  true
+) on conflict (id) do update set
+  show_featured_projects = excluded.show_featured_projects,
+  show_featured_blogs = excluded.show_featured_blogs,
+  show_contact_cta = excluded.show_contact_cta;
+
+insert into public.social_links (
+  id,
+  platform,
+  label,
+  url,
+  icon,
+  sort_order,
+  is_visible
+) values
+  (
+    'soc_1',
+    'LinkedIn',
+    'LinkedIn',
+    'https://linkedin.com/in/orvencasido',
+    'linkedin',
+    1,
+    true
+  ),
+  (
+    'soc_2',
+    'GitHub',
+    'GitHub',
+    'https://github.com/orvencasido',
+    'github',
+    2,
+    true
+  ),
+  (
+    'soc_3',
+    'Gmail',
+    'Gmail',
+    'mailto:orvencasidop@gmail.com',
+    'mail',
+    3,
+    true
+  ),
+  (
+    'soc_4',
+    'Facebook',
+    'Facebook',
+    'https://facebook.com/orvencasido',
+    'facebook',
+    4,
+    true
+  ),
+  (
+    'soc_5',
+    'Instagram',
+    'Instagram',
+    'https://instagram.com/orvencasido',
+    'instagram',
+    5,
+    true
+  )
+on conflict (id) do update set
+  platform = excluded.platform,
+  label = excluded.label,
+  url = excluded.url,
+  icon = excluded.icon,
+  sort_order = excluded.sort_order,
+  is_visible = excluded.is_visible;
 
 notify pgrst, 'reload schema';

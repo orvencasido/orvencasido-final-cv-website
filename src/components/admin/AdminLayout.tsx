@@ -10,6 +10,7 @@ import {
   Award,
   GraduationCap,
   Mail,
+  PanelBottom,
   Settings,
   User,
   LogOut,
@@ -55,6 +56,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Certifications', path: '/orven/dashboard/certifications', icon: Award },
     { label: 'Education', path: '/orven/dashboard/education', icon: GraduationCap },
     { label: 'Contact Messages', path: '/orven/dashboard/messages', icon: Mail },
+    { label: 'Footer', path: '/orven/dashboard/footer', icon: PanelBottom },
     { label: 'Site Settings', path: '/orven/dashboard/settings', icon: Settings },
     { label: 'Admin Profile', path: '/orven/dashboard/profile', icon: User },
   ];

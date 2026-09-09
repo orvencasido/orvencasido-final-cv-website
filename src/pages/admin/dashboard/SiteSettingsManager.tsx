@@ -83,7 +83,7 @@ export const SiteSettingsManager: React.FC = () => {
   if (loading) return <LoadingSkeleton count={2} />;
 
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-8">
       <SectionHeader
         title="Website Global Settings"
         description="Configure application metadata, SEO descriptions, analytics options, and view database connection status."

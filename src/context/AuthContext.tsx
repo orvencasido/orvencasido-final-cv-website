@@ -33,17 +33,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             role: 'admin',
           });
         }
-      } else {
-        // Mock Auth check
-        localStorage.removeItem('orven_admin_session');
-        const storedUser = sessionStorage.getItem('orven_admin_session');
-        if (storedUser) {
-          try {
-            setUser(JSON.parse(storedUser));
-          } catch {
-            sessionStorage.removeItem('orven_admin_session');
-          }
-        }
       }
       setIsLoading(false);
     }
@@ -54,72 +43,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, pass: string) => {
     setIsLoading(true);
     try {
-      if (isSupabaseConfigured && supabase) {
-        const response = await fetch(`${supabaseUrl}/functions/v1/admin-login`, {
-          method: 'POST',
-          headers: {
-            apikey: supabaseAnonKey,
-            Authorization: `Bearer ${supabaseAnonKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email, password: pass }),
-        });
-
-        const payload = await response.json().catch(() => ({}));
-
-        if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
-          setIsLoading(false);
-          const resetText = payload.resetAt
-            ? ` Try again after ${new Date(payload.resetAt).toLocaleString()}.`
-            : '';
-          const remainingText =
-            typeof payload.remaining === 'number' && payload.remaining > 0
-              ? ` ${payload.remaining} attempts remaining.`
-              : '';
-          return {
-            success: false,
-            error: `${payload.error || 'Invalid credentials.'}${remainingText}${resetText}`,
-          };
-        }
-
-        const { data, error } = await supabase.auth.setSession({
-          access_token: payload.session.access_token,
-          refresh_token: payload.session.refresh_token,
-        });
-
-        if (error || !data.user) {
-          setIsLoading(false);
-          return { success: false, error: error?.message || 'Unable to establish admin session.' };
-        }
-
-        const adminUser: User = {
-          id: data.user.id,
-          email: data.user.email || email,
-          role: 'admin',
-        };
-        setUser(adminUser);
+      if (!isSupabaseConfigured || !supabase) {
         setIsLoading(false);
-        return { success: true };
-      } else {
-        // Local demo mode authentication accepts any valid email with a minimum-length password.
-        if (!email || pass.length < 5) {
-          setIsLoading(false);
-          return { success: false, error: 'Password must be at least 6 characters' };
-        }
-
-        const adminUser: User = {
-          id: 'admin_usr_1',
-          email: email,
-          role: 'admin',
-        };
-
-        setUser(adminUser);
-        localStorage.removeItem('orven_admin_session');
-        sessionStorage.setItem('orven_admin_session', JSON.stringify(adminUser));
-
-        setIsLoading(false);
-        return { success: true };
+        return { success: false, error: 'Supabase is not configured.' };
       }
+
+      const response = await fetch(`${supabaseUrl}/functions/v1/admin-login`, {
+        method: 'POST',
+        headers: {
+          apikey: supabaseAnonKey,
+          Authorization: `Bearer ${supabaseAnonKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password: pass }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.session?.access_token || !payload.session?.refresh_token) {
+        setIsLoading(false);
+        const resetText = payload.resetAt
+          ? ` Try again after ${new Date(payload.resetAt).toLocaleString()}.`
+          : '';
+        const remainingText =
+          typeof payload.remaining === 'number' && payload.remaining > 0
+            ? ` ${payload.remaining} attempts remaining.`
+            : '';
+        return {
+          success: false,
+          error: `${payload.error || 'Invalid credentials.'}${remainingText}${resetText}`,
+        };
+      }
+
+      const { data, error } = await supabase.auth.setSession({
+        access_token: payload.session.access_token,
+        refresh_token: payload.session.refresh_token,
+      });
+
+      if (error || !data.user) {
+        setIsLoading(false);
+        return { success: false, error: error?.message || 'Unable to establish admin session.' };
+      }
+
+      const adminUser: User = {
+        id: data.user.id,
+        email: data.user.email || email,
+        role: 'admin',
+      };
+      setUser(adminUser);
+      setIsLoading(false);
+      return { success: true };
     } catch (err: unknown) {
       setIsLoading(false);
       const errorMessage = err instanceof Error ? err.message : 'Authentication failed';
@@ -132,8 +105,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
     }
-    localStorage.removeItem('orven_admin_session');
-    sessionStorage.removeItem('orven_admin_session');
     setUser(null);
     setIsLoading(false);
   };

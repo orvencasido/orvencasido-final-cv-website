@@ -24,14 +24,14 @@ export const ExperiencePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-6 md:px-10 py-16">
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
         <LoadingSkeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
         title="My Journey, My Career"
         description="From internships to production environments—here's how I've grown as a DevOps and System Architect."

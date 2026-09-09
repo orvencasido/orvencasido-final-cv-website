@@ -18,6 +18,7 @@ export const initialProfile: Profile = {
   full_name: 'Orven Casido',
   professional_title: 'DevOps Engineer',
   introduction: 'Welcome to my tech journey.',
+  biography: '',
   profile_image_url: '',
   resume_url: '',
   email: 'orvencasidop@gmail.com',
@@ -112,6 +113,9 @@ export const initialSiteSettings: SiteSettings = {
   resume_download_url: '',
   theme_preference: 'system',
   visible_nav_items: ['home', 'blogs', 'projects', 'experience', 'certifications', 'education', 'contact'],
+  show_featured_projects: true,
+  show_featured_blogs: true,
+  show_contact_cta: true,
   created_at: now,
   updated_at: now,
 };

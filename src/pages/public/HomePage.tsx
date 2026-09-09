@@ -2,16 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Code2,
-  ArrowRight,
   ChevronRight,
 } from 'lucide-react';
-import { getProfile, getProjects, getBlogs, getSkills } from '../../lib/services';
-import { Profile, Project, Blog, Skill } from '../../types';
+import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings } from '../../lib/services';
+import { Profile, Project, Blog, Skill, SiteSettings } from '../../types';
 import { LoadingSkeleton } from '../../components/ui/CommonUI';
 import { getTechIconUrl } from '../../lib/techIcons';
 
 export const HomePage: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [featuredBlogs, setFeaturedBlogs] = useState<Blog[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -20,15 +20,18 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     async function loadHomeData() {
       try {
-        const [profData, projData, blogData, skillData] = await Promise.all([
+        const [profData, projData, blogData, skillData, settingsData] = await Promise.all([
           getProfile(),
           getProjects(),
           getBlogs(),
           getSkills(),
+          getSiteSettings(),
         ]);
 
         setProfile(profData);
-        setFeaturedProjects(projData.filter((p) => p.is_featured).slice(0, 2));
+        setSiteSettings(settingsData);
+        const featured = projData.filter((p) => p.is_featured);
+        setFeaturedProjects(featured.length > 0 ? featured.slice(0, 2) : projData.slice(0, 2));
         setFeaturedBlogs(blogData.filter((b) => b.is_featured && b.status === 'published').slice(0, 2));
         setSkills(skillData.filter((s) => s.is_visible));
       } catch (err) {
@@ -47,6 +50,10 @@ export const HomePage: React.FC = () => {
       </div>
     );
   }
+
+  const showFeaturedProjects = siteSettings?.show_featured_projects !== false;
+  const showFeaturedBlogs = siteSettings?.show_featured_blogs !== false;
+  const showContactCta = siteSettings?.show_contact_cta !== false;
 
   const initials = profile.full_name
     .split(' ')
@@ -139,152 +146,178 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. Featured Projects Section (White Pastel Background) */}
-      <section className="w-full bg-white border-y border-beige-200/80 py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-6 gap-4">
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
-                Always Building
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
-                Shipped Projects
-              </h2>
-            </div>
-            <Link
-              to="/projects"
-              className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
-            >
-              <span>View all projects</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {featuredProjects.map((proj) => (
-              <div
-                key={proj.id}
-                className="bg-beige-50 border border-beige-200 rounded-3xl p-8 shadow-2xs hover:shadow-md hover:border-matcha-400 group flex flex-col justify-between transition-all space-y-6"
-              >
-                <div className="space-y-4">
-                  <div className="w-12 h-12 bg-matcha-100 text-matcha-900 rounded-2xl flex items-center justify-center group-hover:bg-matcha-900 group-hover:text-beige-50 transition-colors shadow-2xs">
-                    <Code2 className="w-6 h-6" />
-                  </div>
-                  <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
-                    <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
-                  </h3>
-                  <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
-                    {proj.short_description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-beige-200 flex items-center gap-2 flex-wrap">
-                  {proj.technologies.slice(0, 4).map((tech) => (
-                    <span
-                      key={tech}
-                      className="text-xs font-bold text-matcha-900 uppercase tracking-wider bg-matcha-100/70 px-3 py-1 rounded-full"
-                    >
-                      {tech}
+      {/* 2. Featured Projects & CTA Section (White Pastel Background) */}
+      {(showFeaturedProjects || showContactCta) && (
+        <section className="w-full bg-white border-y border-beige-200/80 py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
+            {showFeaturedProjects && (
+              <>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-6 gap-4">
+                  <div className="space-y-1.5">
+                    <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
+                      Always Building
                     </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA Banner Section */}
-          <div className="bg-matcha-900 text-beige-50 border border-matcha-800 rounded-3xl p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl mt-12">
-            <div className="relative z-10 max-w-xl space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-beige-50 tracking-tight leading-tight">
-                Let's build something extraordinary together.
-              </h2>
-              <p className="text-matcha-200 text-base sm:text-lg leading-relaxed font-normal pb-2">
-                I am open for software engineering opportunities, consulting, and building high-impact platforms.
-              </p>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <Link
-                  to="/contact"
-                  className="px-8 py-3.5 bg-beige-50 text-matcha-950 font-bold text-sm rounded-full hover:bg-beige-200 transition shadow-md"
-                >
-                  Get In Touch
-                </Link>
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="px-8 py-3.5 border border-matcha-600 text-matcha-100 font-bold text-sm rounded-full hover:bg-matcha-800 transition"
-                >
-                  Send Email
-                </a>
-              </div>
-            </div>
-            {/* Background Chevron Graphic */}
-            <div className="absolute top-1/2 -translate-y-1/2 -right-8 pointer-events-none hidden sm:block opacity-15">
-              <ChevronRight className="w-80 h-80 text-beige-50 stroke-[1.5]" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. Featured Writing Section (Warm Beige Base) */}
-      <section className="w-full bg-beige-100 py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-300 pb-6 gap-4">
-            <div className="space-y-1.5">
-              <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
-                Engineering Higlights
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
-                Latest Articles & Insights
-              </h2>
-            </div>
-            <Link
-              to="/blogs"
-              className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
-            >
-              <span>Read all articles</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {featuredBlogs.map((blog) => (
-              <article
-                key={blog.id}
-                className="p-8 bg-white border border-beige-300 rounded-3xl shadow-2xs hover:border-matcha-400 hover:shadow-md transition-all flex flex-col justify-between space-y-6"
-              >
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-matcha-600 font-mono font-medium">
-                    <span>{blog.published_at}</span>
-                    <span>{blog.reading_time}</span>
-                  </div>
-                  <h3 className="text-xl font-extrabold text-matcha-950 hover:text-matcha-700 transition-colors">
-                    <Link to={`/blogs/${blog.slug}`}>{blog.title}</Link>
-                  </h3>
-                  <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
-                    {blog.summary}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-beige-200">
-                  <div className="flex flex-wrap gap-2">
-                    {blog.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 border border-matcha-200"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
+                      Shipped Projects
+                    </h2>
                   </div>
                   <Link
-                    to={`/blogs/${blog.slug}`}
-                    className="text-sm font-extrabold text-matcha-800 hover:text-matcha-950 flex items-center gap-1"
+                    to="/projects"
+                    className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
                   >
-                    Read &rarr;
+                    <span>View all projects</span>
                   </Link>
                 </div>
-              </article>
-            ))}
+
+                {featuredProjects.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    {featuredProjects.map((proj) => (
+                      <div
+                        key={proj.id}
+                        className="bg-beige-50 border border-beige-200 rounded-3xl p-8 shadow-2xs hover:shadow-md hover:border-matcha-400 group flex flex-col justify-between transition-all space-y-6"
+                      >
+                        <div className="space-y-4">
+                          <div className="w-12 h-12 bg-matcha-100 text-matcha-900 rounded-2xl flex items-center justify-center group-hover:bg-matcha-900 group-hover:text-beige-50 transition-colors shadow-2xs">
+                            <Code2 className="w-6 h-6" />
+                          </div>
+                          <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
+                            <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
+                          </h3>
+                          <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
+                            {proj.short_description}
+                          </p>
+                        </div>
+
+                        <div className="pt-4 border-t border-beige-200 flex items-center gap-2 flex-wrap">
+                          {proj.technologies.slice(0, 4).map((tech) => (
+                            <span
+                              key={tech}
+                              className="text-xs font-bold text-matcha-900 uppercase tracking-wider bg-matcha-100/70 px-3 py-1 rounded-full"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-10 rounded-3xl border border-dashed border-beige-300 bg-beige-50/50 flex flex-col items-center justify-center text-center space-y-2 py-12">
+                    <div className="w-12 h-12 rounded-2xl bg-matcha-100 flex items-center justify-center text-matcha-800">
+                      <Code2 className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-base font-bold text-matcha-950">No projects in database yet</h3>
+                    <p className="text-xs sm:text-sm text-matcha-700 max-w-md font-normal">
+                      Any projects created in your Admin Dashboard or Supabase database will appear here.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* CTA Banner Section */}
+            {showContactCta && (
+              <div
+                className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-3xl p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${
+                  showFeaturedProjects ? 'mt-12' : ''
+                }`}
+              >
+                <div className="relative z-10 max-w-xl space-y-4">
+                  <h2 className="text-3xl sm:text-4xl font-extrabold text-beige-50 tracking-tight leading-tight">
+                    Let's build something extraordinary together.
+                  </h2>
+                  <p className="text-matcha-200 text-base sm:text-lg leading-relaxed font-normal pb-2">
+                    I am open for software engineering opportunities, consulting, and building high-impact platforms.
+                  </p>
+                  <div className="flex flex-wrap gap-4 pt-2">
+                    <Link
+                      to="/contact"
+                      className="px-8 py-3.5 bg-beige-50 text-matcha-950 font-bold text-sm rounded-full hover:bg-beige-200 transition shadow-md"
+                    >
+                      Get In Touch
+                    </Link>
+                    <a
+                      href={`mailto:${profile.email}`}
+                      className="px-8 py-3.5 border border-matcha-600 text-matcha-100 font-bold text-sm rounded-full hover:bg-matcha-800 transition"
+                    >
+                      Send Email
+                    </a>
+                  </div>
+                </div>
+                {/* Background Chevron Graphic */}
+                <div className="absolute top-1/2 -translate-y-1/2 -right-8 pointer-events-none hidden sm:block opacity-15">
+                  <ChevronRight className="w-80 h-80 text-beige-50 stroke-[1.5]" />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* 3. Featured Writing Section (Warm Beige Base) */}
+      {showFeaturedBlogs && featuredBlogs.length > 0 && (
+        <section className="w-full bg-beige-100 py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-300 pb-6 gap-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
+                  Engineering Higlights
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
+                  Latest Articles & Insights
+                </h2>
+              </div>
+              <Link
+                to="/blogs"
+                className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
+              >
+                <span>Read all articles</span>
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {featuredBlogs.map((blog) => (
+                <article
+                  key={blog.id}
+                  className="p-8 bg-white border border-beige-300 rounded-3xl shadow-2xs hover:border-matcha-400 hover:shadow-md transition-all flex flex-col justify-between space-y-6"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs text-matcha-600 font-mono font-medium">
+                      <span>{blog.published_at}</span>
+                      <span>{blog.reading_time}</span>
+                    </div>
+                    <h3 className="text-xl font-extrabold text-matcha-950 hover:text-matcha-700 transition-colors">
+                      <Link to={`/blogs/${blog.slug}`}>{blog.title}</Link>
+                    </h3>
+                    <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
+                      {blog.summary}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t border-beige-200">
+                    <div className="flex flex-wrap gap-2">
+                      {blog.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 border border-matcha-200"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                    <Link
+                      to={`/blogs/${blog.slug}`}
+                      className="text-sm font-extrabold text-matcha-800 hover:text-matcha-950 flex items-center gap-1"
+                    >
+                      Read &rarr;
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

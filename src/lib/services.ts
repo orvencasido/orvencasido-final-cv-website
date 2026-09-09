@@ -12,38 +12,6 @@ import {
   SiteSettings,
   PublicNavItem,
 } from '../types';
-import {
-  initialProfile,
-  initialSocialLinks,
-  initialSkills,
-  initialBlogs,
-  initialProjects,
-  initialExperiences,
-  initialCertifications,
-  initialEducation,
-  initialContactMessages,
-  initialSiteSettings,
-} from './mockData';
-
-// Helper to interact with LocalStorage for persistence in mock mode
-function getStorageItem<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback;
-  try {
-    const item = localStorage.getItem(`orven_${key}`);
-    return item ? JSON.parse(item) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function setStorageItem<T>(key: string, value: T): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(`orven_${key}`, JSON.stringify(value));
-  } catch (err) {
-    console.error(`Error saving ${key} to localStorage:`, err);
-  }
-}
 
 export const defaultPublicNavItems: PublicNavItem[] = [
   'home',
@@ -62,53 +30,56 @@ function normalizeSiteSettings(settings: SiteSettings): SiteSettings {
       Array.isArray(settings.visible_nav_items) && settings.visible_nav_items.length > 0
         ? settings.visible_nav_items
         : defaultPublicNavItems,
+    show_featured_projects:
+      typeof settings.show_featured_projects === 'boolean' ? settings.show_featured_projects : true,
+    show_featured_blogs:
+      typeof settings.show_featured_blogs === 'boolean' ? settings.show_featured_blogs : true,
+    show_contact_cta:
+      typeof settings.show_contact_cta === 'boolean' ? settings.show_contact_cta : true,
   };
+}
+
+function requireSupabase() {
+  if (!isSupabaseConfigured || !supabase) {
+    throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+  }
+
+  return supabase;
 }
 
 /* ==========================================================================
    PROFILE SERVICES
    ========================================================================== */
 export async function getProfile(): Promise<Profile> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('profiles').select('*').single();
-    if (!error && data) return data as Profile;
-  }
-  return getStorageItem<Profile>('profile', initialProfile);
+  const client = requireSupabase();
+  const { data, error } = await client.from('profiles').select('*').single();
+  if (error) throw new Error(error.message);
+  return data as Profile;
 }
 
 export async function updateProfile(profileData: Partial<Profile>): Promise<Profile> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('profiles')
-      .update({ ...profileData, updated_at: new Date().toISOString() })
-      .eq('id', profileData.id || 'prof_1')
-      .select()
-      .single();
-    if (!error && data) return data as Profile;
-  }
-
-  const current = getStorageItem<Profile>('profile', initialProfile);
-  const updated: Profile = {
-    ...current,
-    ...profileData,
-    updated_at: new Date().toISOString(),
-  };
-  setStorageItem('profile', updated);
-  return updated;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('profiles')
+    .update({ ...profileData, updated_at: new Date().toISOString() })
+    .eq('id', profileData.id || 'prof_1')
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Profile;
 }
 
 /* ==========================================================================
    BLOG SERVICES
    ========================================================================== */
 export async function getBlogs(): Promise<Blog[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('blogs')
-      .select('*')
-      .order('published_at', { ascending: false });
-    if (!error && data) return data as Blog[];
-  }
-  return getStorageItem<Blog[]>('blogs', initialBlogs);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('blogs')
+    .select('*')
+    .order('published_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data as Blog[];
 }
 
 export async function getBlogBySlug(slug: string): Promise<Blog | null> {
@@ -124,52 +95,28 @@ export async function createBlog(blog: Omit<Blog, 'id' | 'created_at' | 'updated
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('blogs').insert(newBlog).select().single();
-    if (!error && data) return data as Blog;
-  }
-
-  const current = getStorageItem<Blog[]>('blogs', initialBlogs);
-  const updated = [newBlog, ...current];
-  setStorageItem('blogs', updated);
-  return newBlog;
+  const client = requireSupabase();
+  const { data, error } = await client.from('blogs').insert(newBlog).select().single();
+  if (error) throw new Error(error.message);
+  return data as Blog;
 }
 
 export async function updateBlog(id: string, blogData: Partial<Blog>): Promise<Blog> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('blogs')
-      .update({ ...blogData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as Blog;
-  }
-
-  const current = getStorageItem<Blog[]>('blogs', initialBlogs);
-  let updatedBlog: Blog | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedBlog = { ...item, ...blogData, updated_at: new Date().toISOString() };
-      return updatedBlog;
-    }
-    return item;
-  });
-
-  setStorageItem('blogs', updated);
-  if (!updatedBlog) throw new Error('Blog not found');
-  return updatedBlog;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('blogs')
+    .update({ ...blogData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Blog;
 }
 
 export async function deleteBlog(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('blogs').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<Blog[]>('blogs', initialBlogs);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('blogs', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('blogs').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -177,14 +124,13 @@ export async function deleteBlog(id: string): Promise<boolean> {
    PROJECT SERVICES
    ========================================================================== */
 export async function getProjects(): Promise<Project[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as Project[];
-  }
-  return getStorageItem<Project[]>('projects', initialProjects);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('projects')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as Project[];
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
@@ -200,52 +146,28 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at' |
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('projects').insert(newProject).select().single();
-    if (!error && data) return data as Project;
-  }
-
-  const current = getStorageItem<Project[]>('projects', initialProjects);
-  const updated = [newProject, ...current];
-  setStorageItem('projects', updated);
-  return newProject;
+  const client = requireSupabase();
+  const { data, error } = await client.from('projects').insert(newProject).select().single();
+  if (error) throw new Error(error.message);
+  return data as Project;
 }
 
 export async function updateProject(id: string, projectData: Partial<Project>): Promise<Project> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('projects')
-      .update({ ...projectData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as Project;
-  }
-
-  const current = getStorageItem<Project[]>('projects', initialProjects);
-  let updatedProject: Project | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedProject = { ...item, ...projectData, updated_at: new Date().toISOString() };
-      return updatedProject;
-    }
-    return item;
-  });
-
-  setStorageItem('projects', updated);
-  if (!updatedProject) throw new Error('Project not found');
-  return updatedProject;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('projects')
+    .update({ ...projectData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Project;
 }
 
 export async function deleteProject(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('projects').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<Project[]>('projects', initialProjects);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('projects', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('projects').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -253,14 +175,13 @@ export async function deleteProject(id: string): Promise<boolean> {
    EXPERIENCE SERVICES
    ========================================================================== */
 export async function getExperiences(): Promise<Experience[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('experiences')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as Experience[];
-  }
-  return getStorageItem<Experience[]>('experiences', initialExperiences);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('experiences')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as Experience[];
 }
 
 export async function createExperience(
@@ -273,52 +194,28 @@ export async function createExperience(
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('experiences').insert(newExp).select().single();
-    if (!error && data) return data as Experience;
-  }
-
-  const current = getStorageItem<Experience[]>('experiences', initialExperiences);
-  const updated = [newExp, ...current];
-  setStorageItem('experiences', updated);
-  return newExp;
+  const client = requireSupabase();
+  const { data, error } = await client.from('experiences').insert(newExp).select().single();
+  if (error) throw new Error(error.message);
+  return data as Experience;
 }
 
 export async function updateExperience(id: string, expData: Partial<Experience>): Promise<Experience> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('experiences')
-      .update({ ...expData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as Experience;
-  }
-
-  const current = getStorageItem<Experience[]>('experiences', initialExperiences);
-  let updatedExp: Experience | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedExp = { ...item, ...expData, updated_at: new Date().toISOString() };
-      return updatedExp;
-    }
-    return item;
-  });
-
-  setStorageItem('experiences', updated);
-  if (!updatedExp) throw new Error('Experience entry not found');
-  return updatedExp;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('experiences')
+    .update({ ...expData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Experience;
 }
 
 export async function deleteExperience(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('experiences').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<Experience[]>('experiences', initialExperiences);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('experiences', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('experiences').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -326,14 +223,13 @@ export async function deleteExperience(id: string): Promise<boolean> {
    CERTIFICATION SERVICES
    ========================================================================== */
 export async function getCertifications(): Promise<Certification[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('certifications')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as Certification[];
-  }
-  return getStorageItem<Certification[]>('certifications', initialCertifications);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('certifications')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as Certification[];
 }
 
 export async function createCertification(
@@ -346,52 +242,28 @@ export async function createCertification(
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('certifications').insert(newCert).select().single();
-    if (!error && data) return data as Certification;
-  }
-
-  const current = getStorageItem<Certification[]>('certifications', initialCertifications);
-  const updated = [newCert, ...current];
-  setStorageItem('certifications', updated);
-  return newCert;
+  const client = requireSupabase();
+  const { data, error } = await client.from('certifications').insert(newCert).select().single();
+  if (error) throw new Error(error.message);
+  return data as Certification;
 }
 
 export async function updateCertification(id: string, certData: Partial<Certification>): Promise<Certification> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('certifications')
-      .update({ ...certData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as Certification;
-  }
-
-  const current = getStorageItem<Certification[]>('certifications', initialCertifications);
-  let updatedCert: Certification | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedCert = { ...item, ...certData, updated_at: new Date().toISOString() };
-      return updatedCert;
-    }
-    return item;
-  });
-
-  setStorageItem('certifications', updated);
-  if (!updatedCert) throw new Error('Certification not found');
-  return updatedCert;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('certifications')
+    .update({ ...certData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Certification;
 }
 
 export async function deleteCertification(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('certifications').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<Certification[]>('certifications', initialCertifications);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('certifications', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('certifications').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -399,14 +271,13 @@ export async function deleteCertification(id: string): Promise<boolean> {
    EDUCATION SERVICES
    ========================================================================== */
 export async function getEducation(): Promise<Education[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('education')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as Education[];
-  }
-  return getStorageItem<Education[]>('education', initialEducation);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('education')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as Education[];
 }
 
 export async function createEducation(
@@ -419,52 +290,28 @@ export async function createEducation(
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('education').insert(newEdu).select().single();
-    if (!error && data) return data as Education;
-  }
-
-  const current = getStorageItem<Education[]>('education', initialEducation);
-  const updated = [newEdu, ...current];
-  setStorageItem('education', updated);
-  return newEdu;
+  const client = requireSupabase();
+  const { data, error } = await client.from('education').insert(newEdu).select().single();
+  if (error) throw new Error(error.message);
+  return data as Education;
 }
 
 export async function updateEducation(id: string, eduData: Partial<Education>): Promise<Education> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('education')
-      .update({ ...eduData, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as Education;
-  }
-
-  const current = getStorageItem<Education[]>('education', initialEducation);
-  let updatedEdu: Education | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedEdu = { ...item, ...eduData, updated_at: new Date().toISOString() };
-      return updatedEdu;
-    }
-    return item;
-  });
-
-  setStorageItem('education', updated);
-  if (!updatedEdu) throw new Error('Education record not found');
-  return updatedEdu;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('education')
+    .update({ ...eduData, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as Education;
 }
 
 export async function deleteEducation(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('education').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<Education[]>('education', initialEducation);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('education', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('education').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -472,14 +319,13 @@ export async function deleteEducation(id: string): Promise<boolean> {
    CONTACT MESSAGE SERVICES
    ========================================================================== */
 export async function getContactMessages(): Promise<ContactMessage[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('contact_messages')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (!error && data) return data as ContactMessage[];
-  }
-  return getStorageItem<ContactMessage[]>('contact_messages', initialContactMessages);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('contact_messages')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data as ContactMessage[];
 }
 
 export async function createContactMessage(
@@ -494,15 +340,10 @@ export async function createContactMessage(
     updated_at: new Date().toISOString(),
   };
 
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('contact_messages').insert(newMsg).select().single();
-    if (!error && data) return data as ContactMessage;
-  }
-
-  const current = getStorageItem<ContactMessage[]>('contact_messages', initialContactMessages);
-  const updated = [newMsg, ...current];
-  setStorageItem('contact_messages', updated);
-  return newMsg;
+  const client = requireSupabase();
+  const { data, error } = await client.from('contact_messages').insert(newMsg).select().single();
+  if (error) throw new Error(error.message);
+  return data as ContactMessage;
 }
 
 export async function updateContactMessageStatus(
@@ -510,40 +351,21 @@ export async function updateContactMessageStatus(
   status: ContactMessage['status'],
   isRead: boolean = true
 ): Promise<ContactMessage> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('contact_messages')
-      .update({ status, is_read: isRead, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single();
-    if (!error && data) return data as ContactMessage;
-  }
-
-  const current = getStorageItem<ContactMessage[]>('contact_messages', initialContactMessages);
-  let updatedMsg: ContactMessage | null = null;
-  const updated = current.map((item) => {
-    if (item.id === id) {
-      updatedMsg = { ...item, status, is_read: isRead, updated_at: new Date().toISOString() };
-      return updatedMsg;
-    }
-    return item;
-  });
-
-  setStorageItem('contact_messages', updated);
-  if (!updatedMsg) throw new Error('Message not found');
-  return updatedMsg;
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('contact_messages')
+    .update({ status, is_read: isRead, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return data as ContactMessage;
 }
 
 export async function deleteContactMessage(id: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    const { error } = await supabase.from('contact_messages').delete().eq('id', id);
-    if (!error) return true;
-  }
-
-  const current = getStorageItem<ContactMessage[]>('contact_messages', initialContactMessages);
-  const updated = current.filter((item) => item.id !== id);
-  setStorageItem('contact_messages', updated);
+  const client = requireSupabase();
+  const { error } = await client.from('contact_messages').delete().eq('id', id);
+  if (error) throw new Error(error.message);
   return true;
 }
 
@@ -551,72 +373,67 @@ export async function deleteContactMessage(id: string): Promise<boolean> {
    SITE SETTINGS SERVICES
    ========================================================================== */
 export async function getSiteSettings(): Promise<SiteSettings> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase.from('site_settings').select('*').single();
-    if (!error && data) return normalizeSiteSettings(data as SiteSettings);
-  }
-  return normalizeSiteSettings(getStorageItem<SiteSettings>('site_settings', initialSiteSettings));
+  const client = requireSupabase();
+  const { data, error } = await client.from('site_settings').select('*').single();
+  if (error) throw new Error(error.message);
+  return normalizeSiteSettings(data as SiteSettings);
 }
 
 export async function updateSiteSettings(settingsData: Partial<SiteSettings>): Promise<SiteSettings> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('site_settings')
-      .update({ ...settingsData, updated_at: new Date().toISOString() })
-      .eq('id', settingsData.id || 'settings_1')
-      .select()
-      .single();
-    if (!error && data) return data as SiteSettings;
-  }
-
-  const current = getStorageItem<SiteSettings>('site_settings', initialSiteSettings);
-  const updated: SiteSettings = {
-    ...current,
-    ...settingsData,
-    visible_nav_items: settingsData.visible_nav_items || current.visible_nav_items || defaultPublicNavItems,
+  const client = requireSupabase();
+  const updatePayload: Record<string, unknown> = {
     updated_at: new Date().toISOString(),
   };
-  setStorageItem('site_settings', updated);
-  return updated;
+  for (const [key, value] of Object.entries(settingsData)) {
+    if (value !== undefined) {
+      updatePayload[key] = value;
+    }
+  }
+
+  const { data, error } = await client
+    .from('site_settings')
+    .update(updatePayload)
+    .eq('id', settingsData.id || 'settings_1')
+    .select()
+    .single();
+  if (error) throw new Error(error.message);
+  return normalizeSiteSettings(data as SiteSettings);
 }
 
 /* ==========================================================================
    SKILLS SERVICES
    ========================================================================== */
 export async function getSkills(): Promise<Skill[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('skills')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as Skill[];
-  }
-  return getStorageItem<Skill[]>('skills', initialSkills);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('skills')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as Skill[];
 }
 
 export async function updateSkills(skills: Skill[]): Promise<Skill[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data: existing, error: readError } = await supabase.from('skills').select('id');
-    if (readError) throw new Error(readError.message);
+  const client = requireSupabase();
+  const { data: existing, error: readError } = await client.from('skills').select('id');
+  if (readError) throw new Error(readError.message);
 
-    const existingIds = (existing || []).map((item) => item.id);
-    const nextIds = skills.map((skill) => skill.id);
-    const staleIds = existingIds.filter((id) => !nextIds.includes(id));
+  const existingIds = (existing || []).map((item) => item.id);
+  const nextIds = skills.map((skill) => skill.id);
+  const staleIds = existingIds.filter((id) => !nextIds.includes(id));
 
-    if (skills.length > 0) {
-      const { error: upsertError } = await supabase.from('skills').upsert(skills).select();
-      if (upsertError) throw new Error(upsertError.message);
-    }
-
-    await Promise.all(
-      staleIds.map(async (id) => {
-        const { error } = await supabase.from('skills').delete().eq('id', id);
-        if (error) throw new Error(error.message);
-      })
-    );
+  if (skills.length > 0) {
+    const { error: upsertError } = await client.from('skills').upsert(skills).select();
+    if (upsertError) throw new Error(upsertError.message);
   }
 
-  setStorageItem('skills', skills);
+  await Promise.all(
+    staleIds.map(async (id) => {
+      const { error } = await client.from('skills').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+    })
+  );
+
   return skills;
 }
 
@@ -624,38 +441,35 @@ export async function updateSkills(skills: Skill[]): Promise<Skill[]> {
    SOCIAL LINKS SERVICES
    ========================================================================== */
 export async function getSocialLinks(): Promise<SocialLink[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data, error } = await supabase
-      .from('social_links')
-      .select('*')
-      .order('sort_order', { ascending: true });
-    if (!error && data) return data as SocialLink[];
-  }
-  return getStorageItem<SocialLink[]>('social_links', initialSocialLinks);
+  const client = requireSupabase();
+  const { data, error } = await client
+    .from('social_links')
+    .select('*')
+    .order('sort_order', { ascending: true });
+  if (error) throw new Error(error.message);
+  return data as SocialLink[];
 }
 
 export async function updateSocialLinks(links: SocialLink[]): Promise<SocialLink[]> {
-  if (isSupabaseConfigured && supabase) {
-    const { data: existing, error: readError } = await supabase.from('social_links').select('id');
-    if (readError) throw new Error(readError.message);
+  const client = requireSupabase();
+  const { data: existing, error: readError } = await client.from('social_links').select('id');
+  if (readError) throw new Error(readError.message);
 
-    const existingIds = (existing || []).map((item) => item.id);
-    const nextIds = links.map((link) => link.id);
-    const staleIds = existingIds.filter((id) => !nextIds.includes(id));
+  const existingIds = (existing || []).map((item) => item.id);
+  const nextIds = links.map((link) => link.id);
+  const staleIds = existingIds.filter((id) => !nextIds.includes(id));
 
-    if (links.length > 0) {
-      const { error: upsertError } = await supabase.from('social_links').upsert(links).select();
-      if (upsertError) throw new Error(upsertError.message);
-    }
-
-    await Promise.all(
-      staleIds.map(async (id) => {
-        const { error } = await supabase.from('social_links').delete().eq('id', id);
-        if (error) throw new Error(error.message);
-      })
-    );
+  if (links.length > 0) {
+    const { error: upsertError } = await client.from('social_links').upsert(links).select();
+    if (upsertError) throw new Error(upsertError.message);
   }
 
-  setStorageItem('social_links', links);
+  await Promise.all(
+    staleIds.map(async (id) => {
+      const { error } = await client.from('social_links').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+    })
+  );
+
   return links;
 }

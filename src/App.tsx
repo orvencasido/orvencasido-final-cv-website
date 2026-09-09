@@ -32,6 +32,7 @@ import { CertificationManager } from './pages/admin/dashboard/CertificationManag
 import { EducationManager } from './pages/admin/dashboard/EducationManager';
 import { ContactMessagesManager } from './pages/admin/dashboard/ContactMessagesManager';
 import { SiteSettingsManager } from './pages/admin/dashboard/SiteSettingsManager';
+import { FooterManager } from './pages/admin/dashboard/FooterManager';
 import { AdminProfileManager } from './pages/admin/dashboard/AdminProfileManager';
 
 const RouteTitle: React.FC = () => {
@@ -82,6 +83,7 @@ export default function App() {
                 <Route path="certifications" element={<CertificationManager />} />
                 <Route path="education" element={<EducationManager />} />
                 <Route path="messages" element={<ContactMessagesManager />} />
+                <Route path="footer" element={<FooterManager />} />
                 <Route path="settings" element={<SiteSettingsManager />} />
                 <Route path="profile" element={<AdminProfileManager />} />
               </Route>
