@@ -20,15 +20,6 @@ function sanitizeFileName(fileName: string): string {
   return `${baseName || 'image'}-${Date.now()}.${extension}`;
 }
 
-function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result || ''));
-    reader.onerror = () => reject(new Error('Failed to read selected image.'));
-    reader.readAsDataURL(file);
-  });
-}
-
 export async function uploadPortfolioImage(file: File, folder: ImageUploadFolder): Promise<string> {
   if (!file.type.startsWith('image/')) {
     throw new Error('Please select an image file.');
@@ -39,7 +30,7 @@ export async function uploadPortfolioImage(file: File, folder: ImageUploadFolder
   }
 
   if (!isSupabaseConfigured || !supabase) {
-    return fileToDataUrl(file);
+    throw new Error('Supabase is not configured. Image uploads require Supabase Storage.');
   }
 
   const path = `${folder}/${sanitizeFileName(file.name)}`;
@@ -67,7 +58,7 @@ export async function uploadPortfolioFile(file: File, folder: FileUploadFolder):
   }
 
   if (!isSupabaseConfigured || !supabase) {
-    return fileToDataUrl(file);
+    throw new Error('Supabase is not configured. File uploads require Supabase Storage.');
   }
 
   const path = `${folder}/${sanitizeFileName(file.name)}`;
@@ -104,11 +95,7 @@ export async function getRateLimitedResumeDownloadUrl(resumePathOrUrl: string): 
     throw new Error('Resume is not configured.');
   }
 
-  if (!isSupabaseConfigured) {
-    return resumePathOrUrl;
-  }
-
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!isSupabaseConfigured || !supabaseUrl || !supabaseAnonKey) {
     throw new Error('Supabase is not configured.');
   }
 

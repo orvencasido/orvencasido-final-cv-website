@@ -182,7 +182,7 @@ export const TechStackManager: React.FC = () => {
   if (loading) return <LoadingSkeleton count={3} />;
 
   return (
-    <div className="space-y-8 max-w-5xl">
+    <div className="space-y-8">
       <SectionHeader
         title="Tech Stack & Skill Icons"
         description="Add, update, or re-order tech icons displayed on the public Home page. Supports SimpleIcons slugs (e.g., kubernetes, docker, python) or custom image URLs."

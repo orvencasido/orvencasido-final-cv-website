@@ -1,18 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Linkedin, Github, Mail, Facebook, Instagram } from 'lucide-react';
-import { getSiteSettings, getSocialLinks } from '../../lib/services';
-import { SiteSettings, SocialLink } from '../../types';
+import { defaultPublicNavItems, getProfile, getSiteSettings, getSocialLinks } from '../../lib/services';
+import { Profile, PublicNavItem, SiteSettings, SocialLink } from '../../types';
+
+const navItemMeta: Record<PublicNavItem, { label: string; path: string }> = {
+  home: { label: 'Home', path: '/' },
+  blogs: { label: 'Blogs', path: '/blogs' },
+  projects: { label: 'Projects', path: '/projects' },
+  experience: { label: 'Experience', path: '/experience' },
+  certifications: { label: 'Certifications', path: '/certifications' },
+  education: { label: 'Education', path: '/education' },
+  contact: { label: 'Contact', path: '/contact' },
+};
 
 export const PublicFooter: React.FC = () => {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [logoFailed, setLogoFailed] = useState(false);
 
   useEffect(() => {
     async function loadFooterData() {
       try {
-        const [siteSettings, links] = await Promise.all([getSiteSettings(), getSocialLinks()]);
+        const [siteSettings, links, profileData] = await Promise.all([
+          getSiteSettings(),
+          getSocialLinks(),
+          getProfile(),
+        ]);
         setSettings(siteSettings);
+        setProfile(profileData);
         setSocialLinks(links.filter((link) => link.is_visible));
       } catch (err) {
         console.error('Failed to load footer data:', err);
@@ -21,24 +38,6 @@ export const PublicFooter: React.FC = () => {
 
     loadFooterData();
   }, []);
-
-  const defaultSocials = [
-    { label: 'LinkedIn', url: 'https://linkedin.com/in/orven-casido-39bb58319', icon: Linkedin },
-    { label: 'GitHub', url: 'https://github.com/orvencasido', icon: Github },
-    { label: 'Gmail', url: 'mailto:orvencasidop@gmail.com', icon: Mail },
-    { label: 'Facebook', url: 'https://www.facebook.com/orven.casido/', icon: Facebook },
-    { label: 'Instagram', url: 'https://www.instagram.com/orvencasido/', icon: Instagram },
-  ];
-
-  const siteLinks = [
-    { label: 'Home', path: '/' },
-    { label: 'Blogs', path: '/blogs' },
-    { label: 'Projects', path: '/projects' },
-    { label: 'Experience', path: '/experience' },
-    { label: 'Certifications', path: '/certifications' },
-    { label: 'Education', path: '/education' },
-    { label: 'Contact', path: '/contact' },
-  ];
 
   const getSocialIcon = (platform: string) => {
     const lower = platform.toLowerCase();
@@ -50,13 +49,24 @@ export const PublicFooter: React.FC = () => {
     return undefined;
   };
 
-  const displayedSocials = socialLinks.length > 0
-    ? socialLinks.map((link) => ({
-      label: link.platform,
-      url: link.url,
-      icon: getSocialIcon(link.platform),
-    }))
-    : defaultSocials;
+  const visibleNavItems = settings?.visible_nav_items?.length
+    ? settings.visible_nav_items
+    : defaultPublicNavItems;
+  const siteLinks = visibleNavItems.map((item) => navItemMeta[item]).filter(Boolean);
+  const displayedSocials = socialLinks.map((link) => ({
+    label: link.label || link.platform,
+    url: link.url,
+    icon: getSocialIcon(link.icon || link.platform),
+  }));
+  const brandName = profile?.full_name || settings?.website_title || 'Orven Casido';
+  const tagline = profile?.professional_title || settings?.website_description || '';
+  const logoUrl = settings?.favicon_url?.trim() || '/orbs-icon.png';
+  const initials = brandName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'OC';
 
   return (
     <footer className="bg-matcha-900 text-beige-100 pt-16 pb-12 px-6 md:px-10 border-t border-matcha-800 transition-colors">
@@ -67,18 +77,29 @@ export const PublicFooter: React.FC = () => {
           <div className="md:col-span-6 lg:col-span-5 space-y-4">
             <Link to="/" className="inline-flex items-center gap-3 group">
               <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center bg-matcha-950 border border-matcha-700">
-                <img
-                  src="/orbs-icon.png"
-                  alt="Orven Casido"
-                  className="w-full h-full object-cover"
-                />
+                {logoFailed ? (
+                  <span className="text-[10px] font-extrabold text-beige-50">{initials}</span>
+                ) : (
+                  <img
+                    src={logoUrl}
+                    alt={brandName}
+                    className="w-full h-full object-cover"
+                    onError={(event) => {
+                      if (event.currentTarget.src.endsWith('/orbs-icon.png')) {
+                        setLogoFailed(true);
+                        return;
+                      }
+                      event.currentTarget.src = '/orbs-icon.png';
+                    }}
+                  />
+                )}
               </div>
               <span className="font-extrabold text-xl text-beige-50 tracking-tight">
-                Orven Casido
+                {brandName}
               </span>
             </Link>
             <p className="text-sm text-matcha-200 leading-relaxed font-normal max-w-sm">
-              AI · Cloud · DevOps. Engineering secure, scalable, and high-impact web platforms and cloud systems.
+              {tagline}
             </p>
           </div>
 

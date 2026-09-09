@@ -33,7 +33,8 @@ All public and administrative features are fully developed, compiled, and verifi
   - **Experience & Education Managers**: Career timeline and education entry administration.
   - **Certifications Manager**: Management of credentials and certification URLs.
   - **Messages Inbox**: Review and status tracking for incoming contact form inquiries.
-  - **Site Settings**: Profile metadata, bio, avatar, and contact email controls.
+  - **Home Content Manager**: Profile metadata, bio, avatar, contact info, resume upload, and **Homepage Sections Visibility controls** (independent toggles to show/hide Shipped Projects, Latest Articles, and the Contact Redirection CTA banner on the home page).
+  - **Site Settings**: Global SEO descriptions, website title, footer copyright, and public navigation item visibility controls.
 
 ---
 

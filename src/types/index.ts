@@ -5,6 +5,7 @@ export interface Profile {
   full_name: string;
   professional_title: string;
   introduction: string;
+  biography: string;
   profile_image_url: string;
   resume_url: string;
   email: string;
@@ -166,6 +167,9 @@ export interface SiteSettings {
   resume_download_url: string;
   theme_preference: 'light' | 'dark' | 'system';
   visible_nav_items: PublicNavItem[];
+  show_featured_projects?: boolean;
+  show_featured_blogs?: boolean;
+  show_contact_cta?: boolean;
   created_at: string;
   updated_at: string;
 }
