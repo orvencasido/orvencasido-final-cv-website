@@ -34,6 +34,7 @@ import { ContactMessagesManager } from './pages/admin/dashboard/ContactMessagesM
 import { SiteSettingsManager } from './pages/admin/dashboard/SiteSettingsManager';
 import { FooterManager } from './pages/admin/dashboard/FooterManager';
 import { AdminProfileManager } from './pages/admin/dashboard/AdminProfileManager';
+import { AIAssistantPage } from './pages/admin/dashboard/AIAssistantPage';
 
 const RouteTitle: React.FC = () => {
   const location = useLocation();
@@ -75,6 +76,7 @@ export default function App() {
               {/* Protected Admin Dashboard Routes */}
               <Route path="/orven/dashboard" element={<AdminLayout />}>
                 <Route index element={<DashboardOverview />} />
+                <Route path="ai" element={<AIAssistantPage />} />
                 <Route path="home" element={<HomeContentManager />} />
                 <Route path="tech-stack" element={<TechStackManager />} />
                 <Route path="blogs" element={<BlogManager />} />

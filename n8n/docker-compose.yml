@@ -1,0 +1,23 @@
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    container_name: orven_n8n
+    restart: unless-stopped
+    ports:
+      # Exposes n8n locally to http://localhost:5678 on your Ubuntu machine
+      - "127.0.0.1:5678:5678"
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - GENERIC_TIMEZONE=Asia/Manila
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      # Secret matched with VITE_N8N_ADMIN_SECRET in your React CMS .env
+      - ORVEN_ADMIN_SECRET=secret-admin-token-12345
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+volumes:
+  n8n_data:
+    name: orven_n8n_data

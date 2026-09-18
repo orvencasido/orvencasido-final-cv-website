@@ -173,3 +173,28 @@ export interface SiteSettings {
   created_at: string;
   updated_at: string;
 }
+
+export type AIActionType = 'CREATE' | 'UPDATE' | 'DELETE' | 'READ';
+
+export interface AIAction {
+  type: AIActionType;
+  table: string;
+  recordId?: string;
+  summary: string;
+}
+
+export interface AIChatSession {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AIChatMessage {
+  id: string;
+  session_id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  actions?: AIAction[];
+  created_at: string;
+}

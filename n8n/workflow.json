@@ -1,0 +1,146 @@
+{
+  "name": "Orven Portfolio AI Assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "orven-ai-assistant",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify shared admin secret header\nconst expectedSecret = $env.ORVEN_ADMIN_SECRET || 'secret-admin-token-12345';\nconst headers = $input.first().json.headers || {};\nconst token = headers['x-admin-token'] || headers['X-Admin-Token'];\n\nif (!token || token !== expectedSecret) {\n  throw new NodeApiError(this.getNode(), { message: 'Unauthorized: Invalid or missing x-admin-token header' }, { httpCode: '401' });\n}\n\nconst body = $input.first().json.body || {};\nreturn [{\n  json: {\n    sessionId: body.sessionId || `sess_${Date.now()}`,\n    message: body.message || '',\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 0],
+      "id": "auth-check",
+      "name": "Verify Secret Token"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message }}",
+        "hasOutputParser": false,
+        "options": {
+          "systemMessage": "You are Orven Casido's Senior DevOps & Full-Stack Portfolio Assistant. Your role is to intelligently manage his portfolio database stored in Supabase.\n\nYou have access to database tools:\n- get_full_context: Query existing profile, experiences, projects, and skills.\n- manage_experience: Add, edit, or remove career timeline items.\n- manage_project: Add, edit, or remove showcase projects.\n- manage_skill: Add or adjust proficiency for technical skills.\n- update_profile: Update title, biography, or location.\n\nRules:\n1. Always inspect existing context before modifying or deleting items.\n2. When making updates or additions, provide clear confirmations.\n3. Return a clean conversational answer, and record actions performed in the structured actions list."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [460, 0],
+      "id": "ai-agent",
+      "name": "Portfolio AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [420, 220],
+      "id": "gemini-model",
+      "name": "Google Gemini Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "google-ai-studio-gemini",
+          "name": "Google AI Studio API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Verify Secret Token').first().json.sessionId }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [560, 220],
+      "id": "session-memory",
+      "name": "Session Memory"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"sessionId\": \"{{ $('Verify Secret Token').first().json.sessionId }}\",\n  \"reply\": {{ JSON.stringify($json.output || $json.text || 'Action completed successfully.') }},\n  \"actions\": {{ JSON.stringify($json.actions || []) }},\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [780, 0],
+      "id": "respond-webhook",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Verify Secret Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Secret Token": {
+      "main": [
+        [
+          {
+            "node": "Portfolio AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Portfolio AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Session Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Portfolio AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Portfolio AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
