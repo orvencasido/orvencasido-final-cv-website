@@ -13,5 +13,5 @@
       - service: http_status:404 
 7. sudo cloudflared service install
 8. sudo systemctl enable --now cloudflared
-9. sudo systemctl status cloudflared
-10. sudo systemctl stop cloudflared
+9. sudo systemctl status cloudflared.service
+10. sudo systemctl stop cloudflared.service

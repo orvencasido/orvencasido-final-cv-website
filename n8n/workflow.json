@@ -10,51 +10,82 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 0],
+      "position": [
+        0,
+        0
+      ],
       "id": "webhook-trigger",
-      "name": "Webhook Trigger"
+      "name": "Webhook Trigger",
+      "webhookId": "bca4d529-2036-4983-b7a3-8a6876199a9e"
     },
     {
       "parameters": {
-        "jsCode": "// Verify shared admin secret header\nconst expectedSecret = $env.ORVEN_ADMIN_SECRET || 'secret-admin-token-12345';\nconst headers = $input.first().json.headers || {};\nconst token = headers['x-admin-token'] || headers['X-Admin-Token'];\n\nif (!token || token !== expectedSecret) {\n  throw new NodeApiError(this.getNode(), { message: 'Unauthorized: Invalid or missing x-admin-token header' }, { httpCode: '401' });\n}\n\nconst body = $input.first().json.body || {};\nreturn [{\n  json: {\n    sessionId: body.sessionId || `sess_${Date.now()}`,\n    message: body.message || '',\n    timestamp: new Date().toISOString()\n  }\n}];"
+        "jsCode": "// Verify shared admin secret header\nlet expectedSecret = 'secret-admin-token-12345';\ntry {\n  if (typeof $env !== 'undefined' && $env.ORVEN_ADMIN_SECRET) {\n    expectedSecret = $env.ORVEN_ADMIN_SECRET;\n  }\n} catch (e) {}\n\nconst headers = $input.first().json.headers || {};\nconst token = headers['x-admin-token'] || headers['X-Admin-Token'];\n\nif (!token || token !== expectedSecret) {\n  throw new Error('Unauthorized: Invalid or missing x-admin-token header');\n}\n\nconst body = $input.first().json.body || {};\nconst authHeader = headers['authorization'] || headers['Authorization'] || '';\nconst authToken = body.authToken || (authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '');\n\nreturn [{\n  json: {\n    sessionId: body.sessionId || `sess_${Date.now()}`,\n    message: body.message || '',\n    authToken: authToken,\n    supabaseUrl: body.supabaseUrl || 'https://razkqzmzqdjbhjwyagnt.supabase.co',\n    supabaseKey: body.supabaseKey || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhemtxem16cWRqYmhqd3lhZ250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NTgxNTYsImV4cCI6MjEwMTMzNDE1Nn0.SQwRIVZVipCkEQFVqqxj9nNar-zCMzIiPcT96820f-U',\n    timestamp: new Date().toISOString()\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [220, 0],
-      "id": "auth-check",
+      "position": [
+        224,
+        0
+      ],
+      "id": "verify-secret",
       "name": "Verify Secret Token"
+    },
+    {
+      "parameters": {
+        "name": "manage_portfolio",
+        "description": "Call this tool to execute live database queries and modifications on Orven's Supabase portfolio. Tables: 'projects', 'experiences', 'skills', 'profiles', 'certifications', 'blogs'. Actions: 'get' to inspect existing records, 'create' to add a new record, 'update' to update an existing record by id, 'delete' to remove a record by id.",
+        "language": "javaScript",
+        "specifyInputSchema": true,
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"action\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"get\",\n        \"create\",\n        \"update\",\n        \"delete\"\n      ],\n      \"description\": \"The database action to perform: get, create, update, or delete\"\n    },\n    \"table\": {\n      \"type\": \"string\",\n      \"enum\": [\n        \"projects\",\n        \"experiences\",\n        \"skills\",\n        \"profiles\",\n        \"certifications\",\n        \"blogs\"\n      ],\n      \"description\": \"The Supabase database table\"\n    },\n    \"data\": {\n      \"type\": \"object\",\n      \"description\": \"The JSON payload for create or update operations\"\n    },\n    \"recordId\": {\n      \"type\": \"string\",\n      \"description\": \"The ID of the record to update or delete\"\n    }\n  },\n  \"required\": [\n    \"action\",\n    \"table\"\n  ]\n}",
+        "jsCode": "const https = require('https');\nconst { URL } = require('url');\n\nfunction apiRequest(url, options, postData) {\n  options = options || {};\n  return new Promise((resolve, reject) => {\n    try {\n      const u = new URL(url);\n      const reqHeaders = Object.assign({}, options.headers || {});\n      let bodyStr = null;\n      if (postData) {\n        bodyStr = typeof postData === 'string' ? postData : JSON.stringify(postData);\n        reqHeaders['Content-Length'] = Buffer.byteLength(bodyStr);\n        if (!reqHeaders['Content-Type']) reqHeaders['Content-Type'] = 'application/json';\n      }\n      const reqOptions = {\n        hostname: u.hostname,\n        port: u.port || 443,\n        path: u.pathname + u.search,\n        method: options.method || 'GET',\n        headers: reqHeaders\n      };\n      const req = https.request(reqOptions, (res) => {\n        let raw = '';\n        res.on('data', chunk => raw += chunk);\n        res.on('end', () => {\n          resolve({\n            ok: res.statusCode >= 200 && res.statusCode < 300,\n            status: res.statusCode,\n            text: () => Promise.resolve(raw),\n            json: () => {\n              try { return Promise.resolve(JSON.parse(raw)); }\n              catch (e) { return Promise.resolve(raw); }\n            }\n          });\n        });\n      });\n      req.on('error', reject);\n      if (bodyStr) req.write(bodyStr);\n      req.end();\n    } catch (err) {\n      reject(err);\n    }\n  });\n}\n\nlet input = query;\nif (typeof input === 'string') {\n  try { input = JSON.parse(input); } catch (e) {}\n}\n\nconst action = (input.action || 'get').toLowerCase();\nconst table = (input.table || 'projects').toLowerCase();\nconst data = input.data || {};\nconst recordId = input.recordId || data.id || '';\n\nlet supabaseUrl = 'https://razkqzmzqdjbhjwyagnt.supabase.co';\nlet supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhemtxem16cWRqYmhqd3lhZ250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NTgxNTYsImV4cCI6MjEwMTMzNDE1Nn0.SQwRIVZVipCkEQFVqqxj9nNar-zCMzIiPcT96820f-U';\nlet authToken = '';\nlet serviceRoleKey = '';\n\ntry {\n  const nodeData = $('Verify Secret Token').first().json || {};\n  if (nodeData.supabaseUrl) supabaseUrl = nodeData.supabaseUrl;\n  if (nodeData.supabaseKey) supabaseKey = nodeData.supabaseKey;\n  if (nodeData.authToken) authToken = nodeData.authToken;\n} catch (e) {}\n\ntry {\n  if (typeof $env !== 'undefined') {\n    if ($env.SUPABASE_URL) supabaseUrl = $env.SUPABASE_URL;\n    if ($env.SUPABASE_ANON_KEY) supabaseKey = $env.SUPABASE_ANON_KEY;\n    if ($env.SUPABASE_SERVICE_ROLE_KEY) serviceRoleKey = $env.SUPABASE_SERVICE_ROLE_KEY;\n  }\n} catch (e) {}\n\nconst bearerToken = serviceRoleKey || authToken || supabaseKey;\nconst headers = {\n  'apikey': serviceRoleKey || supabaseKey,\n  'Authorization': 'Bearer ' + bearerToken,\n  'Content-Type': 'application/json',\n  'Prefer': 'return=representation'\n};\n\nconst baseUrl = supabaseUrl.replace(/\\\\/+$/, '') + '/rest/v1/' + table;\n\ntry {\n  if (action === 'get') {\n    const url = recordId ? (baseUrl + '?id=eq.' + encodeURIComponent(recordId)) : (baseUrl + '?select=*&limit=30');\n    const res = await apiRequest(url, { method: 'GET', headers });\n    if (!res.ok) {\n      const err = await res.text();\n      return JSON.stringify({ error: 'Supabase GET failed (' + res.status + '): ' + err });\n    }\n    const list = await res.json();\n    return JSON.stringify({ success: true, count: Array.isArray(list) ? list.length : 1, data: list });\n  }\n\n  if (action === 'create') {\n    const prefix = table === 'projects' ? 'proj_' : table === 'experiences' ? 'exp_' : table === 'skills' ? 'skill_' : table === 'blogs' ? 'blog_' : 'rec_';\n    const payload = Object.assign({}, data);\n    if (!payload.id) {\n      payload.id = prefix + Date.now();\n    }\n    if (table === 'projects') {\n      if (!payload.slug) {\n        payload.slug = (payload.title || 'project').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || ('proj-' + Date.now());\n      }\n      if (!payload.short_description) payload.short_description = payload.full_description || payload.title || '';\n      if (!payload.full_description) payload.full_description = payload.short_description || '';\n      if (!Array.isArray(payload.technologies)) {\n        payload.technologies = typeof payload.technologies === 'string' ? payload.technologies.split(',').map(t => t.trim()) : [];\n      }\n      if (!payload.completion_date) payload.completion_date = new Date().toISOString().slice(0, 7);\n      if (!payload.status) payload.status = 'completed';\n    } else if (table === 'experiences') {\n      if (!Array.isArray(payload.responsibilities)) payload.responsibilities = [];\n      if (!Array.isArray(payload.achievements)) payload.achievements = [];\n      if (!Array.isArray(payload.technologies)) payload.technologies = [];\n      if (!payload.employment_type) payload.employment_type = 'Full-time';\n    } else if (table === 'skills') {\n      if (typeof payload.proficiency !== 'number') payload.proficiency = 85;\n      if (!payload.category) payload.category = 'DevOps & Cloud';\n    }\n\n    const res = await apiRequest(baseUrl, { method: 'POST', headers }, payload);\n    if (!res.ok) {\n      const err = await res.text();\n      return JSON.stringify({ error: 'Supabase insert failed (' + res.status + '): ' + err });\n    }\n    const created = await res.json();\n    return JSON.stringify({ success: true, action: 'CREATE', table, recordId: payload.id, summary: payload.title || payload.company || payload.name || payload.id, created });\n  }\n\n  if (action === 'update') {\n    if (!recordId) return JSON.stringify({ error: 'recordId is required for update' });\n    const updatePayload = Object.assign({}, data, { updated_at: new Date().toISOString() });\n    const res = await apiRequest(baseUrl + '?id=eq.' + encodeURIComponent(recordId), { method: 'PATCH', headers }, updatePayload);\n    if (!res.ok) {\n      const err = await res.text();\n      return JSON.stringify({ error: 'Supabase update failed (' + res.status + '): ' + err });\n    }\n    const updated = await res.json();\n    return JSON.stringify({ success: true, action: 'UPDATE', table, recordId, summary: updatePayload.title || updatePayload.company || updatePayload.name || recordId, updated });\n  }\n\n  if (action === 'delete') {\n    if (!recordId) return JSON.stringify({ error: 'recordId is required for delete' });\n    const res = await apiRequest(baseUrl + '?id=eq.' + encodeURIComponent(recordId), { method: 'DELETE', headers });\n    if (!res.ok) {\n      const err = await res.text();\n      return JSON.stringify({ error: 'Supabase delete failed (' + res.status + '): ' + err });\n    }\n    return JSON.stringify({ success: true, action: 'DELETE', table, recordId, summary: 'Deleted record ' + recordId + ' from ' + table });\n  }\n\n  return JSON.stringify({ error: 'Unknown action: ' + action });\n} catch (e) {\n  return JSON.stringify({ error: e.message || String(e), stack: e.stack });\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -200
+      ],
+      "id": "manage-portfolio-tool",
+      "name": "Manage Portfolio Tool"
     },
     {
       "parameters": {
         "promptType": "define",
         "text": "={{ $json.message }}",
-        "hasOutputParser": false,
         "options": {
-          "systemMessage": "You are Orven Casido's Senior DevOps & Full-Stack Portfolio Assistant. Your role is to intelligently manage his portfolio database stored in Supabase.\n\nYou have access to database tools:\n- get_full_context: Query existing profile, experiences, projects, and skills.\n- manage_experience: Add, edit, or remove career timeline items.\n- manage_project: Add, edit, or remove showcase projects.\n- manage_skill: Add or adjust proficiency for technical skills.\n- update_profile: Update title, biography, or location.\n\nRules:\n1. Always inspect existing context before modifying or deleting items.\n2. When making updates or additions, provide clear confirmations.\n3. Return a clean conversational answer, and record actions performed in the structured actions list."
+          "systemMessage": "You are Orven Casido's Senior DevOps & Full-Stack Portfolio Assistant. Your role is to intelligently manage his portfolio database stored in Supabase.\n\nCRITICAL WORKFLOW RULES:\n1. You have the 'manage_portfolio' tool connected to his live Supabase database.\n2. Whenever the user asks to query, add, edit, or remove portfolio items (projects, experiences, skills, blogs, certifications, or profile):\n   - You MUST call the 'manage_portfolio' tool.\n   - For adding a project: call manage_portfolio with action='create', table='projects', and provide title, short_description, full_description, technologies, github_url, etc.\n   - For adding an experience: call manage_portfolio with action='create', table='experiences', and provide company, position, employment_type, start_date, etc.\n   - For adding a skill: call manage_portfolio with action='create', table='skills', and provide name, category, proficiency.\n   - For querying existing items: call manage_portfolio with action='get', table=...\n3. NEVER claim you have added, updated, or deleted anything unless you have successfully called the 'manage_portfolio' tool and received a success confirmation from it!\n4. If the tool returns an error, explain the error clearly to the user.\n5. In your final reply, clearly confirm the item name and table that was created or updated."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
-      "position": [460, 0],
-      "id": "ai-agent",
+      "position": [
+        464,
+        0
+      ],
+      "id": "portfolio-ai-agent",
       "name": "Portfolio AI Agent"
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.0-flash",
+        "modelName": "models/gemini-3.1-flash-lite",
         "options": {
           "temperature": 0.2
         }
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
-      "position": [420, 220],
+      "position": [
+        432,
+        224
+      ],
       "id": "gemini-model",
       "name": "Google Gemini Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "google-ai-studio-gemini",
-          "name": "Google AI Studio API Key"
+          "id": "O5PTHZ1pquVHuvXw",
+          "name": "Google Gemini(PaLM) Api account"
         }
       }
     },
@@ -66,19 +97,25 @@
       },
       "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
       "typeVersion": 1.3,
-      "position": [560, 220],
+      "position": [
+        560,
+        224
+      ],
       "id": "session-memory",
       "name": "Session Memory"
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n  \"sessionId\": \"{{ $('Verify Secret Token').first().json.sessionId }}\",\n  \"reply\": {{ JSON.stringify($json.output || $json.text || 'Action completed successfully.') }},\n  \"actions\": {{ JSON.stringify($json.actions || []) }},\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
+        "responseBody": "={\n  \"sessionId\": \"{{ $('Verify Secret Token').first().json.sessionId }}\",\n  \"reply\": {{ JSON.stringify($json.output || $json.text || 'Action completed successfully.') }},\n  \"actions\": {{ (() => {\n    try {\n      const toolRuns = $('Manage Portfolio Tool').all();\n      const actions = [];\n      for (const item of toolRuns) {\n        try {\n          const resp = typeof item.json.response === 'string' ? JSON.parse(item.json.response) : item.json.response;\n          if (resp && resp.success && resp.action && resp.action !== 'GET') {\n            actions.push({\n              type: resp.action,\n              table: resp.table,\n              recordId: resp.recordId,\n              summary: resp.summary || resp.recordId\n            });\n          }\n        } catch (e) {}\n      }\n      return JSON.stringify(actions);\n    } catch (e) {\n      return JSON.stringify([]);\n    }\n  })() }},\n  \"timestamp\": \"{{ new Date().toISOString() }}\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [780, 0],
+      "position": [
+        784,
+        0
+      ],
       "id": "respond-webhook",
       "name": "Respond to Webhook"
     }
@@ -128,6 +165,17 @@
         ]
       ]
     },
+    "Manage Portfolio Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Portfolio AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Portfolio AI Agent": {
       "main": [
         [
@@ -142,5 +190,7 @@
   },
   "settings": {
     "executionOrder": "v1"
-  }
+  },
+  "id": "ObQunx1XvjBN2K02",
+  "active": true
 }

@@ -286,6 +286,15 @@ export async function sendMessageToN8N(
     );
   }
 
+  let authToken = '';
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      authToken = sessionData.session?.access_token || '';
+    } catch {}
+  }
+
+  const env = (import.meta as any).env || {};
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
   };
@@ -293,10 +302,16 @@ export async function sendMessageToN8N(
   if (adminSecret) {
     headers['x-admin-token'] = adminSecret;
   }
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
 
   const payload = {
     sessionId,
     message: userMessage,
+    authToken,
+    supabaseUrl: env.VITE_SUPABASE_URL || 'https://razkqzmzqdjbhjwyagnt.supabase.co',
+    supabaseKey: env.VITE_SUPABASE_ANON_KEY || '',
     timestamp: new Date().toISOString(),
   };
 
@@ -315,10 +330,16 @@ export async function sendMessageToN8N(
       throw new Error(`n8n responded with status ${response.status}: ${errorText || response.statusText}`);
     }
 
-    const data = await response.json();
+    const rawText = await response.text();
+    let data: any = {};
+    try {
+      data = rawText ? JSON.parse(rawText) : {};
+    } catch {
+      data = { reply: rawText };
+    }
 
     // Standardize n8n response format
-    const reply = data.reply || data.output || data.message || (typeof data === 'string' ? data : JSON.stringify(data));
+    const reply = data.reply || data.output || data.message || (typeof data === 'string' ? data : (rawText || 'Message received.'));
     const actions: AIAction[] = Array.isArray(data.actions) ? data.actions : [];
 
     return {
@@ -351,18 +372,27 @@ export async function checkTunnelHealth(): Promise<{
   }
 
   try {
-    // Attempt an OPTIONS or HEAD or lightweight test
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 4000);
+    const timeout = setTimeout(() => controller.abort(), 5000);
 
-    const res = await fetch(webhookUrl, {
-      method: 'OPTIONS',
+    let healthUrl = webhookUrl;
+    try {
+      const parsed = new URL(webhookUrl);
+      healthUrl = `${parsed.origin}/healthz`;
+    } catch {
+      healthUrl = webhookUrl;
+    }
+
+    // Ping healthz endpoint with no-cors so cross-origin checks succeed without preflight issues
+    const res = await fetch(healthUrl, {
+      method: 'GET',
+      mode: 'no-cors',
       signal: controller.signal,
     }).catch(() => null);
 
     clearTimeout(timeout);
 
-    if (res && (res.status < 500 || res.status === 405 || res.status === 401)) {
+    if (res) {
       return {
         status: 'connected',
         message: 'Connected via Cloudflare Tunnel to local n8n.',

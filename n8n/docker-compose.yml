@@ -13,8 +13,16 @@ services:
       - NODE_ENV=production
       - GENERIC_TIMEZONE=Asia/Manila
       - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false
+      - NODE_FUNCTION_ALLOW_BUILTIN=*
+      - NODE_FUNCTION_ALLOW_EXTERNAL=*
       # Secret matched with VITE_N8N_ADMIN_SECRET in your React CMS .env
       - ORVEN_ADMIN_SECRET=secret-admin-token-12345
+      # Supabase configuration for Portfolio Tool
+      - SUPABASE_URL=https://razkqzmzqdjbhjwyagnt.supabase.co
+      - SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhemtxem16cWRqYmhqd3lhZ250Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3NTgxNTYsImV4cCI6MjEwMTMzNDE1Nn0.SQwRIVZVipCkEQFVqqxj9nNar-zCMzIiPcT96820f-U
+      # (Optional) Paste your Supabase Service Role Secret Key here to grant n8n admin write permissions without needing user tokens:
+      - SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJhemtxem16cWRqYmhqd3lhZ250Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NTc1ODE1NiwiZXhwIjoyMTAxMzM0MTU2fQ.RuM5h3grYr6isygXy85cFIVXcDdG6EwKDdTwyFNSP9A
     volumes:
       - n8n_data:/home/node/.n8n
 
