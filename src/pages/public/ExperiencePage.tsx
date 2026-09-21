@@ -33,7 +33,7 @@ export const ExperiencePage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
-        title="My Journey, My Career"
+        title="My Tech Journey"
         description="From internships to production environments—here's how I've grown as a DevOps and System Architect."
       />
 

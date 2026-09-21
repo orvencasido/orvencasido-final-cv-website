@@ -45,7 +45,7 @@ export const ProjectsPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
-        title="Shipped Projects Im Proud of!"
+        title="Shipped Projects"
         description="Projects, experiments, and ideas I've brought to life—built to learn, solve problems, and occasionally break things."
       />
 

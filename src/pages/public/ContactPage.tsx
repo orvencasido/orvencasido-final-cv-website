@@ -59,7 +59,7 @@ export const ContactPage: React.FC = () => {
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
       <SectionHeader
-        title="Let's Connect and Conquer!"
+        title="Let's Connect!"
         description="Interested in collaborating, hiring for cloud & software engineering, or asking a question? Send a message below."
       />
 

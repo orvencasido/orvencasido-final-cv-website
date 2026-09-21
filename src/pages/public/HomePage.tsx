@@ -155,10 +155,10 @@ export const HomePage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-6 gap-4">
                   <div className="space-y-1.5">
                     <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
-                      Always Building
+                      Deployed Projects
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
-                      Shipped Projects
+                      Featured Works
                     </h2>
                   </div>
                   <Link
@@ -218,9 +218,8 @@ export const HomePage: React.FC = () => {
             {/* CTA Banner Section */}
             {showContactCta && (
               <div
-                className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-3xl p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${
-                  showFeaturedProjects ? 'mt-12' : ''
-                }`}
+                className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-3xl p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${showFeaturedProjects ? 'mt-12' : ''
+                  }`}
               >
                 <div className="relative z-10 max-w-xl space-y-4">
                   <h2 className="text-3xl sm:text-4xl font-extrabold text-beige-50 tracking-tight leading-tight">
