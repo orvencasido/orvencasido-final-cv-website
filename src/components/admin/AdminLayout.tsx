@@ -19,6 +19,7 @@ import {
   ExternalLink,
   Menu,
   X,
+  Bot,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { ConfirmModal } from '../ui/Modal';
@@ -48,6 +49,7 @@ export const AdminLayout: React.FC = () => {
 
   const navItems = [
     { label: 'Overview', path: '/orven/dashboard', icon: LayoutDashboard, exact: true },
+    { label: 'AI Assistant', path: '/orven/dashboard/ai', icon: Bot },
     { label: 'Home Content', path: '/orven/dashboard/home', icon: Home },
     { label: 'Tech Stack & Icons', path: '/orven/dashboard/tech-stack', icon: Cpu },
     { label: 'Blogs', path: '/orven/dashboard/blogs', icon: FileText },

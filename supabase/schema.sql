@@ -217,6 +217,24 @@ create table if not exists public.admin_login_limits (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.ai_chat_sessions (
+  id text primary key,
+  title text not null default 'New Conversation',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.ai_chat_messages (
+  id text primary key,
+  session_id text not null references public.ai_chat_sessions(id) on delete cascade,
+  role text not null check (role in ('user', 'assistant', 'system')),
+  content text not null,
+  actions jsonb default '[]'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_ai_chat_messages_session on public.ai_chat_messages(session_id, created_at asc);
+
 create or replace function public.consume_resume_download_limit(
   p_identifier text,
   p_max_attempts integer default 20,
@@ -322,6 +340,10 @@ drop trigger if exists set_site_settings_updated_at on public.site_settings;
 create trigger set_site_settings_updated_at before update on public.site_settings
 for each row execute function public.set_updated_at();
 
+drop trigger if exists set_ai_chat_sessions_updated_at on public.ai_chat_sessions;
+create trigger set_ai_chat_sessions_updated_at before update on public.ai_chat_sessions
+for each row execute function public.set_updated_at();
+
 alter table public.profiles enable row level security;
 alter table public.social_links enable row level security;
 alter table public.skills enable row level security;
@@ -335,6 +357,8 @@ alter table public.contact_messages enable row level security;
 alter table public.site_settings enable row level security;
 alter table public.resume_download_limits enable row level security;
 alter table public.admin_login_limits enable row level security;
+alter table public.ai_chat_sessions enable row level security;
+alter table public.ai_chat_messages enable row level security;
 
 drop policy if exists "Public can read profiles" on public.profiles;
 drop policy if exists "Public can read visible social links" on public.social_links;
@@ -360,6 +384,8 @@ drop policy if exists "Authenticated admins can manage contact messages" on publ
 drop policy if exists "Authenticated admins can manage settings" on public.site_settings;
 drop policy if exists "Authenticated admins can read resume limits" on public.resume_download_limits;
 drop policy if exists "Authenticated admins can read admin login limits" on public.admin_login_limits;
+drop policy if exists "Authenticated admins can manage chat sessions" on public.ai_chat_sessions;
+drop policy if exists "Authenticated admins can manage chat messages" on public.ai_chat_messages;
 
 create policy "Public can read profiles" on public.profiles for select using (true);
 create policy "Public can read visible social links" on public.social_links for select using (is_visible = true or auth.role() = 'authenticated');
@@ -386,6 +412,8 @@ create policy "Authenticated admins can manage contact messages" on public.conta
 create policy "Authenticated admins can manage settings" on public.site_settings for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 create policy "Authenticated admins can read resume limits" on public.resume_download_limits for select using (auth.role() = 'authenticated');
 create policy "Authenticated admins can read admin login limits" on public.admin_login_limits for select using (auth.role() = 'authenticated');
+create policy "Authenticated admins can manage chat sessions" on public.ai_chat_sessions for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
+create policy "Authenticated admins can manage chat messages" on public.ai_chat_messages for all using (auth.role() = 'authenticated') with check (auth.role() = 'authenticated');
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values (

@@ -1,0 +1,17 @@
+1. redirect namecheap to cloudflare servers 
+2. install cloudflared 
+3. cloudflared tunnel login
+4. cloudflared tunnel create n8n-orven
+5. copy tunnel id
+6. Create configuration file ~/.cloudflared/config.yml
+    tunnel: <TUNNEL_UUID>                                                    
+    credentials-file: /home/orven/.cloudflared/<TUNNEL_UUID>.json            
+                                                                             
+    ingress:                                                                 
+      - hostname: n8n.yourdomain.com                                         
+        service: http://localhost:5678                                       
+      - service: http_status:404 
+7. sudo cloudflared service install
+8. sudo systemctl enable --now cloudflared
+9. sudo systemctl status cloudflared.service
+10. sudo systemctl stop cloudflared.service
