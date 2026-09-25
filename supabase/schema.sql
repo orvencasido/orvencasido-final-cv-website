@@ -186,6 +186,8 @@ create table if not exists public.site_settings (
   show_featured_projects boolean not null default true,
   show_featured_blogs boolean not null default true,
   show_contact_cta boolean not null default true,
+  floating_video_url text default '',
+  floating_video_enabled boolean not null default true,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -202,6 +204,12 @@ add column if not exists show_featured_blogs boolean not null default true;
 
 alter table public.site_settings
 add column if not exists show_contact_cta boolean not null default true;
+
+alter table public.site_settings
+add column if not exists floating_video_url text default '';
+
+alter table public.site_settings
+add column if not exists floating_video_enabled boolean not null default true;
 
 create table if not exists public.resume_download_limits (
   identifier text primary key,

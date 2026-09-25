@@ -170,6 +170,8 @@ export interface SiteSettings {
   show_featured_projects?: boolean;
   show_featured_blogs?: boolean;
   show_contact_cta?: boolean;
+  floating_video_url?: string;
+  floating_video_enabled?: boolean;
   created_at: string;
   updated_at: string;
 }
