@@ -6,6 +6,8 @@ import { Blog } from '../../types';
 import { ShimmerBlock } from '../../components/ui/ShimmerSkeleton';
 import { EmptyState } from '../../components/ui/CommonUI';
 import { useToast } from '../../components/ui/Toast';
+import { SEOHead } from '../../seo/SEOHead';
+import { getBlogPostingSchema } from '../../seo/structuredData';
 
 export const BlogDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -60,6 +62,7 @@ export const BlogDetailPage: React.FC = () => {
   if (!blog) {
     return (
       <div className="max-w-4xl mx-auto px-6 md:px-10 py-20 animate-in fade-in duration-300">
+        <SEOHead title="Article Not Found | Orven Casido" noindex={true} />
         <EmptyState
           title="Article Not Found"
           description="The requested blog post could not be located or has been moved."
@@ -78,6 +81,15 @@ export const BlogDetailPage: React.FC = () => {
 
   return (
     <article className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead
+        title={`${blog.title} | Orven Casido`}
+        description={blog.summary}
+        canonicalPath={`/blogs/${blog.slug}`}
+        ogImage={blog.cover_image_url}
+        ogType="article"
+        keywords={blog.tags}
+        jsonLd={getBlogPostingSchema(blog)}
+      />
       {/* Back button */}
       <button
         onClick={() => navigate('/blogs')}
@@ -130,7 +142,7 @@ export const BlogDetailPage: React.FC = () => {
         <div className="rounded-3xl overflow-hidden border border-beige-300 aspect-video bg-beige-200 shadow-md">
           <img
             src={blog.cover_image_url}
-            alt={blog.title}
+            alt={`${blog.title} - Technical article by Orven Casido`}
             className="w-full h-full object-cover"
           />
         </div>

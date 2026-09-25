@@ -1,10 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const NotFoundPage: React.FC = () => {
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 py-24 space-y-8">
+      <SEOHead {...PAGE_SEO_CONFIG.notFound} />
       <div className="w-20 h-20 rounded-3xl bg-matcha-100 flex items-center justify-center text-matcha-950 font-mono text-2xl font-extrabold shadow-2xs">
         404
       </div>

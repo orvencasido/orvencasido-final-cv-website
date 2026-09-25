@@ -6,6 +6,8 @@ import { Lock, Mail, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
 import { loginSchema, LoginFormData } from '../../lib/schemas';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/ui/Toast';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const AdminLoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -51,6 +53,7 @@ export const AdminLoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-beige-100 text-matcha-950 flex items-center justify-center p-6 relative overflow-hidden">
+      <SEOHead {...PAGE_SEO_CONFIG.admin} />
       {/* Background Accent */}
       <div className="absolute -top-40 -left-40 w-96 h-96 bg-matcha-200/40 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-matcha-100 rounded-full blur-3xl pointer-events-none" />

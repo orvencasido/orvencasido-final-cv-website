@@ -5,6 +5,8 @@ import { getBlogs } from '../../lib/services';
 import { Blog } from '../../types';
 import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
 import { BlogListSkeleton } from '../../components/ui/ShimmerSkeleton';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const BlogsPage: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -49,6 +51,8 @@ export const BlogsPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead {...PAGE_SEO_CONFIG.blogs} />
+
       <SectionHeader
         title="Im Not Good at Words"
         description="Things I've learned and want to share with the world. Whether it's a new technology, a lesson from a project, or a challenge I overcame, I hope you'll learn something alongside me."
