@@ -35,10 +35,10 @@ export const blogSchema = z.object({
 export type BlogFormData = z.infer<typeof blogSchema>;
 
 export const projectSchema = z.object({
-  title: z.string().min(2, 'Title is required'),
-  slug: z.string().min(2, 'Slug is required'),
-  short_description: z.string().min(10, 'Short description is required'),
-  full_description: z.string().min(20, 'Full description is required'),
+  title: z.string().min(2, 'Title must be at least 2 characters'),
+  slug: z.string().min(2, 'Slug must be at least 2 characters'),
+  short_description: z.string().min(10, 'Short description must be at least 10 characters'),
+  full_description: z.string().min(20, 'Full description must be at least 20 characters'),
   cover_image_url: imageSourceSchema,
   technologies: z.array(z.string()).min(1, 'Select or add at least one technology'),
   github_url: z.string(),

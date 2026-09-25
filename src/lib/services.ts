@@ -142,6 +142,11 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at' |
   const newProject: Project = {
     ...project,
     id: `proj_${Date.now()}`,
+    cover_image_url: project.cover_image_url || '',
+    technologies: Array.isArray(project.technologies) ? project.technologies : [],
+    github_url: project.github_url || '',
+    live_url: project.live_url || '',
+    sort_order: typeof project.sort_order === 'number' ? project.sort_order : 0,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
@@ -154,9 +159,17 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at' |
 
 export async function updateProject(id: string, projectData: Partial<Project>): Promise<Project> {
   const client = requireSupabase();
+  const payload: Record<string, unknown> = {
+    ...projectData,
+    updated_at: new Date().toISOString(),
+  };
+  if (projectData.cover_image_url !== undefined) payload.cover_image_url = projectData.cover_image_url || '';
+  if (projectData.github_url !== undefined) payload.github_url = projectData.github_url || '';
+  if (projectData.live_url !== undefined) payload.live_url = projectData.live_url || '';
+
   const { data, error } = await client
     .from('projects')
-    .update({ ...projectData, updated_at: new Date().toISOString() })
+    .update(payload)
     .eq('id', id)
     .select()
     .single();
