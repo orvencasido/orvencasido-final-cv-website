@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { GraduationCap, MapPin, Calendar, Award, BookOpen, Users } from 'lucide-react';
 import { getEducation } from '../../lib/services';
 import { Education } from '../../types';
-import { SectionHeader, LoadingSkeleton, EmptyState } from '../../components/ui/CommonUI';
+import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
+import { TimelineSkeleton } from '../../components/ui/ShimmerSkeleton';
 
 export const EducationPage: React.FC = () => {
   const [educationList, setEducationList] = useState<Education[]>([]);
@@ -24,14 +25,18 @@ export const EducationPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={2} />
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+        <SectionHeader
+          title="I Studied Computers"
+          description="Ever since I was young, I've been fascinated by technology. That curiosity led me to pursue a career in tech—and I'm just getting started."
+        />
+        <TimelineSkeleton count={2} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
       <SectionHeader
         title="I Studied Computers"
         description="Ever since I was young, I've been fascinated by technology. That curiosity led me to pursue a career in tech—and I'm just getting started."

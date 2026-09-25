@@ -3,7 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Clock, User, Share2 } from 'lucide-react';
 import { getBlogBySlug } from '../../lib/services';
 import { Blog } from '../../types';
-import { LoadingSkeleton, EmptyState } from '../../components/ui/CommonUI';
+import { ShimmerBlock } from '../../components/ui/ShimmerSkeleton';
+import { EmptyState } from '../../components/ui/CommonUI';
 import { useToast } from '../../components/ui/Toast';
 
 export const BlogDetailPage: React.FC = () => {
@@ -35,15 +36,30 @@ export const BlogDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-16 space-y-6">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-8 animate-in fade-in duration-200">
+        <ShimmerBlock className="w-32 h-6 rounded-full mb-6" />
+        <div className="space-y-4">
+          <div className="flex gap-2">
+            <ShimmerBlock className="w-20 h-6 rounded-full" />
+            <ShimmerBlock className="w-24 h-6 rounded-full" />
+          </div>
+          <ShimmerBlock className="w-3/4 h-12 rounded-xl" />
+          <ShimmerBlock className="w-1/2 h-5 rounded-lg" />
+        </div>
+        <ShimmerBlock className="w-full aspect-video rounded-3xl" />
+        <div className="space-y-3 pt-6">
+          <ShimmerBlock className="w-full h-4 rounded-md" />
+          <ShimmerBlock className="w-full h-4 rounded-md" />
+          <ShimmerBlock className="w-5/6 h-4 rounded-md" />
+          <ShimmerBlock className="w-2/3 h-4 rounded-md" />
+        </div>
       </div>
     );
   }
 
   if (!blog) {
     return (
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-20">
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-20 animate-in fade-in duration-300">
         <EmptyState
           title="Article Not Found"
           description="The requested blog post could not be located or has been moved."
@@ -61,7 +77,7 @@ export const BlogDetailPage: React.FC = () => {
   }
 
   return (
-    <article className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <article className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
       {/* Back button */}
       <button
         onClick={() => navigate('/blogs')}
