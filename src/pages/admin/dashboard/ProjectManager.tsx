@@ -8,6 +8,7 @@ import {
   Trash2,
   Eye,
   Star,
+  RefreshCw,
 } from 'lucide-react';
 import { projectSchema, ProjectFormData } from '../../../lib/schemas';
 import { getProjects, createProject, updateProject, deleteProject } from '../../../lib/services';
@@ -23,6 +24,7 @@ export const ProjectManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [techInput, setTechInput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -41,7 +43,7 @@ export const ProjectManager: React.FC = () => {
       technologies: [],
       status: 'completed',
       is_featured: false,
-      completion_date: '2026-03',
+      completion_date: new Date().toISOString().slice(0, 7),
       sort_order: 1,
     },
   });
@@ -67,6 +69,7 @@ export const ProjectManager: React.FC = () => {
 
   const openCreateModal = () => {
     setEditingProject(null);
+    setTechInput('');
     reset({
       title: '',
       slug: '',
@@ -77,35 +80,37 @@ export const ProjectManager: React.FC = () => {
       github_url: '',
       live_url: '',
       status: 'completed',
-      completion_date: '2026-03',
+      completion_date: new Date().toISOString().slice(0, 7),
       is_featured: false,
-      sort_order: 1,
+      sort_order: projects.length + 1,
     });
     setIsModalOpen(true);
   };
 
   const openEditModal = (proj: Project) => {
     setEditingProject(proj);
+    setTechInput('');
     reset({
       title: proj.title,
       slug: proj.slug,
       short_description: proj.short_description,
       full_description: proj.full_description,
-      cover_image_url: proj.cover_image_url,
-      technologies: proj.technologies,
-      github_url: proj.github_url,
-      live_url: proj.live_url,
+      cover_image_url: proj.cover_image_url || '',
+      technologies: proj.technologies || [],
+      github_url: proj.github_url || '',
+      live_url: proj.live_url || '',
       status: proj.status,
       completion_date: proj.completion_date,
-      is_featured: proj.is_featured,
-      sort_order: proj.sort_order,
+      is_featured: proj.is_featured || false,
+      sort_order: proj.sort_order ?? 0,
     });
     setIsModalOpen(true);
   };
 
   const handleAddTech = () => {
-    if (techInput.trim() && !watchTechs.includes(techInput.trim())) {
-      setValue('technologies', [...watchTechs, techInput.trim()]);
+    const trimmed = techInput.trim();
+    if (trimmed && !watchTechs.includes(trimmed)) {
+      setValue('technologies', [...watchTechs, trimmed], { shouldValidate: true });
       setTechInput('');
     }
   };
@@ -113,24 +118,40 @@ export const ProjectManager: React.FC = () => {
   const handleRemoveTech = (item: string) => {
     setValue(
       'technologies',
-      watchTechs.filter((t) => t !== item)
+      watchTechs.filter((t) => t !== item),
+      { shouldValidate: true }
     );
   };
 
   const onSubmit = async (data: ProjectFormData) => {
+    setIsSubmitting(true);
     try {
+      const payload: ProjectFormData = {
+        ...data,
+        technologies:
+          techInput.trim() && !data.technologies.includes(techInput.trim())
+            ? [...data.technologies, techInput.trim()]
+            : data.technologies,
+        cover_image_url: data.cover_image_url || '',
+        github_url: data.github_url || '',
+        live_url: data.live_url || '',
+        sort_order: typeof data.sort_order === 'number' ? data.sort_order : 0,
+      };
+
       if (editingProject) {
-        await updateProject(editingProject.id, data);
+        await updateProject(editingProject.id, payload);
         showToast('Project updated successfully!', 'success');
       } else {
-        await createProject(data);
+        await createProject(payload);
         showToast('New project created!', 'success');
       }
       setIsModalOpen(false);
-      loadProjects();
-    } catch (err) {
+      await loadProjects();
+    } catch (err: any) {
       console.error('Error saving project:', err);
-      showToast('Error saving project', 'error');
+      showToast('Error saving project', 'error', err?.message || 'Failed to save project');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -299,10 +320,25 @@ export const ProjectManager: React.FC = () => {
         title={editingProject ? 'Edit Project' : 'Add New Project'}
         maxWidth="2xl"
       >
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
+        <form
+          onSubmit={handleSubmit(onSubmit, (formErrors) => {
+            console.error('Project form validation errors:', formErrors);
+            const firstErrorMessage = Object.values(formErrors)[0]?.message;
+            showToast(
+              'Please check the form for errors',
+              'error',
+              firstErrorMessage ? String(firstErrorMessage) : 'Please fill in all required fields.'
+            );
+          })}
+          className="space-y-5 text-xs sm:text-sm"
+        >
+          <input type="hidden" {...register('sort_order', { valueAsNumber: true })} />
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Project Title</label>
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                Project Title <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 {...register('title')}
@@ -314,7 +350,8 @@ export const ProjectManager: React.FC = () => {
                       e.target.value
                         .toLowerCase()
                         .replace(/[^a-z0-9]+/g, '-')
-                        .replace(/(^-|-$)+/g, '')
+                        .replace(/(^-|-$)+/g, ''),
+                      { shouldValidate: true }
                     );
                   }
                 }}
@@ -324,7 +361,9 @@ export const ProjectManager: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Slug</label>
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                Slug <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 {...register('slug')}
@@ -346,21 +385,29 @@ export const ProjectManager: React.FC = () => {
                 <option value="maintained">Actively Maintained</option>
                 <option value="archived">Archived</option>
               </select>
+              {errors.status && <p className="text-xs text-red-600 font-medium">{errors.status.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Completion Date</label>
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                Completion Date <span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="e.g. 2026-03"
                 {...register('completion_date')}
                 className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
+              {errors.completion_date && (
+                <p className="text-xs text-red-600 font-medium">{errors.completion_date.message}</p>
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Short Summary</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              Short Summary <span className="text-red-500">* (min 10 chars)</span>
+            </label>
             <textarea
               rows={2}
               {...register('short_description')}
@@ -372,7 +419,9 @@ export const ProjectManager: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Full Description</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              Full Description <span className="text-red-500">* (min 20 chars)</span>
+            </label>
             <textarea
               rows={4}
               {...register('full_description')}
@@ -391,6 +440,7 @@ export const ProjectManager: React.FC = () => {
                 {...register('github_url')}
                 className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
+              {errors.github_url && <p className="text-xs text-red-600 font-medium">{errors.github_url.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -400,6 +450,7 @@ export const ProjectManager: React.FC = () => {
                 {...register('live_url')}
                 className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
+              {errors.live_url && <p className="text-xs text-red-600 font-medium">{errors.live_url.message}</p>}
             </div>
           </div>
 
@@ -414,13 +465,22 @@ export const ProjectManager: React.FC = () => {
 
           {/* Tech stack tags */}
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Technologies Used</label>
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              Technologies Used <span className="text-red-500">*</span>
+            </label>
             <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={techInput}
                 onChange={(e) => setTechInput(e.target.value)}
-                placeholder="Add technology (e.g. Kubernetes)..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddTech();
+                  }
+                }}
+                onBlur={handleAddTech}
+                placeholder="Add technology (e.g. Kubernetes, React, Terraform)..."
                 className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none font-medium"
               />
               <button
@@ -431,6 +491,9 @@ export const ProjectManager: React.FC = () => {
                 Add Tech
               </button>
             </div>
+            {errors.technologies && (
+              <p className="text-xs text-red-600 font-medium">{errors.technologies.message}</p>
+            )}
             <div className="flex flex-wrap gap-2 pt-2">
               {watchTechs.map((t) => (
                 <span
@@ -472,9 +535,11 @@ export const ProjectManager: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs hover:bg-matcha-800 cursor-pointer shadow-xs"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-extrabold text-xs hover:bg-matcha-800 disabled:opacity-50 cursor-pointer shadow-xs transition"
             >
-              Save Project
+              {isSubmitting && <RefreshCw className="w-3.5 h-3.5 animate-spin" />}
+              {isSubmitting ? 'Saving...' : editingProject ? 'Update Project' : 'Save Project'}
             </button>
           </div>
         </form>
