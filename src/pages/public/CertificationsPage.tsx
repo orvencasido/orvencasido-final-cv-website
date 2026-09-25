@@ -4,6 +4,8 @@ import { getCertifications } from '../../lib/services';
 import { Certification } from '../../types';
 import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
 import { CertificationGridSkeleton } from '../../components/ui/ShimmerSkeleton';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const CertificationsPage: React.FC = () => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -37,6 +39,8 @@ export const CertificationsPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead {...PAGE_SEO_CONFIG.certifications} />
+
       <SectionHeader
         title="Achievements Somehow?"
         description="Technology never stands still, and neither do I. These training certificates represent my commitment to continuous growth, with more certifications to come."

@@ -5,6 +5,8 @@ import { getProjects } from '../../lib/services';
 import { Project } from '../../types';
 import { SectionHeader, EmptyState, StatusBadge } from '../../components/ui/CommonUI';
 import { ProjectGridSkeleton } from '../../components/ui/ShimmerSkeleton';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 const PAGE_SIZE = 6;
 
@@ -89,6 +91,8 @@ export const ProjectsPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead {...PAGE_SEO_CONFIG.projects} />
+
       <SectionHeader
         title="Shipped Projects"
         description="Projects, experiments, and ideas I've brought to life—built to learn, solve problems, and occasionally break things."
@@ -144,7 +148,8 @@ export const ProjectsPage: React.FC = () => {
                   {project.cover_image_url ? (
                     <img
                       src={project.cover_image_url}
-                      alt={project.title}
+                      alt={`${project.title} - DevOps project by Orven Casido`}
+                      loading="lazy"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   ) : (

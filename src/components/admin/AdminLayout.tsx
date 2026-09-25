@@ -24,6 +24,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { ConfirmModal } from '../ui/Modal';
 import { LoadingSkeleton } from '../ui/CommonUI';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const AdminLayout: React.FC = () => {
   const { user, isAuthenticated, isLoading, logout } = useAuth();
@@ -75,6 +77,7 @@ export const AdminLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen md:h-screen bg-beige-100 text-matcha-950 flex flex-col md:flex-row font-sans md:overflow-hidden">
+      <SEOHead {...PAGE_SEO_CONFIG.admin} />
       {/* Sidebar - Desktop */}
       <aside
         className={`hidden md:flex flex-col border-r border-beige-300 bg-beige-50 transition-all duration-300 sticky top-0 h-screen shrink-0 ${

@@ -7,6 +7,8 @@ import { createContactMessage, getProfile } from '../../lib/services';
 import { Profile } from '../../types';
 import { SectionHeader, StatusBadge } from '../../components/ui/CommonUI';
 import { useToast } from '../../components/ui/Toast';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const ContactPage: React.FC = () => {
   const { showToast } = useToast();
@@ -58,6 +60,8 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+      <SEOHead {...PAGE_SEO_CONFIG.contact} />
+
       <SectionHeader
         title="Let's Connect!"
         description="Interested in collaborating, hiring for cloud & software engineering, or asking a question? Send a message below."

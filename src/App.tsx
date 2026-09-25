@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './components/ui/Toast';
@@ -36,25 +36,12 @@ import { FooterManager } from './pages/admin/dashboard/FooterManager';
 import { AdminProfileManager } from './pages/admin/dashboard/AdminProfileManager';
 import { AIAssistantPage } from './pages/admin/dashboard/AIAssistantPage';
 
-const RouteTitle: React.FC = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    document.title = location.pathname.startsWith('/orven')
-      ? 'Orven Casido | CMS'
-      : 'Orven Casido | Resume';
-  }, [location.pathname]);
-
-  return null;
-};
-
 export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
           <BrowserRouter>
-            <RouteTitle />
             <Routes>
               {/* Public Portfolio Routes */}
               <Route path="/" element={<PublicLayout />}>
