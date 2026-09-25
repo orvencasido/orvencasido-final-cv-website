@@ -129,6 +129,8 @@ export const siteSettingsSchema = z.object({
   show_featured_projects: z.boolean().optional(),
   show_featured_blogs: z.boolean().optional(),
   show_contact_cta: z.boolean().optional(),
+  floating_video_url: z.string().optional(),
+  floating_video_enabled: z.boolean().optional(),
 });
 
 export type SiteSettingsFormData = z.infer<typeof siteSettingsSchema>;
