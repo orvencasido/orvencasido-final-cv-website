@@ -3,7 +3,10 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Github, Calendar, Layers, CheckCircle2 } from 'lucide-react';
 import { getProjectBySlug } from '../../lib/services';
 import { Project } from '../../types';
-import { LoadingSkeleton, EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { ShimmerBlock } from '../../components/ui/ShimmerSkeleton';
+import { SEOHead } from '../../seo/SEOHead';
+import { getProjectSchema } from '../../seo/structuredData';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,8 +31,18 @@ export const ProjectDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-8">
+        <ShimmerBlock className="h-6 w-36" rounded="rounded-xl" />
+        <div className="space-y-4">
+          <ShimmerBlock className="h-10 sm:h-12 w-3/4" rounded="rounded-2xl" />
+          <ShimmerBlock className="h-6 w-1/3" rounded="rounded-xl" />
+        </div>
+        <ShimmerBlock className="aspect-video w-full rounded-3xl" />
+        <div className="space-y-3 pt-4">
+          <ShimmerBlock className="h-4 w-full" rounded="rounded-lg" />
+          <ShimmerBlock className="h-4 w-5/6" rounded="rounded-lg" />
+          <ShimmerBlock className="h-4 w-2/3" rounded="rounded-lg" />
+        </div>
       </div>
     );
   }
@@ -37,6 +50,7 @@ export const ProjectDetailPage: React.FC = () => {
   if (!project) {
     return (
       <div className="max-w-4xl mx-auto px-6 md:px-10 py-20">
+        <SEOHead title="Project Not Found | Orven Casido" noindex={true} />
         <EmptyState
           title="Project Not Found"
           description="The requested project case study could not be located."
@@ -54,7 +68,17 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead
+        title={`${project.title} | Orven Casido Case Study`}
+        description={project.short_description}
+        canonicalPath={`/projects/${project.slug}`}
+        ogImage={project.cover_image_url}
+        ogType="article"
+        keywords={project.technologies}
+        jsonLd={getProjectSchema(project)}
+      />
+
       {/* Back button */}
       <button
         onClick={() => navigate('/projects')}
@@ -110,7 +134,7 @@ export const ProjectDetailPage: React.FC = () => {
           <div className="rounded-3xl overflow-hidden border border-beige-300 aspect-video bg-beige-200 shadow-md">
             <img
               src={project.cover_image_url}
-              alt={project.title}
+              alt={`${project.title} - Cloud & DevOps project by Orven Casido`}
               className="w-full h-full object-cover"
             />
           </div>

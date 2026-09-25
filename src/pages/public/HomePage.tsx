@@ -6,8 +6,10 @@ import {
 } from 'lucide-react';
 import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings } from '../../lib/services';
 import { Profile, Project, Blog, Skill, SiteSettings } from '../../types';
-import { LoadingSkeleton } from '../../components/ui/CommonUI';
+import { HeroSkeleton, ProjectGridSkeleton } from '../../components/ui/ShimmerSkeleton';
 import { getTechIconUrl } from '../../lib/techIcons';
+import { SEOHead } from '../../seo/SEOHead';
+import { getProfilePageSchema } from '../../seo/structuredData';
 
 export const HomePage: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -45,8 +47,11 @@ export const HomePage: React.FC = () => {
 
   if (loading || !profile) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={4} />
+      <div className="w-full flex flex-col min-h-screen">
+        <HeroSkeleton />
+        <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 w-full space-y-12">
+          <ProjectGridSkeleton count={2} />
+        </div>
       </div>
     );
   }
@@ -63,7 +68,28 @@ export const HomePage: React.FC = () => {
     .join('') || 'OC';
 
   return (
-    <div className="w-full flex flex-col min-h-screen">
+    <div className="w-full flex flex-col min-h-screen animate-in fade-in duration-300">
+      <SEOHead
+        title={siteSettings?.website_title || 'Orven Casido | Senior DevOps & Cloud Engineer'}
+        description={
+          siteSettings?.website_description ||
+          'Official portfolio of Orven Casido, Senior DevOps & Cloud Engineer specializing in Kubernetes, CI/CD automation, Cloud Architecture (AWS/Azure), Docker, IaC (Terraform), and DevSecOps.'
+        }
+        keywords={
+          siteSettings?.seo_keywords
+            ? siteSettings.seo_keywords.split(',').map((k) => k.trim())
+            : undefined
+        }
+        canonicalPath="/"
+        jsonLd={getProfilePageSchema({
+          name: profile.full_name,
+          jobTitle: profile.professional_title,
+          email: profile.email,
+          location: profile.location,
+          image: profile.profile_image_url,
+        })}
+      />
+
       {/* 1. Hero Section (Warm Beige Base) */}
       <section className="w-full bg-beige-100 py-16 md:py-24">
         <div className="max-w-6xl mx-auto px-6 md:px-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-16">
@@ -133,7 +159,8 @@ export const HomePage: React.FC = () => {
               {profile.profile_image_url ? (
                 <img
                   src={profile.profile_image_url}
-                  alt={profile.full_name}
+                  alt={`${profile.full_name} - ${profile.professional_title}`}
+                  loading="eager"
                   className="w-full h-full object-cover object-top"
                 />
               ) : (

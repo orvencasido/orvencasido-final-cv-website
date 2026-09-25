@@ -2,7 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Briefcase, MapPin, Calendar, CheckCircle, Award } from 'lucide-react';
 import { getExperiences } from '../../lib/services';
 import { Experience } from '../../types';
-import { SectionHeader, LoadingSkeleton, EmptyState } from '../../components/ui/CommonUI';
+import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
+import { TimelineSkeleton } from '../../components/ui/ShimmerSkeleton';
+import { SEOHead } from '../../seo/SEOHead';
+import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
 
 export const ExperiencePage: React.FC = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);
@@ -24,14 +27,20 @@ export const ExperiencePage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+        <SectionHeader
+          title="My Tech Journey"
+          description="From internships to production environments—here's how I've grown as a DevOps and System Architect."
+        />
+        <TimelineSkeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+      <SEOHead {...PAGE_SEO_CONFIG.experience} />
+
       <SectionHeader
         title="My Tech Journey"
         description="From internships to production environments—here's how I've grown as a DevOps and System Architect."

@@ -1,0 +1,8 @@
+# Crawl directives for https://www.orvencasido.site
+User-agent: *
+Allow: /
+Disallow: /orven
+Disallow: /orven/*
+
+# Sitemap location
+Sitemap: https://www.orvencasido.site/sitemap.xml
