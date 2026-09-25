@@ -116,6 +116,8 @@ export const initialSiteSettings: SiteSettings = {
   show_featured_projects: true,
   show_featured_blogs: true,
   show_contact_cta: true,
+  floating_video_url: 'https://www.youtube.com/shorts/zZ7AimPACzc',
+  floating_video_enabled: true,
   created_at: now,
   updated_at: now,
 };

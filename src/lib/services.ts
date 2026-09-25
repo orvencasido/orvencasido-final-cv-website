@@ -37,6 +37,9 @@ function normalizeSiteSettings(settings: SiteSettings): SiteSettings {
       typeof settings.show_featured_blogs === 'boolean' ? settings.show_featured_blogs : true,
     show_contact_cta:
       typeof settings.show_contact_cta === 'boolean' ? settings.show_contact_cta : true,
+    floating_video_enabled:
+      typeof settings.floating_video_enabled === 'boolean' ? settings.floating_video_enabled : true,
+    floating_video_url: settings.floating_video_url ?? '',
   };
 }
 

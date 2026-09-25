@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, Settings, Database, Eye } from 'lucide-react';
+import { Save, Settings, Database, Eye, Smartphone } from 'lucide-react';
 import { siteSettingsSchema, SiteSettingsFormData } from '../../../lib/schemas';
 import { getSiteSettings, updateSiteSettings } from '../../../lib/services';
 import { isSupabaseConfigured } from '../../../lib/supabaseClient';
@@ -249,6 +249,38 @@ export const SiteSettingsManager: React.FC = () => {
           <p className="text-xs font-medium text-matcha-700">
             Hidden items are removed from the public header navigation. Home stays visible.
           </p>
+        </div>
+
+        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+          <div className="flex items-center justify-between border-b border-beige-200 pb-4">
+            <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2">
+              <Smartphone className="w-5 h-5 text-matcha-600" /> Floating Phone Video Player
+            </h2>
+            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                {...register('floating_video_enabled')}
+                className="h-5 w-5 accent-matcha-900 rounded cursor-pointer"
+              />
+              <span className="text-xs font-bold text-matcha-900">Enable Player</span>
+            </label>
+          </div>
+
+          <div className="space-y-3">
+            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              YouTube Video or Shorts URL
+            </label>
+            <input
+              type="text"
+              {...register('floating_video_url')}
+              placeholder="e.g. https://www.youtube.com/shorts/zZ7AimPACzc or https://www.youtube.com/watch?v=..."
+              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+            />
+            <p className="text-xs font-medium text-matcha-700">
+              Provide any YouTube video or Shorts link (defaults to Subway Surfers vertical gameplay if blank).
+              The player floats as a movable &quot;Click Me&quot; button in the bottom right, and pops up a portrait phone player when clicked.
+            </p>
+          </div>
         </div>
 
         <div className="flex justify-end">

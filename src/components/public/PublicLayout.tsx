@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { PublicNavbar } from './PublicNavbar';
 import { PublicFooter } from './PublicFooter';
 import { TopProgressBar } from './TopProgressBar';
+import { FloatingPhonePlayer } from './FloatingPhonePlayer';
 
 export const PublicLayout: React.FC = () => {
   return (
@@ -13,6 +14,7 @@ export const PublicLayout: React.FC = () => {
         <Outlet />
       </main>
       <PublicFooter />
+      <FloatingPhonePlayer />
     </div>
   );
 };
