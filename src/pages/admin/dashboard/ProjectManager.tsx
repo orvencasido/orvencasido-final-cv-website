@@ -9,10 +9,23 @@ import {
   Eye,
   Star,
   RefreshCw,
+  ImagePlus,
+  Cpu,
+  Globe,
+  EyeOff,
 } from 'lucide-react';
 import { projectSchema, ProjectFormData } from '../../../lib/schemas';
-import { getProjects, createProject, updateProject, deleteProject } from '../../../lib/services';
-import { Project } from '../../../types';
+import { getProjects, createProject, updateProject, deleteProject, getSkills, updateSkills } from '../../../lib/services';
+import { Project, Skill } from '../../../types';
+import {
+  parseTechString,
+  resolveTechIconUrl,
+  isLiveUrlVisible,
+  isLiveUrlToggleActive,
+  getCleanLiveUrl,
+  formatLiveUrl,
+} from '../../../lib/techIcons';
+import { uploadPortfolioImage } from '../../../lib/storage';
 import { SectionHeader, LoadingSkeleton, EmptyState, StatusBadge } from '../../../components/ui/CommonUI';
 import { Modal, ConfirmModal } from '../../../components/ui/Modal';
 import { useToast } from '../../../components/ui/Toast';
@@ -21,10 +34,14 @@ import { ImageUploadField } from '../../../components/admin/ImageUploadField';
 export const ProjectManager: React.FC = () => {
   const { showToast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [techInput, setTechInput] = useState('');
+  const [customTechIcon, setCustomTechIcon] = useState('');
+  const [uploadingTechIcon, setUploadingTechIcon] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLiveVisible, setIsLiveVisible] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -54,8 +71,9 @@ export const ProjectManager: React.FC = () => {
   const loadProjects = async () => {
     setLoading(true);
     try {
-      const data = await getProjects();
-      setProjects(data);
+      const [projData, skillData] = await Promise.all([getProjects(), getSkills()]);
+      setProjects(projData);
+      setSkills(skillData);
     } catch (err) {
       console.error('Failed to load projects:', err);
     } finally {
@@ -70,6 +88,8 @@ export const ProjectManager: React.FC = () => {
   const openCreateModal = () => {
     setEditingProject(null);
     setTechInput('');
+    setCustomTechIcon('');
+    setIsLiveVisible(true);
     reset({
       title: '',
       slug: '',
@@ -90,6 +110,8 @@ export const ProjectManager: React.FC = () => {
   const openEditModal = (proj: Project) => {
     setEditingProject(proj);
     setTechInput('');
+    setCustomTechIcon('');
+    setIsLiveVisible(isLiveUrlToggleActive(proj.live_url));
     reset({
       title: proj.title,
       slug: proj.slug,
@@ -98,7 +120,7 @@ export const ProjectManager: React.FC = () => {
       cover_image_url: proj.cover_image_url || '',
       technologies: proj.technologies || [],
       github_url: proj.github_url || '',
-      live_url: proj.live_url || '',
+      live_url: getCleanLiveUrl(proj.live_url),
       status: proj.status,
       completion_date: proj.completion_date,
       is_featured: proj.is_featured || false,
@@ -107,12 +129,64 @@ export const ProjectManager: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleAddTech = () => {
-    const trimmed = techInput.trim();
-    if (trimmed && !watchTechs.includes(trimmed)) {
-      setValue('technologies', [...watchTechs, trimmed], { shouldValidate: true });
-      setTechInput('');
+  const handleTechIconUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setUploadingTechIcon(true);
+    try {
+      const uploadedUrl = await uploadPortfolioImage(file, 'misc');
+      setCustomTechIcon(uploadedUrl);
+      showToast('Custom tech icon uploaded.', 'success');
+    } catch (err) {
+      console.error('Failed to upload tech icon:', err);
+      const message = err instanceof Error ? err.message : 'Icon upload failed.';
+      showToast(message, 'error');
+    } finally {
+      setUploadingTechIcon(false);
     }
+  };
+
+  const handleAddTech = async (explicitName?: string, explicitIcon?: string) => {
+    const nameToAdd = (explicitName || techInput).trim();
+    const iconToAdd = explicitIcon || customTechIcon;
+    if (!nameToAdd) return;
+
+    const isCustomUrl = iconToAdd && (iconToAdd.startsWith('http') || iconToAdd.startsWith('data:'));
+    const valueToStore = isCustomUrl ? `${nameToAdd}:::${iconToAdd}` : nameToAdd;
+
+    const alreadyExists = watchTechs.some((t) => {
+      const { name } = parseTechString(t);
+      return name.toLowerCase() === nameToAdd.toLowerCase();
+    });
+
+    if (!alreadyExists) {
+      setValue('technologies', [...watchTechs, valueToStore], { shouldValidate: true });
+
+      if (iconToAdd && !skills.some((s) => s.name.toLowerCase() === nameToAdd.toLowerCase())) {
+        try {
+          const newSkill: Skill = {
+            id: `sk_${Date.now()}`,
+            name: nameToAdd,
+            icon: iconToAdd,
+            category: 'Tools & Methods',
+            proficiency: 90,
+            sort_order: skills.length + 1,
+            is_visible: false,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          const savedSkills = await updateSkills([...skills, newSkill]);
+          setSkills(savedSkills);
+        } catch (err) {
+          console.error('Failed to save skill to library:', err);
+        }
+      }
+    }
+
+    setTechInput('');
+    setCustomTechIcon('');
   };
 
   const handleRemoveTech = (item: string) => {
@@ -134,7 +208,7 @@ export const ProjectManager: React.FC = () => {
             : data.technologies,
         cover_image_url: data.cover_image_url || '',
         github_url: data.github_url || '',
-        live_url: data.live_url || '',
+        live_url: formatLiveUrl(data.live_url || '', isLiveVisible),
         sort_order: typeof data.sort_order === 'number' ? data.sort_order : 0,
       };
 
@@ -169,9 +243,56 @@ export const ProjectManager: React.FC = () => {
   };
 
   const handleToggleFeatured = async (proj: Project) => {
-    await updateProject(proj.id, { is_featured: !proj.is_featured });
-    showToast('Featured project status updated', 'info');
-    loadProjects();
+    const nextFeatured = !proj.is_featured;
+    setProjects((prev) =>
+      prev.map((p) => (p.id === proj.id ? { ...p, is_featured: nextFeatured } : p))
+    );
+    try {
+      await updateProject(proj.id, { is_featured: nextFeatured });
+      showToast(
+        nextFeatured ? `"${proj.title}" added to featured` : `"${proj.title}" removed from featured`,
+        'success'
+      );
+      await loadProjects();
+    } catch (err: any) {
+      console.error('Failed to toggle featured status:', err);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === proj.id ? { ...p, is_featured: proj.is_featured } : p))
+      );
+      showToast('Failed to update featured status', 'error', err?.message);
+    }
+  };
+
+  const handleToggleLiveVisibility = async (proj: Project) => {
+    const clean = getCleanLiveUrl(proj.live_url);
+    if (!clean) {
+      showToast('No live demo URL set for this project', 'error');
+      return;
+    }
+    const currentlyVisible = isLiveUrlVisible(proj.live_url);
+    const nextVisible = !currentlyVisible;
+    const newLiveUrl = formatLiveUrl(clean, nextVisible);
+
+    setProjects((prev) =>
+      prev.map((p) => (p.id === proj.id ? { ...p, live_url: newLiveUrl } : p))
+    );
+
+    try {
+      await updateProject(proj.id, { live_url: newLiveUrl });
+      showToast(
+        nextVisible
+          ? `Live button is now visible for "${proj.title}"`
+          : `Live button is now hidden for "${proj.title}"`,
+        'success'
+      );
+      await loadProjects();
+    } catch (err: any) {
+      console.error('Failed to toggle live visibility:', err);
+      setProjects((prev) =>
+        prev.map((p) => (p.id === proj.id ? { ...p, live_url: proj.live_url } : p))
+      );
+      showToast('Failed to update live button visibility', 'error', err?.message);
+    }
   };
 
   const filteredProjects = projects.filter(
@@ -262,15 +383,45 @@ export const ProjectManager: React.FC = () => {
                     </td>
 
                     <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-1 max-w-xs">
-                        {proj.technologies.map((t) => (
-                          <span
-                            key={t}
-                            className="text-[10px] px-2.5 py-1 rounded-full bg-matcha-100/80 text-matcha-900 font-mono font-bold"
-                          >
-                            {t}
+                      <div className="flex items-center gap-1.5 flex-wrap max-w-xs">
+                        {proj.technologies.slice(0, 6).map((t) => {
+                          const { name: techName, customIcon } = parseTechString(t);
+                          const iconUrl = customIcon || resolveTechIconUrl(t, skills);
+
+                          return (
+                            <div
+                              key={t}
+                              className="relative group/tech flex items-center justify-center w-7 h-7 rounded-xl bg-beige-200/80 border border-beige-300 p-1 hover:border-matcha-400 transition"
+                            >
+                              {iconUrl ? (
+                                <img
+                                  src={iconUrl}
+                                  alt={techName}
+                                  className="w-4 h-4 object-contain select-none"
+                                  onError={(e) => {
+                                    (e.currentTarget as HTMLElement).style.display = 'none';
+                                  }}
+                                />
+                              ) : (
+                                <span className="text-[10px] font-bold font-mono text-matcha-900">
+                                  {techName.slice(0, 2).toUpperCase()}
+                                </span>
+                              )}
+                              {/* Tooltip on hover */}
+                              <div className="absolute bottom-full mb-1.5 hidden group-hover/tech:flex flex-col items-center pointer-events-none z-30">
+                                <span className="px-2 py-0.5 bg-matcha-950 text-beige-50 text-[10px] font-semibold rounded-md shadow-md whitespace-nowrap">
+                                  {techName}
+                                </span>
+                                <span className="w-1 h-1 bg-matcha-950 rotate-45 -mt-0.5"></span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                        {proj.technologies.length > 6 && (
+                          <span className="text-[10px] font-mono font-bold text-matcha-800 bg-beige-200/90 border border-beige-300 px-1.5 py-0.5 rounded-lg">
+                            +{proj.technologies.length - 6}
                           </span>
-                        ))}
+                        )}
                       </div>
                     </td>
 
@@ -280,6 +431,28 @@ export const ProjectManager: React.FC = () => {
 
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
+                        {getCleanLiveUrl(proj.live_url) ? (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleLiveVisibility(proj)}
+                            className={`p-2 rounded-xl transition cursor-pointer ${
+                              isLiveUrlVisible(proj.live_url)
+                                ? 'text-matcha-800 hover:bg-beige-200'
+                                : 'text-stone-400 hover:text-stone-600 hover:bg-beige-200'
+                            }`}
+                            title={
+                              isLiveUrlVisible(proj.live_url)
+                                ? 'Live button is visible on public cards (click to hide)'
+                                : 'Live button is hidden on public cards (click to show)'
+                            }
+                          >
+                            {isLiveUrlVisible(proj.live_url) ? (
+                              <Globe className="w-4 h-4 text-matcha-800" />
+                            ) : (
+                              <EyeOff className="w-4 h-4 text-stone-400" />
+                            )}
+                          </button>
+                        ) : null}
                         <a
                           href={`/projects/${proj.slug}`}
                           target="_blank"
@@ -444,12 +617,31 @@ export const ProjectManager: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Live Demo URL</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                  Live Demo URL
+                </label>
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-matcha-800 hover:text-matcha-950 select-none">
+                  <input
+                    type="checkbox"
+                    checked={isLiveVisible}
+                    onChange={(e) => setIsLiveVisible(e.target.checked)}
+                    className="w-4 h-4 rounded text-matcha-900 focus:ring-matcha-500"
+                  />
+                  <span>Show Live button</span>
+                </label>
+              </div>
               <input
                 type="text"
+                placeholder="e.g. https://demo.example.com"
                 {...register('live_url')}
                 className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
+              {!isLiveVisible && (
+                <p className="text-[11px] text-amber-700 font-medium">
+                  Live button will be hidden on public project cards.
+                </p>
+              )}
               {errors.live_url && <p className="text-xs text-red-600 font-medium">{errors.live_url.message}</p>}
             </div>
           </div>
@@ -463,54 +655,149 @@ export const ProjectManager: React.FC = () => {
             onError={(message) => showToast('Image upload failed', 'error', message)}
           />
 
-          {/* Tech stack tags */}
-          <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
-              Technologies Used <span className="text-red-500">*</span>
-            </label>
-            <div className="flex items-center gap-3">
-              <input
-                type="text"
-                value={techInput}
-                onChange={(e) => setTechInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleAddTech();
-                  }
-                }}
-                onBlur={handleAddTech}
-                placeholder="Add technology (e.g. Kubernetes, React, Terraform)..."
-                className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none font-medium"
-              />
+          {/* Tech stack tags with icon preview and upload option */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                Technologies Used <span className="text-red-500">*</span>
+              </label>
+              <span className="text-[11px] font-mono text-matcha-600">
+                Icons resolve automatically or via upload
+              </span>
+            </div>
+
+            {/* Input + Preview + Upload Button + Add Button */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+              <div className="relative flex-1 flex items-center">
+                <div className="absolute left-3 w-6 h-6 flex items-center justify-center shrink-0 pointer-events-none">
+                  {customTechIcon || techInput.trim() ? (
+                    <img
+                      src={customTechIcon || resolveTechIconUrl(techInput, skills)}
+                      alt="preview"
+                      className="w-5 h-5 object-contain"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'none';
+                      }}
+                      onLoad={(e) => {
+                        (e.currentTarget as HTMLElement).style.display = 'block';
+                      }}
+                    />
+                  ) : (
+                    <Cpu className="w-4 h-4 text-matcha-600/50" />
+                  )}
+                </div>
+
+                <input
+                  type="text"
+                  value={techInput}
+                  onChange={(e) => setTechInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleAddTech();
+                    }
+                  }}
+                  placeholder="Technology name (e.g. Docker, React, Terraform)..."
+                  className="w-full pl-11 pr-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium text-sm"
+                />
+              </div>
+
+              {/* Upload Icon option */}
+              <label
+                className={`inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold rounded-2xl border transition cursor-pointer select-none ${
+                  customTechIcon
+                    ? 'bg-matcha-100 text-matcha-950 border-matcha-300'
+                    : 'bg-beige-100 text-matcha-800 border-beige-300 hover:bg-beige-200'
+                }`}
+                title="Upload custom icon if not available"
+              >
+                {uploadingTechIcon ? (
+                  <RefreshCw className="w-4 h-4 animate-spin text-matcha-700" />
+                ) : (
+                  <ImagePlus className="w-4 h-4 text-matcha-700" />
+                )}
+                <span>{uploadingTechIcon ? 'Uploading...' : customTechIcon ? 'Icon Attached' : 'Upload Icon'}</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleTechIconUpload}
+                  disabled={uploadingTechIcon}
+                  className="sr-only"
+                />
+              </label>
+
               <button
                 type="button"
-                onClick={handleAddTech}
-                className="px-5 py-2.5 bg-matcha-900 text-beige-50 rounded-full font-bold text-xs hover:bg-matcha-800 cursor-pointer"
+                onClick={() => handleAddTech()}
+                className="px-5 py-2.5 bg-matcha-900 text-beige-50 rounded-2xl font-bold text-xs hover:bg-matcha-800 transition cursor-pointer shrink-0"
               >
                 Add Tech
               </button>
             </div>
+
             {errors.technologies && (
               <p className="text-xs text-red-600 font-medium">{errors.technologies.message}</p>
             )}
-            <div className="flex flex-wrap gap-2 pt-2">
-              {watchTechs.map((t) => (
-                <span
-                  key={t}
-                  className="px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 text-xs flex items-center gap-1.5 font-mono font-bold"
-                >
-                  {t}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveTech(t)}
-                    className="hover:text-red-700 ml-1 font-extrabold cursor-pointer"
+
+            {/* Selected tech badges with icons */}
+            <div className="flex flex-wrap gap-2 pt-1 min-h-8">
+              {watchTechs.map((t) => {
+                const { name: techName, customIcon: itemIcon } = parseTechString(t);
+                const iconUrl = itemIcon || resolveTechIconUrl(t, skills);
+
+                return (
+                  <span
+                    key={t}
+                    className="px-3 py-1.5 rounded-full bg-beige-100 border border-beige-300 text-matcha-950 text-xs flex items-center gap-2 font-mono font-bold shadow-2xs"
                   >
-                    ×
-                  </button>
-                </span>
-              ))}
+                    {iconUrl && (
+                      <img
+                        src={iconUrl}
+                        alt={techName}
+                        className="w-4 h-4 object-contain"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLElement).style.display = 'none';
+                        }}
+                      />
+                    )}
+                    <span>{techName}</span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTech(t)}
+                      className="hover:text-red-700 ml-1 text-matcha-600 hover:scale-110 transition cursor-pointer font-extrabold"
+                      title="Remove technology"
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
             </div>
+
+            {/* Quick Suggestions from existing Tech Stack */}
+            {skills.length > 0 && (
+              <div className="pt-2 border-t border-beige-200">
+                <span className="text-[11px] font-bold text-matcha-700 uppercase tracking-wider block mb-2">
+                  Quick Add from Tech Stack Library:
+                </span>
+                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">
+                  {skills
+                    .filter((s) => s.name && !watchTechs.some((wt) => parseTechString(wt).name.toLowerCase() === s.name.toLowerCase()))
+                    .slice(0, 16)
+                    .map((skill) => (
+                      <button
+                        key={skill.id}
+                        type="button"
+                        onClick={() => handleAddTech(skill.name, skill.icon)}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-beige-200/70 hover:bg-matcha-100 hover:border-matcha-300 border border-beige-300 text-[11px] font-medium text-matcha-900 transition cursor-pointer"
+                      >
+                        <Plus className="w-3 h-3 text-matcha-600" />
+                        <span>{skill.name}</span>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-3 pt-2">

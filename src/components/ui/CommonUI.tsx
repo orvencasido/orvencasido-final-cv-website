@@ -1,5 +1,7 @@
-import React from 'react';
-import { LucideIcon, FolderOpen } from 'lucide-react';
+import React, { useState } from 'react';
+import { LucideIcon, FolderOpen, ImageOff } from 'lucide-react';
+import { Skill } from '../../types';
+import { parseTechString, resolveTechIconUrl } from '../../lib/techIcons';
 
 export const SectionHeader: React.FC<{
   title: string;
@@ -104,5 +106,68 @@ export const StatusBadge: React.FC<{
       <span className="w-2 h-2 rounded-full bg-current opacity-80" />
       {label.replace(/_/g, ' ')}
     </span>
+  );
+};
+
+export const ProjectCoverImage: React.FC<{
+  url?: string;
+  title: string;
+  className?: string;
+}> = ({ url, title, className = 'w-full h-full object-cover' }) => {
+  const [hasError, setHasError] = useState(false);
+
+  if (!url || hasError) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-beige-200/70 text-matcha-700/60 select-none p-4 text-center">
+        <ImageOff className="w-8 h-8 opacity-60 stroke-[1.5]" />
+        <span className="text-xs font-mono font-medium">No preview image available</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={url}
+      alt={`${title} - DevOps project by Orven Casido`}
+      loading="lazy"
+      onError={() => setHasError(true)}
+      className={className}
+    />
+  );
+};
+
+export const ProjectTechBadge: React.FC<{
+  tech: string;
+  skills?: Skill[];
+}> = ({ tech, skills }) => {
+  const { name: techName } = parseTechString(tech);
+  const iconUrl = resolveTechIconUrl(tech, skills);
+  const [hasError, setHasError] = useState(false);
+
+  if (!techName) return null;
+
+  return (
+    <div className="relative group/tech flex items-center justify-center p-1 cursor-default transition-all duration-200">
+      {!hasError && iconUrl ? (
+        <img
+          src={iconUrl}
+          alt={techName}
+          className="w-5 h-5 sm:w-5.5 sm:h-5.5 object-contain select-none opacity-50 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
+          onError={() => setHasError(true)}
+        />
+      ) : (
+        <span className="text-[11px] font-bold font-mono text-matcha-900 bg-matcha-100/70 px-2.5 py-0.5 rounded-full border border-matcha-200/60 select-none">
+          {techName}
+        </span>
+      )}
+
+      {/* Tooltip on hover */}
+      <div className="absolute bottom-full mb-2 hidden group-hover/tech:flex flex-col items-center pointer-events-none z-30">
+        <span className="px-2.5 py-1 bg-matcha-950 text-beige-50 text-xs font-semibold rounded-lg shadow-lg whitespace-nowrap">
+          {techName}
+        </span>
+        <span className="w-1.5 h-1.5 bg-matcha-950 rotate-45 -mt-0.5"></span>
+      </div>
+    </div>
   );
 };

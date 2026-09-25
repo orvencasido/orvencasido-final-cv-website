@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Github, Calendar, Layers, CheckCircle2 } from 'lucide-react';
-import { getProjectBySlug } from '../../lib/services';
-import { Project } from '../../types';
-import { EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { getProjectBySlug, getSkills } from '../../lib/services';
+import { Project, Skill } from '../../types';
+import { isLiveUrlVisible, getCleanLiveUrl } from '../../lib/techIcons';
+import { EmptyState, StatusBadge, ProjectTechBadge } from '../../components/ui/CommonUI';
 import { ShimmerBlock } from '../../components/ui/ShimmerSkeleton';
 import { SEOHead } from '../../seo/SEOHead';
 import { getProjectSchema } from '../../seo/structuredData';
@@ -12,14 +13,16 @@ export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [project, setProject] = useState<Project | null>(null);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadProject() {
       if (!slug) return;
       try {
-        const data = await getProjectBySlug(slug);
-        setProject(data);
+        const [projData, skillData] = await Promise.all([getProjectBySlug(slug), getSkills()]);
+        setProject(projData);
+        setSkills(skillData);
       } catch (err) {
         console.error('Error fetching project:', err);
       } finally {
@@ -116,9 +119,9 @@ export const ProjectDetailPage: React.FC = () => {
                 <Github className="w-4 h-4" /> GitHub Code
               </a>
             )}
-            {project.live_url && (
+            {isLiveUrlVisible(project.live_url) && (
               <a
-                href={project.live_url}
+                href={getCleanLiveUrl(project.live_url)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 text-xs font-extrabold text-beige-50 bg-matcha-900 hover:bg-matcha-800 rounded-full transition shadow-xs"
@@ -146,14 +149,9 @@ export const ProjectDetailPage: React.FC = () => {
         <h3 className="text-xs font-extrabold uppercase tracking-widest text-matcha-700 flex items-center gap-2">
           <Layers className="w-4 h-4" /> Tech & Infrastructure Stack
         </h3>
-        <div className="flex flex-wrap gap-2.5">
+        <div className="flex items-center gap-3 flex-wrap min-h-7">
           {project.technologies.map((tech) => (
-            <span
-              key={tech}
-              className="px-4 py-1.5 text-xs font-semibold rounded-full bg-matcha-100 text-matcha-950 border border-matcha-200"
-            >
-              {tech}
-            </span>
+            <ProjectTechBadge key={tech} tech={tech} skills={skills} />
           ))}
         </div>
       </div>

@@ -1,4 +1,5 @@
 import { CANONICAL_SITE_URL } from './seoConfig';
+import { isLiveUrlVisible, getCleanLiveUrl } from '../lib/techIcons';
 
 export interface PersonData {
   name?: string;
@@ -130,10 +131,10 @@ export function getProjectSchema(project: {
     description: project.short_description,
     image: project.cover_image_url || `${CANONICAL_SITE_URL}/orbs-icon.png`,
     codeRepository: project.github_url || undefined,
-    targetProduct: project.live_url
+    targetProduct: isLiveUrlVisible(project.live_url)
       ? {
           '@type': 'SoftwareApplication',
-          url: project.live_url,
+          url: getCleanLiveUrl(project.live_url),
           name: project.title,
         }
       : undefined,
