@@ -47,3 +47,61 @@ export function getTechIconUrl(skill: Partial<Skill> & { name: string }): string
   const sanitized = skill.name.toLowerCase().replace(/[^a-z0-9]/g, '');
   return `https://cdn.simpleicons.org/${sanitized}`;
 }
+
+export function parseTechString(tech: string): { name: string; customIcon?: string } {
+  if (!tech) return { name: '' };
+  if (tech.includes(':::')) {
+    const [name, icon] = tech.split(':::');
+    const trimmedName = name.trim();
+    const trimmedIcon = icon?.trim();
+    const isCustomUrl = trimmedIcon && (trimmedIcon.startsWith('http') || trimmedIcon.startsWith('data:'));
+    return {
+      name: trimmedName,
+      customIcon: isCustomUrl ? trimmedIcon : undefined,
+    };
+  }
+  return { name: tech.trim() };
+}
+
+export function resolveTechIconUrl(tech: string, skills?: Skill[]): string {
+  const { name, customIcon } = parseTechString(tech);
+  if (customIcon) return customIcon;
+  if (!name) return '';
+
+  if (skills && skills.length > 0) {
+    const match = skills.find(
+      (s) => s.name.trim().toLowerCase() === name.toLowerCase()
+    );
+    if (match && match.icon) {
+      return getTechIconUrl(match);
+    }
+  }
+
+  return getTechIconUrl({ name });
+}
+
+export function isLiveUrlVisible(url?: string | null): boolean {
+  if (!url) return false;
+  const trimmed = url.trim();
+  if (!trimmed || trimmed.startsWith('#hidden#')) return false;
+  return true;
+}
+
+export function isLiveUrlToggleActive(url?: string | null): boolean {
+  if (!url) return true;
+  return !url.trim().startsWith('#hidden#');
+}
+
+export function getCleanLiveUrl(url?: string | null): string {
+  if (!url) return '';
+  return url.replace(/^#hidden#/, '').trim();
+}
+
+export function formatLiveUrl(url: string, isVisible: boolean): string {
+  const clean = getCleanLiveUrl(url);
+  if (!isVisible) {
+    return clean ? `#hidden#${clean}` : '#hidden#';
+  }
+  return clean;
+}
+

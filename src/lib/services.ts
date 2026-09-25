@@ -183,6 +183,7 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at' |
   const client = requireSupabase();
   const { data, error } = await client.from('projects').insert(newProject).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.PROJECTS);
   invalidateCache('cache:project');
   return data as Project;
 }
@@ -204,6 +205,7 @@ export async function updateProject(id: string, projectData: Partial<Project>): 
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.PROJECTS);
   invalidateCache('cache:project');
   return data as Project;
 }
@@ -212,6 +214,7 @@ export async function deleteProject(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('projects').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.PROJECTS);
   invalidateCache('cache:project');
   return true;
 }

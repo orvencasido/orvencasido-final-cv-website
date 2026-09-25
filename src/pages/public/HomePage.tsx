@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings } from '../../lib/services';
 import { Profile, Project, Blog, Skill, SiteSettings } from '../../types';
+import { ProjectCoverImage, ProjectTechBadge } from '../../components/ui/CommonUI';
 import { HeroSkeleton, ProjectGridSkeleton } from '../../components/ui/ShimmerSkeleton';
 import { getTechIconUrl } from '../../lib/techIcons';
 import { SEOHead } from '../../seo/SEOHead';
@@ -33,7 +34,7 @@ export const HomePage: React.FC = () => {
         setProfile(profData);
         setSiteSettings(settingsData);
         const featured = projData.filter((p) => p.is_featured);
-        setFeaturedProjects(featured.length > 0 ? featured.slice(0, 2) : projData.slice(0, 2));
+        setFeaturedProjects(featured.length > 0 ? featured : projData.slice(0, 4));
         setFeaturedBlogs(blogData.filter((b) => b.is_featured && b.status === 'published').slice(0, 2));
         setSkills(skillData.filter((s) => s.is_visible));
       } catch (err) {
@@ -121,7 +122,7 @@ export const HomePage: React.FC = () => {
                     return (
                       <div
                         key={skill.id}
-                        className="relative group/tech flex items-center justify-center p-1.5 cursor-pointer transition-all duration-200"
+                        className="relative group/tech flex items-center justify-center p-1.5 cursor-default transition-all duration-200"
                       >
                         <img
                           src={iconUrl}
@@ -201,29 +202,39 @@ export const HomePage: React.FC = () => {
                     {featuredProjects.map((proj) => (
                       <div
                         key={proj.id}
-                        className="bg-beige-50 border border-beige-200 rounded-3xl p-8 shadow-2xs hover:shadow-md hover:border-matcha-400 group flex flex-col justify-between transition-all space-y-6"
+                        className="bg-beige-50 border border-beige-200 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-matcha-400 group flex flex-col justify-between transition-all"
                       >
-                        <div className="space-y-4">
-                          <div className="w-12 h-12 bg-matcha-100 text-matcha-900 rounded-2xl flex items-center justify-center group-hover:bg-matcha-900 group-hover:text-beige-50 transition-colors shadow-2xs">
-                            <Code2 className="w-6 h-6" />
-                          </div>
-                          <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
-                            <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
-                          </h3>
-                          <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
-                            {proj.short_description}
-                          </p>
+                        {/* Project Cover Image */}
+                        <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
+                          <ProjectCoverImage url={proj.cover_image_url} title={proj.title} />
                         </div>
 
-                        <div className="pt-4 border-t border-beige-200 flex items-center gap-2 flex-wrap">
-                          {proj.technologies.slice(0, 4).map((tech) => (
-                            <span
-                              key={tech}
-                              className="text-xs font-bold text-matcha-900 uppercase tracking-wider bg-matcha-100/70 px-3 py-1 rounded-full"
-                            >
-                              {tech}
-                            </span>
-                          ))}
+                        <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
+                          <div className="space-y-3">
+                            <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
+                              <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
+                            </h3>
+                            <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
+                              {proj.short_description}
+                            </p>
+                          </div>
+
+                          <div className="space-y-5 pt-2">
+                            <div className="flex items-center gap-2.5 flex-wrap min-h-7">
+                              {proj.technologies.slice(0, 6).map((tech) => (
+                                <ProjectTechBadge key={tech} tech={tech} skills={skills} />
+                              ))}
+                            </div>
+
+                            <div className="flex items-center justify-between text-sm pt-4 border-t border-beige-200">
+                              <Link
+                                to={`/projects/${proj.slug}`}
+                                className="font-extrabold text-matcha-900 hover:text-matcha-700 flex items-center gap-1.5"
+                              >
+                                See More...
+                              </Link>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ))}

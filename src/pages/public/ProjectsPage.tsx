@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Search, Github, ExternalLink, ArrowRight, ChevronDown, X, Calendar, Code2 } from 'lucide-react';
-import { getProjects } from '../../lib/services';
-import { Project } from '../../types';
-import { SectionHeader, EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { getProjects, getSkills } from '../../lib/services';
+import { Project, Skill } from '../../types';
+import { isLiveUrlVisible, getCleanLiveUrl } from '../../lib/techIcons';
+import { SectionHeader, EmptyState, StatusBadge, ProjectCoverImage, ProjectTechBadge } from '../../components/ui/CommonUI';
 import { ProjectGridSkeleton } from '../../components/ui/ShimmerSkeleton';
 import { SEOHead } from '../../seo/SEOHead';
 import { PAGE_SEO_CONFIG } from '../../seo/seoConfig';
@@ -24,6 +25,7 @@ function getProjectTimestamp(project: Project): number {
 
 export const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [skills, setSkills] = useState<Skill[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [loading, setLoading] = useState(true);
@@ -31,8 +33,9 @@ export const ProjectsPage: React.FC = () => {
   useEffect(() => {
     async function loadProjects() {
       try {
-        const data = await getProjects();
-        setProjects(data);
+        const [projData, skillData] = await Promise.all([getProjects(), getSkills()]);
+        setProjects(projData);
+        setSkills(skillData);
       } catch (err) {
         console.error('Error fetching projects:', err);
       } finally {
@@ -145,18 +148,7 @@ export const ProjectsPage: React.FC = () => {
                 className="group flex flex-col rounded-3xl border border-beige-300 bg-beige-50 overflow-hidden hover:border-matcha-400 hover:shadow-md transition-all"
               >
                 <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
-                  {project.cover_image_url ? (
-                    <img
-                      src={project.cover_image_url}
-                      alt={`${project.title} - DevOps project by Orven Casido`}
-                      loading="lazy"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-beige-200 text-matcha-700">
-                      <Code2 className="w-12 h-12 opacity-50" />
-                    </div>
-                  )}
+                  <ProjectCoverImage url={project.cover_image_url} title={project.title} />
                   <div className="absolute top-4 right-4">
                     <StatusBadge status={project.status} type="project" />
                   </div>
@@ -179,14 +171,9 @@ export const ProjectsPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-5 pt-2">
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex items-center gap-2.5 flex-wrap min-h-7">
                       {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-950 border border-matcha-200"
-                        >
-                          {tech}
-                        </span>
+                        <ProjectTechBadge key={tech} tech={tech} skills={skills} />
                       ))}
                     </div>
 
@@ -195,7 +182,7 @@ export const ProjectsPage: React.FC = () => {
                         to={`/projects/${project.slug}`}
                         className="font-extrabold text-matcha-900 hover:text-matcha-700 flex items-center gap-1.5"
                       >
-                        View Case Study <ArrowRight className="w-4 h-4" />
+                        See More...
                       </Link>
 
                       <div className="flex items-center gap-4">
@@ -210,14 +197,14 @@ export const ProjectsPage: React.FC = () => {
                             <Github className="w-4 h-4" />
                           </a>
                         )}
-                        {project.live_url && (
+                        {isLiveUrlVisible(project.live_url) && (
                           <a
-                            href={project.live_url}
+                            href={getCleanLiveUrl(project.live_url)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-matcha-900 hover:underline flex items-center gap-1 font-extrabold"
                           >
-                            Live <ExternalLink className="w-4 h-4" />
+                            Preview <ExternalLink className="w-4 h-4" />
                           </a>
                         )}
                       </div>
