@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Search, Calendar, Clock, ArrowRight, Tag } from 'lucide-react';
 import { getBlogs } from '../../lib/services';
 import { Blog } from '../../types';
-import { SectionHeader, EmptyState, LoadingSkeleton } from '../../components/ui/CommonUI';
+import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
+import { BlogListSkeleton } from '../../components/ui/ShimmerSkeleton';
 
 export const BlogsPage: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -36,14 +37,18 @@ export const BlogsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+        <SectionHeader
+          title="Im Not Good at Words"
+          description="Things I've learned and want to share with the world. Whether it's a new technology, a lesson from a project, or a challenge I overcame, I hope you'll learn something alongside me."
+        />
+        <BlogListSkeleton count={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
       <SectionHeader
         title="Im Not Good at Words"
         description="Things I've learned and want to share with the world. Whether it's a new technology, a lesson from a project, or a challenge I overcame, I hope you'll learn something alongside me."

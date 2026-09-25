@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
+import { getCached, setCached, invalidateCache, CacheKeys } from './cache';
 import {
   Profile,
   SocialLink,
@@ -51,9 +52,13 @@ function requireSupabase() {
    PROFILE SERVICES
    ========================================================================== */
 export async function getProfile(): Promise<Profile> {
+  const cached = getCached<Profile>(CacheKeys.PROFILE);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client.from('profiles').select('*').single();
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.PROFILE, data as Profile);
   return data as Profile;
 }
 
@@ -66,6 +71,7 @@ export async function updateProfile(profileData: Partial<Profile>): Promise<Prof
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.PROFILE);
   return data as Profile;
 }
 
@@ -73,18 +79,28 @@ export async function updateProfile(profileData: Partial<Profile>): Promise<Prof
    BLOG SERVICES
    ========================================================================== */
 export async function getBlogs(): Promise<Blog[]> {
+  const cached = getCached<Blog[]>(CacheKeys.BLOGS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('blogs')
     .select('*')
     .order('published_at', { ascending: false });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.BLOGS, data as Blog[]);
   return data as Blog[];
 }
 
 export async function getBlogBySlug(slug: string): Promise<Blog | null> {
+  const cacheKey = CacheKeys.blogDetail(slug);
+  const cached = getCached<Blog>(cacheKey);
+  if (cached) return cached;
+
   const blogs = await getBlogs();
-  return blogs.find((b) => b.slug === slug) || null;
+  const found = blogs.find((b) => b.slug === slug) || null;
+  if (found) setCached(cacheKey, found);
+  return found;
 }
 
 export async function createBlog(blog: Omit<Blog, 'id' | 'created_at' | 'updated_at'>): Promise<Blog> {
@@ -98,6 +114,7 @@ export async function createBlog(blog: Omit<Blog, 'id' | 'created_at' | 'updated
   const client = requireSupabase();
   const { data, error } = await client.from('blogs').insert(newBlog).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache('cache:blog');
   return data as Blog;
 }
 
@@ -110,6 +127,7 @@ export async function updateBlog(id: string, blogData: Partial<Blog>): Promise<B
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache('cache:blog');
   return data as Blog;
 }
 
@@ -117,6 +135,7 @@ export async function deleteBlog(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('blogs').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache('cache:blog');
   return true;
 }
 
@@ -124,18 +143,28 @@ export async function deleteBlog(id: string): Promise<boolean> {
    PROJECT SERVICES
    ========================================================================== */
 export async function getProjects(): Promise<Project[]> {
+  const cached = getCached<Project[]>(CacheKeys.PROJECTS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('projects')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.PROJECTS, data as Project[]);
   return data as Project[];
 }
 
 export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  const cacheKey = CacheKeys.projectDetail(slug);
+  const cached = getCached<Project>(cacheKey);
+  if (cached) return cached;
+
   const projects = await getProjects();
-  return projects.find((p) => p.slug === slug) || null;
+  const found = projects.find((p) => p.slug === slug) || null;
+  if (found) setCached(cacheKey, found);
+  return found;
 }
 
 export async function createProject(project: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project> {
@@ -154,6 +183,7 @@ export async function createProject(project: Omit<Project, 'id' | 'created_at' |
   const client = requireSupabase();
   const { data, error } = await client.from('projects').insert(newProject).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache('cache:project');
   return data as Project;
 }
 
@@ -174,6 +204,7 @@ export async function updateProject(id: string, projectData: Partial<Project>): 
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache('cache:project');
   return data as Project;
 }
 
@@ -181,6 +212,7 @@ export async function deleteProject(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('projects').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache('cache:project');
   return true;
 }
 
@@ -188,12 +220,16 @@ export async function deleteProject(id: string): Promise<boolean> {
    EXPERIENCE SERVICES
    ========================================================================== */
 export async function getExperiences(): Promise<Experience[]> {
+  const cached = getCached<Experience[]>(CacheKeys.EXPERIENCES);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('experiences')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.EXPERIENCES, data as Experience[]);
   return data as Experience[];
 }
 
@@ -210,6 +246,7 @@ export async function createExperience(
   const client = requireSupabase();
   const { data, error } = await client.from('experiences').insert(newExp).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EXPERIENCES);
   return data as Experience;
 }
 
@@ -222,6 +259,7 @@ export async function updateExperience(id: string, expData: Partial<Experience>)
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EXPERIENCES);
   return data as Experience;
 }
 
@@ -229,6 +267,7 @@ export async function deleteExperience(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('experiences').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EXPERIENCES);
   return true;
 }
 
@@ -236,12 +275,16 @@ export async function deleteExperience(id: string): Promise<boolean> {
    CERTIFICATION SERVICES
    ========================================================================== */
 export async function getCertifications(): Promise<Certification[]> {
+  const cached = getCached<Certification[]>(CacheKeys.CERTIFICATIONS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('certifications')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.CERTIFICATIONS, data as Certification[]);
   return data as Certification[];
 }
 
@@ -258,6 +301,7 @@ export async function createCertification(
   const client = requireSupabase();
   const { data, error } = await client.from('certifications').insert(newCert).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.CERTIFICATIONS);
   return data as Certification;
 }
 
@@ -270,6 +314,7 @@ export async function updateCertification(id: string, certData: Partial<Certific
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.CERTIFICATIONS);
   return data as Certification;
 }
 
@@ -277,6 +322,7 @@ export async function deleteCertification(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('certifications').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.CERTIFICATIONS);
   return true;
 }
 
@@ -284,12 +330,16 @@ export async function deleteCertification(id: string): Promise<boolean> {
    EDUCATION SERVICES
    ========================================================================== */
 export async function getEducation(): Promise<Education[]> {
+  const cached = getCached<Education[]>(CacheKeys.EDUCATION);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('education')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.EDUCATION, data as Education[]);
   return data as Education[];
 }
 
@@ -306,6 +356,7 @@ export async function createEducation(
   const client = requireSupabase();
   const { data, error } = await client.from('education').insert(newEdu).select().single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EDUCATION);
   return data as Education;
 }
 
@@ -318,6 +369,7 @@ export async function updateEducation(id: string, eduData: Partial<Education>): 
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EDUCATION);
   return data as Education;
 }
 
@@ -325,6 +377,7 @@ export async function deleteEducation(id: string): Promise<boolean> {
   const client = requireSupabase();
   const { error } = await client.from('education').delete().eq('id', id);
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.EDUCATION);
   return true;
 }
 
@@ -386,10 +439,15 @@ export async function deleteContactMessage(id: string): Promise<boolean> {
    SITE SETTINGS SERVICES
    ========================================================================== */
 export async function getSiteSettings(): Promise<SiteSettings> {
+  const cached = getCached<SiteSettings>(CacheKeys.SITE_SETTINGS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client.from('site_settings').select('*').single();
   if (error) throw new Error(error.message);
-  return normalizeSiteSettings(data as SiteSettings);
+  const normalized = normalizeSiteSettings(data as SiteSettings);
+  setCached(CacheKeys.SITE_SETTINGS, normalized);
+  return normalized;
 }
 
 export async function updateSiteSettings(settingsData: Partial<SiteSettings>): Promise<SiteSettings> {
@@ -410,6 +468,7 @@ export async function updateSiteSettings(settingsData: Partial<SiteSettings>): P
     .select()
     .single();
   if (error) throw new Error(error.message);
+  invalidateCache(CacheKeys.SITE_SETTINGS);
   return normalizeSiteSettings(data as SiteSettings);
 }
 
@@ -417,12 +476,16 @@ export async function updateSiteSettings(settingsData: Partial<SiteSettings>): P
    SKILLS SERVICES
    ========================================================================== */
 export async function getSkills(): Promise<Skill[]> {
+  const cached = getCached<Skill[]>(CacheKeys.SKILLS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('skills')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.SKILLS, data as Skill[]);
   return data as Skill[];
 }
 
@@ -447,6 +510,7 @@ export async function updateSkills(skills: Skill[]): Promise<Skill[]> {
     })
   );
 
+  invalidateCache(CacheKeys.SKILLS);
   return skills;
 }
 
@@ -454,12 +518,16 @@ export async function updateSkills(skills: Skill[]): Promise<Skill[]> {
    SOCIAL LINKS SERVICES
    ========================================================================== */
 export async function getSocialLinks(): Promise<SocialLink[]> {
+  const cached = getCached<SocialLink[]>(CacheKeys.SOCIAL_LINKS);
+  if (cached) return cached;
+
   const client = requireSupabase();
   const { data, error } = await client
     .from('social_links')
     .select('*')
     .order('sort_order', { ascending: true });
   if (error) throw new Error(error.message);
+  setCached(CacheKeys.SOCIAL_LINKS, data as SocialLink[]);
   return data as SocialLink[];
 }
 
@@ -484,5 +552,6 @@ export async function updateSocialLinks(links: SocialLink[]): Promise<SocialLink
     })
   );
 
+  invalidateCache(CacheKeys.SOCIAL_LINKS);
   return links;
 }

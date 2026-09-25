@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Award, ExternalLink, Calendar, CheckCircle2, ShieldAlert } from 'lucide-react';
 import { getCertifications } from '../../lib/services';
 import { Certification } from '../../types';
-import { SectionHeader, LoadingSkeleton, EmptyState } from '../../components/ui/CommonUI';
+import { SectionHeader, EmptyState } from '../../components/ui/CommonUI';
+import { CertificationGridSkeleton } from '../../components/ui/ShimmerSkeleton';
 
 export const CertificationsPage: React.FC = () => {
   const [certifications, setCertifications] = useState<Certification[]>([]);
@@ -24,14 +25,18 @@ export const CertificationsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+        <SectionHeader
+          title="Achievements Somehow?"
+          description="Technology never stands still, and neither do I. These training certificates represent my commitment to continuous growth, with more certifications to come."
+        />
+        <CertificationGridSkeleton count={4} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
       <SectionHeader
         title="Achievements Somehow?"
         description="Technology never stands still, and neither do I. These training certificates represent my commitment to continuous growth, with more certifications to come."

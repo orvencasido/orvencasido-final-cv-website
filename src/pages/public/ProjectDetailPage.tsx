@@ -3,7 +3,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ExternalLink, Github, Calendar, Layers, CheckCircle2 } from 'lucide-react';
 import { getProjectBySlug } from '../../lib/services';
 import { Project } from '../../types';
-import { LoadingSkeleton, EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { EmptyState, StatusBadge } from '../../components/ui/CommonUI';
+import { ShimmerBlock } from '../../components/ui/ShimmerSkeleton';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,8 +29,18 @@ export const ProjectDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-16">
-        <LoadingSkeleton count={3} />
+      <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-8">
+        <ShimmerBlock className="h-6 w-36" rounded="rounded-xl" />
+        <div className="space-y-4">
+          <ShimmerBlock className="h-10 sm:h-12 w-3/4" rounded="rounded-2xl" />
+          <ShimmerBlock className="h-6 w-1/3" rounded="rounded-xl" />
+        </div>
+        <ShimmerBlock className="aspect-video w-full rounded-3xl" />
+        <div className="space-y-3 pt-4">
+          <ShimmerBlock className="h-4 w-full" rounded="rounded-lg" />
+          <ShimmerBlock className="h-4 w-5/6" rounded="rounded-lg" />
+          <ShimmerBlock className="h-4 w-2/3" rounded="rounded-lg" />
+        </div>
       </div>
     );
   }
@@ -54,7 +65,7 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+    <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
       {/* Back button */}
       <button
         onClick={() => navigate('/projects')}
