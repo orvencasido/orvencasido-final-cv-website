@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
+    "chatbot": "tsx chatbot/server.ts",
     "build": "node seo/generate-sitemap.mjs && vite build",
     "generate:sitemap": "node seo/generate-sitemap.mjs",
     "preview": "vite preview",

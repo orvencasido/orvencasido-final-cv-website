@@ -1,0 +1,9 @@
+{
+  "name": "orven-ai-chatbot",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server.ts",
+    "start": "tsx server.ts"
+  }
+}
