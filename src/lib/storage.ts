@@ -1,7 +1,8 @@
 import { isSupabaseConfigured, supabase, supabaseAnonKey, supabaseUrl } from './supabaseClient';
 
-const IMAGE_BUCKET = 'portfolio-images';
-const FILE_BUCKET = 'portfolio-files';
+export const IMAGE_BUCKET = 'portfolio-images';
+export const FILE_BUCKET = 'portfolio-files';
+export const AI_MODEL_BUCKET = 'ai-models';
 const MAX_IMAGE_SIZE_BYTES = 10 * 1024 * 1024;
 const MAX_FILE_SIZE_BYTES = 15 * 1024 * 1024;
 
@@ -121,4 +122,13 @@ export async function getRateLimitedResumeDownloadUrl(resumePathOrUrl: string): 
   }
 
   return payload.signedUrl;
+}
+
+/**
+ * Returns the public CDN/Storage URL for a model file in the `ai-models` bucket.
+ */
+export function getAiModelFileUrl(filePath: string): string {
+  if (!supabaseUrl) return '';
+  const cleanPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
+  return `${supabaseUrl}/storage/v1/object/public/${AI_MODEL_BUCKET}/${cleanPath}`;
 }

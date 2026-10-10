@@ -42,10 +42,15 @@ A high-performance personal developer portfolio and administrative Content Manag
   - Optimizes all public portfolio and administrative views for compact viewports and mobile screens (down to 320px).
   - Enforces Modern UI Japanese Minimalist Organic tokens (`--color-matcha-*`, `--color-beige-*`, `Plus Jakarta Sans`) tailored to mobile ergonomics.
   - Follows `.agent/rules/mobile.md`: ensures accessible touch targets ($\ge 44$px), zero horizontal overflow, responsive bottom sheets, and fluid layout scaling.
-- **Database & Backend Agent (`supabase/`, `src/types/index.ts`)**:
-  - Maintains `supabase/schema.sql` and Edge Functions.
+- **AI Specialist Agent (`src/lib/webLlmService.ts`, AI Chat)**:
+  - Manages client-side in-browser WebGPU execution via `@mlc-ai/web-llm` with default model `Qwen2.5-0.5B-Instruct-q4f16_1-MLC`.
+  - Orchestrates client-side RAG context injection, streaming completions, and first-time model caching.
+  - Follows `.agent/rules/ai-agent.md`.
+- **Backend & Supabase Agent (`supabase/`, `src/lib/services.ts`)**:
+  - Maintains `supabase/schema.sql`, RLS policies, migrations, and storage buckets.
+  - Supplies RAG knowledge bundles in `src/lib/services.ts` while preserving the 100% hybrid fallback guarantee.
   - Synchronizes TypeScript interfaces in `src/types/index.ts` and mock fixtures in `src/lib/mockData.ts`.
-  - Follows `.agent/rules/database.md`.
+  - Follows `.agent/rules/backend.md`.
 - **Quality & Verification Agent**:
   - Runs `npm run lint` (`tsc --noEmit`) to verify zero TypeScript errors.
   - Runs `npm run build` (`node seo/generate-sitemap.mjs && vite build`) to verify bundle stability.

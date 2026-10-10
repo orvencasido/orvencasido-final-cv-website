@@ -449,6 +449,19 @@ set public = excluded.public,
     file_size_limit = excluded.file_size_limit,
     allowed_mime_types = excluded.allowed_mime_types;
 
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values (
+  'ai-models',
+  'ai-models',
+  true,
+  524288000,
+  null
+)
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
 drop policy if exists "Public can read portfolio images" on storage.objects;
 drop policy if exists "Authenticated admins can upload portfolio images" on storage.objects;
 drop policy if exists "Authenticated admins can update portfolio images" on storage.objects;
@@ -457,6 +470,10 @@ drop policy if exists "Public can read portfolio files" on storage.objects;
 drop policy if exists "Authenticated admins can upload portfolio files" on storage.objects;
 drop policy if exists "Authenticated admins can update portfolio files" on storage.objects;
 drop policy if exists "Authenticated admins can delete portfolio files" on storage.objects;
+drop policy if exists "Public can read ai models" on storage.objects;
+drop policy if exists "Authenticated admins can upload ai models" on storage.objects;
+drop policy if exists "Authenticated admins can update ai models" on storage.objects;
+drop policy if exists "Authenticated admins can delete ai models" on storage.objects;
 
 create policy "Public can read portfolio images"
 on storage.objects for select
@@ -487,6 +504,23 @@ with check (bucket_id = 'portfolio-files' and auth.role() = 'authenticated');
 create policy "Authenticated admins can delete portfolio files"
 on storage.objects for delete
 using (bucket_id = 'portfolio-files' and auth.role() = 'authenticated');
+
+create policy "Public can read ai models"
+on storage.objects for select
+using (bucket_id = 'ai-models');
+
+create policy "Authenticated admins can upload ai models"
+on storage.objects for insert
+with check (bucket_id = 'ai-models' and auth.role() = 'authenticated');
+
+create policy "Authenticated admins can update ai models"
+on storage.objects for update
+using (bucket_id = 'ai-models' and auth.role() = 'authenticated')
+with check (bucket_id = 'ai-models' and auth.role() = 'authenticated');
+
+create policy "Authenticated admins can delete ai models"
+on storage.objects for delete
+using (bucket_id = 'ai-models' and auth.role() = 'authenticated');
 
 insert into public.profiles (
   id,
