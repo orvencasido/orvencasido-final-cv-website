@@ -77,22 +77,19 @@ export const ContactMessagesManager: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <SectionHeader
-        title="Contact Messages Inbox"
-        description="Review inbound messages submitted through your public contact form."
-      />
+      <SectionHeader title="Contact Inbox" />
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-2 border-b border-beige-300">
-        <Filter className="w-4 h-4 text-matcha-700 shrink-0" />
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-beige-200 select-none [-webkit-overflow-scrolling:touch]">
+        <Filter className="w-4 h-4 text-matcha-700 shrink-0 mx-1" />
         {['all', 'unread', 'read', 'resolved'].map((st) => (
           <button
             key={st}
             onClick={() => setStatusFilter(st)}
-            className={`px-4 py-2 text-xs font-extrabold capitalize rounded-full transition shrink-0 cursor-pointer ${
+            className={`px-4 py-2 min-h-[40px] inline-flex items-center text-xs font-semibold capitalize rounded-full transition shrink-0 cursor-pointer ${
               statusFilter === st
                 ? 'bg-matcha-900 text-beige-50 shadow-xs'
-                : 'bg-beige-200 text-matcha-900 hover:bg-beige-300'
+                : 'bg-beige-200/80 text-matcha-900 hover:bg-beige-300'
             }`}
           >
             {st} ({st === 'all' ? messages.length : messages.filter((m) => m.status === st).length})
@@ -110,18 +107,18 @@ export const ContactMessagesManager: React.FC = () => {
             <div
               key={msg.id}
               onClick={() => handleOpenMessage(msg)}
-              className={`p-6 rounded-3xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs ${
+              className={`p-4 sm:p-6 rounded-2xl sm:rounded-3xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 shadow-xs ${
                 msg.status === 'unread'
                   ? 'border-matcha-400 bg-matcha-100/50 font-medium'
                   : 'border-beige-300 bg-beige-50'
               }`}
             >
               <div className="space-y-1 min-w-0 flex-1">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-extrabold text-matcha-950 truncate">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm font-extrabold text-matcha-950 truncate max-w-[180px] sm:max-w-none">
                     {msg.name}
                   </span>
-                  <span className="text-xs text-matcha-700 font-mono">({msg.email})</span>
+                  <span className="text-xs text-matcha-700 font-mono truncate max-w-[200px] sm:max-w-none">({msg.email})</span>
                   <StatusBadge status={msg.status} type="message" />
                 </div>
                 <p className="text-xs font-extrabold text-matcha-900 truncate">
@@ -130,22 +127,24 @@ export const ContactMessagesManager: React.FC = () => {
                 <p className="text-xs text-matcha-700 font-medium line-clamp-1">{msg.message}</p>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-4 shrink-0">
+              <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-beige-200/60">
                 <span className="text-xs font-mono text-matcha-600 font-medium">
                   {new Date(msg.created_at).toLocaleDateString()}
                 </span>
                 <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                   <button
                     onClick={() => handleOpenMessage(msg)}
-                    className="p-2.5 text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200 cursor-pointer"
+                    className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-matcha-700 hover:text-matcha-950 rounded-2xl hover:bg-beige-200 cursor-pointer"
                     title="View Message"
+                    aria-label="View message"
                   >
                     <Eye className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => setDeletingId(msg.id)}
-                    className="p-2.5 text-matcha-700 hover:text-red-700 rounded-2xl hover:bg-beige-200 cursor-pointer"
+                    className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center text-matcha-700 hover:text-red-700 rounded-2xl hover:bg-red-50 cursor-pointer"
                     title="Delete Message"
+                    aria-label="Delete message"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

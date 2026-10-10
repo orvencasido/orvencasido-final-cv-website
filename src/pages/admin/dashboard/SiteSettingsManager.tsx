@@ -84,13 +84,10 @@ export const SiteSettingsManager: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <SectionHeader
-        title="Website Global Settings"
-        description="Configure application metadata, SEO descriptions, analytics options, and view database connection status."
-      />
+      <SectionHeader title="Website Settings" />
 
       {/* Supabase Status Banner */}
-      <div className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+      <div className="p-6 rounded-3xl border border-beige-200 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
         <div className="flex items-start gap-3">
           <div
             className={`p-3 rounded-2xl text-beige-50 ${
@@ -100,7 +97,7 @@ export const SiteSettingsManager: React.FC = () => {
             <Database className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-matcha-950 flex items-center gap-2">
+            <h3 className="text-base font-bold text-matcha-950 flex items-center gap-2">
               Database Mode:{' '}
               {isSupabaseConfigured ? (
                 <span className="text-matcha-800">Supabase Connected</span>
@@ -108,7 +105,7 @@ export const SiteSettingsManager: React.FC = () => {
                 <span className="text-amber-800">Local Repository Mode</span>
               )}
             </h3>
-            <p className="text-xs text-matcha-700 font-medium mt-0.5">
+            <p className="text-xs text-matcha-700 font-normal mt-0.5">
               {isSupabaseConfigured
                 ? 'Your website is actively synchronizing data with live Supabase PostgreSQL tables.'
                 : 'Running on local persistent storage repository. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env to enable Supabase cloud DB.'}
@@ -118,20 +115,20 @@ export const SiteSettingsManager: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
-          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-6 shadow-2xs">
+          <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
             <Settings className="w-5 h-5 text-matcha-600" /> General SEO & Branding
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Website Title
               </label>
               <input
                 type="text"
                 {...register('website_title')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.website_title && (
                 <p className="text-xs text-red-600 font-medium">{errors.website_title.message}</p>
@@ -139,72 +136,72 @@ export const SiteSettingsManager: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Primary Contact Email
               </label>
               <input
                 type="email"
                 {...register('contact_email')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Navbar Initials Logo
               </label>
               <input
                 type="text"
                 {...register('logo_initials')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 SEO Keywords
               </label>
               <input
                 type="text"
                 {...register('seo_keywords')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               Website Meta Description
             </label>
             <textarea
               rows={3}
               {...register('website_description')}
-              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium"
+              className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium"
             />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Footer Copyright Notice
               </label>
               <input
                 type="text"
                 {...register('footer_text')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Resume Download URL
               </label>
               <input
                 type="text"
                 {...register('resume_download_url')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
@@ -251,9 +248,9 @@ export const SiteSettingsManager: React.FC = () => {
           </p>
         </div>
 
-        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+        <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-6 shadow-2xs">
           <div className="flex items-center justify-between border-b border-beige-200 pb-4">
-            <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2">
               <Smartphone className="w-5 h-5 text-matcha-600" /> Floating Phone Video Player
             </h2>
             <label className="inline-flex items-center gap-2 cursor-pointer select-none">
@@ -262,23 +259,22 @@ export const SiteSettingsManager: React.FC = () => {
                 {...register('floating_video_enabled')}
                 className="h-5 w-5 accent-matcha-900 rounded cursor-pointer"
               />
-              <span className="text-xs font-bold text-matcha-900">Enable Player</span>
+              <span className="text-xs font-semibold text-matcha-900">Enable Player</span>
             </label>
           </div>
 
           <div className="space-y-3">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               YouTube Video or Shorts URL
             </label>
             <input
               type="text"
               {...register('floating_video_url')}
               placeholder="e.g. https://www.youtube.com/shorts/zZ7AimPACzc or https://www.youtube.com/watch?v=..."
-              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+              className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
             />
-            <p className="text-xs font-medium text-matcha-700">
+            <p className="text-xs font-normal text-matcha-700">
               Provide any YouTube video or Shorts link (defaults to Subway Surfers vertical gameplay if blank).
-              The player floats as a movable &quot;Click Me&quot; button in the bottom right, and pops up a portrait phone player when clicked.
             </p>
           </div>
         </div>

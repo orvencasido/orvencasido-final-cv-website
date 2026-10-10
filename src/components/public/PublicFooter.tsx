@@ -69,13 +69,13 @@ export const PublicFooter: React.FC = () => {
     .join('') || 'OC';
 
   return (
-    <footer className="bg-matcha-900 text-beige-100 pt-16 pb-12 px-6 md:px-10 border-t border-matcha-800 transition-colors">
-      <div className="max-w-6xl mx-auto space-y-12">
+    <footer className="bg-matcha-900 text-beige-100 pt-12 sm:pt-16 pb-10 sm:pb-12 px-4 sm:px-6 md:px-10 border-t border-matcha-800 transition-colors">
+      <div className="max-w-6xl mx-auto space-y-10 sm:space-y-12">
         {/* Main Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 sm:gap-10 lg:gap-12">
           {/* Column 1: Brand & Tagline */}
-          <div className="md:col-span-6 lg:col-span-5 space-y-4">
-            <Link to="/" className="inline-flex items-center gap-3 group">
+          <div className="sm:col-span-2 md:col-span-6 lg:col-span-5 space-y-4">
+            <Link to="/" className="inline-flex items-center gap-3 group min-h-[44px]">
               <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center bg-matcha-950 border border-matcha-700">
                 {logoFailed ? (
                   <span className="text-[10px] font-extrabold text-beige-50">{initials}</span>
@@ -94,26 +94,26 @@ export const PublicFooter: React.FC = () => {
                   />
                 )}
               </div>
-              <span className="font-extrabold text-xl text-beige-50 tracking-tight">
+              <span className="font-extrabold text-lg sm:text-xl text-beige-50 tracking-tight">
                 {brandName}
               </span>
             </Link>
-            <p className="text-sm text-matcha-200 leading-relaxed font-normal max-w-sm">
+            <p className="text-xs sm:text-sm text-matcha-200 leading-relaxed font-normal max-w-sm">
               {tagline}
             </p>
           </div>
 
-          {/* Column 2: SITE Navigation */}
+          {/* Column 2: Navigation */}
           <div className="md:col-span-3 lg:col-span-3 space-y-3">
-            <h5 className="text-[10px] font-bold font-mono tracking-[0.2em] uppercase text-matcha-300">
-              SITE
+            <h5 className="text-xs font-semibold text-matcha-200 tracking-wider uppercase">
+              Navigation
             </h5>
-            <ul className="space-y-2 text-sm font-medium">
+            <ul className="space-y-1 text-sm font-medium">
               {siteLinks.map((item) => (
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className="text-matcha-200 hover:text-beige-50 transition-colors inline-block py-0.5"
+                    className="text-matcha-200 hover:text-beige-50 transition-colors inline-flex items-center min-h-[40px] sm:min-h-[44px] py-1"
                   >
                     {item.label}
                   </Link>
@@ -122,12 +122,12 @@ export const PublicFooter: React.FC = () => {
             </ul>
           </div>
 
-          {/* Column 3: ELSEWHERE Social Links */}
+          {/* Column 3: Connect Social Links */}
           <div className="md:col-span-3 lg:col-span-4 space-y-3">
-            <h5 className="text-[10px] font-bold font-mono tracking-[0.2em] uppercase text-matcha-300">
-              ELSEWHERE
+            <h5 className="text-xs font-semibold text-matcha-200 tracking-wider uppercase">
+              Connect
             </h5>
-            <ul className="space-y-2.5 text-sm font-medium">
+            <ul className="space-y-1 text-sm font-medium">
               {displayedSocials.map((item, idx) => {
                 const IconComponent = item.icon;
                 return (
@@ -136,7 +136,7 @@ export const PublicFooter: React.FC = () => {
                       href={item.url}
                       target={item.url.startsWith('mailto:') ? undefined : '_blank'}
                       rel={item.url.startsWith('mailto:') ? undefined : 'noopener noreferrer'}
-                      className="text-matcha-200 hover:text-beige-50 transition-colors inline-flex items-center gap-2.5 py-0.5"
+                      className="text-matcha-200 hover:text-beige-50 transition-colors inline-flex items-center gap-2.5 min-h-[40px] sm:min-h-[44px] py-1 break-all"
                     >
                       {IconComponent && <IconComponent className="w-4 h-4 text-matcha-300 shrink-0" />}
                       <span>{item.label}</span>
@@ -149,7 +149,7 @@ export const PublicFooter: React.FC = () => {
         </div>
 
         {/* Bottom Bar Copyright */}
-        <div className="pt-8 border-t border-matcha-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-matcha-300 font-medium">
+        <div className="pt-6 sm:pt-8 border-t border-matcha-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 text-xs text-matcha-300 font-medium text-center sm:text-left">
           <p>
             {settings?.footer_text || `© ${new Date().getFullYear()} Orven Casido. All rights reserved.`}
           </p>

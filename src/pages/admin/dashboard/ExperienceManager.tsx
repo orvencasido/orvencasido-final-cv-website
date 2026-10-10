@@ -140,12 +140,11 @@ export const ExperienceManager: React.FC = () => {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Experience Management"
-        description="Add, edit, or reorder your employment history and key platform accomplishments."
+        title="Experience"
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Experience
           </button>
@@ -161,7 +160,7 @@ export const ExperienceManager: React.FC = () => {
           {experiences.map((exp) => (
             <div
               key={exp.id}
-              className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+              className="p-6 rounded-3xl border border-beige-200 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-3">
@@ -213,21 +212,21 @@ export const ExperienceManager: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Company Name</label>
+              <label className="text-xs font-semibold text-matcha-900">Company Name</label>
               <input
                 type="text"
                 {...register('company')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.company && <p className="text-xs text-red-600 font-medium">{errors.company.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Position Title</label>
+              <label className="text-xs font-semibold text-matcha-900">Position Title</label>
               <input
                 type="text"
                 {...register('position')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.position && <p className="text-xs text-red-600 font-medium">{errors.position.message}</p>}
             </div>
@@ -235,10 +234,10 @@ export const ExperienceManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Employment Type</label>
+              <label className="text-xs font-semibold text-matcha-900">Employment Type</label>
               <select
                 {...register('employment_type')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="Full-time">Full-time</option>
                 <option value="Part-time">Part-time</option>
@@ -248,22 +247,22 @@ export const ExperienceManager: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Start Date</label>
+              <label className="text-xs font-semibold text-matcha-900">Start Date</label>
               <input
                 type="text"
                 placeholder="2023-04"
                 {...register('start_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">End Date</label>
+              <label className="text-xs font-semibold text-matcha-900">End Date</label>
               <input
                 type="text"
                 placeholder="2024-05"
                 {...register('end_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
@@ -275,39 +274,39 @@ export const ExperienceManager: React.FC = () => {
               {...register('is_current')}
               className="w-4 h-4 rounded text-matcha-900 focus:ring-matcha-500"
             />
-            <label htmlFor="is_current_check" className="font-bold text-xs text-matcha-950 cursor-pointer">
+            <label htmlFor="is_current_check" className="font-semibold text-xs text-matcha-950 cursor-pointer">
               I currently work in this role
             </label>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Location</label>
+            <label className="text-xs font-semibold text-matcha-900">Location</label>
             <input
               type="text"
               {...register('location')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Short Description</label>
+            <label className="text-xs font-semibold text-matcha-900">Short Description</label>
             <textarea
               rows={2}
               {...register('description')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
           {/* Key Responsibilities */}
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Key Responsibilities</label>
+            <label className="text-xs font-semibold text-matcha-900">Key Responsibilities</label>
             <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={respInput}
                 onChange={(e) => setRespInput(e.target.value)}
                 placeholder="Add responsibility item..."
-                className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 font-medium"
+                className="flex-1 px-4 py-2.5 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 font-medium"
               />
               <button
                 type="button"

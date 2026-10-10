@@ -8,13 +8,13 @@ export const SectionHeader: React.FC<{
   description?: string;
   action?: React.ReactNode;
 }> = ({ title, description, action }) => (
-  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10 pb-6 border-b border-beige-300/80">
-    <div className="space-y-2">
-      <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-matcha-950">
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-5 border-b border-beige-200">
+    <div className="space-y-1">
+      <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
         {title}
       </h1>
       {description && (
-        <p className="text-base sm:text-lg text-matcha-700 max-w-3xl leading-relaxed font-normal">
+        <p className="text-sm text-matcha-700 font-normal leading-relaxed max-w-2xl">
           {description}
         </p>
       )}
@@ -34,12 +34,12 @@ export const EmptyState: React.FC<{
   icon: Icon = FolderOpen,
   action,
 }) => (
-  <div className="flex flex-col items-center justify-center py-20 px-6 text-center border-2 border-dashed border-beige-300 rounded-3xl bg-beige-50">
-    <div className="w-14 h-14 rounded-full bg-matcha-100 flex items-center justify-center text-matcha-900 mb-5">
-      <Icon className="w-7 h-7" />
+  <div className="flex flex-col items-center justify-center py-16 px-6 text-center border border-dashed border-beige-200 rounded-2xl bg-beige-50">
+    <div className="w-12 h-12 rounded-2xl bg-matcha-100 flex items-center justify-center text-matcha-900 mb-4 shadow-2xs">
+      <Icon className="w-6 h-6" />
     </div>
-    <h3 className="text-lg font-extrabold text-matcha-950 mb-2">{title}</h3>
-    <p className="text-sm text-matcha-700 max-w-sm mb-8 leading-relaxed">{description}</p>
+    <h3 className="text-base font-extrabold text-matcha-950 mb-1">{title}</h3>
+    <p className="text-xs sm:text-sm text-matcha-700 max-w-sm mb-6 leading-relaxed">{description}</p>
     {action}
   </div>
 );
@@ -49,7 +49,7 @@ export const LoadingSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => 
     {Array.from({ length: count }).map((_, i) => (
       <div
         key={i}
-        className="animate-pulse bg-beige-200/80 rounded-3xl h-36 w-full border border-beige-300"
+        className="animate-pulse bg-beige-200/80 rounded-3xl h-36 w-full border border-beige-200"
       />
     ))}
   </div>
@@ -156,7 +156,7 @@ export const ProjectTechBadge: React.FC<{
           onError={() => setHasError(true)}
         />
       ) : (
-        <span className="text-[11px] font-bold font-mono text-matcha-900 bg-matcha-100/70 px-2.5 py-0.5 rounded-full border border-matcha-200/60 select-none">
+        <span className="text-[11px] font-semibold text-matcha-900 bg-matcha-100/70 px-2.5 py-0.5 rounded-full border border-matcha-200/60 select-none">
           {techName}
         </span>
       )}

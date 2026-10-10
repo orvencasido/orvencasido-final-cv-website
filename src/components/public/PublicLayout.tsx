@@ -7,10 +7,10 @@ import { FloatingPhonePlayer } from './FloatingPhonePlayer';
 
 export const PublicLayout: React.FC = () => {
   return (
-    <div className="min-h-screen bg-beige-100 text-matcha-900 flex flex-col font-sans transition-colors duration-200">
+    <div className="min-h-screen bg-beige-100 text-matcha-900 flex flex-col font-sans transition-colors duration-200 overflow-x-hidden">
       <TopProgressBar />
       <PublicNavbar />
-      <main className="flex-1">
+      <main className="flex-1 w-full overflow-x-hidden">
         <Outlet />
       </main>
       <PublicFooter />
@@ -18,3 +18,4 @@ export const PublicLayout: React.FC = () => {
     </div>
   );
 };
+

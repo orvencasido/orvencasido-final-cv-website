@@ -24,6 +24,7 @@ export const CacheKeys = {
   SOCIAL_LINKS: 'cache:social_links',
   projectDetail: (slug: string) => `cache:project:${slug}`,
   blogDetail: (slug: string) => `cache:blog:${slug}`,
+  githubActivity: (username: string) => `cache:github:${username.toLowerCase()}`,
 };
 
 export function getCached<T>(key: string): T | null {
