@@ -304,12 +304,11 @@ export const ProjectManager: React.FC = () => {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Project Management"
-        description="Add, edit, or feature cloud applications, IaC systems, and software repositories."
+        title="Projects"
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add New Project
           </button>
@@ -317,7 +316,7 @@ export const ProjectManager: React.FC = () => {
       />
 
       {/* Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-beige-200 bg-beige-50 shadow-2xs">
         <div className="relative flex-1 w-full max-w-md">
           <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
           <input
@@ -325,10 +324,10 @@ export const ProjectManager: React.FC = () => {
             placeholder="Search projects by title or tech..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 text-xs sm:text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+            className="w-full pl-11 pr-4 py-2.5 text-xs sm:text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
           />
         </div>
-        <div className="text-xs text-matcha-700 font-mono font-bold">
+        <div className="text-xs text-matcha-700 font-mono font-medium">
           Showing {filteredProjects.length} of {projects.length} projects
         </div>
       </div>
@@ -339,10 +338,10 @@ export const ProjectManager: React.FC = () => {
       ) : filteredProjects.length === 0 ? (
         <EmptyState title="No projects found" />
       ) : (
-        <div className="border border-beige-300 rounded-3xl bg-beige-50 overflow-hidden shadow-xs">
+        <div className="border border-beige-200 rounded-3xl bg-beige-50 overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-beige-200/80 text-matcha-900 border-b border-beige-300 font-extrabold uppercase tracking-wider text-[11px]">
+              <thead className="bg-beige-200/60 text-matcha-900 border-b border-beige-200 font-bold text-xs">
                 <tr>
                   <th className="px-6 py-4">Project Title</th>
                   <th className="px-6 py-4">Status</th>
@@ -509,7 +508,7 @@ export const ProjectManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Project Title <span className="text-red-500">*</span>
               </label>
               <input
@@ -528,19 +527,19 @@ export const ProjectManager: React.FC = () => {
                     );
                   }
                 }}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.title && <p className="text-xs text-red-600 font-medium">{errors.title.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Slug <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 {...register('slug')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
               {errors.slug && <p className="text-xs text-red-600 font-medium">{errors.slug.message}</p>}
             </div>
@@ -548,10 +547,10 @@ export const ProjectManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Project Status</label>
+              <label className="text-xs font-semibold text-matcha-900">Project Status</label>
               <select
                 {...register('status')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="completed">Completed</option>
                 <option value="in_progress">In Progress</option>
@@ -562,14 +561,14 @@ export const ProjectManager: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Completion Date <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 placeholder="e.g. 2026-03"
                 {...register('completion_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.completion_date && (
                 <p className="text-xs text-red-600 font-medium">{errors.completion_date.message}</p>
@@ -578,13 +577,13 @@ export const ProjectManager: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               Short Summary <span className="text-red-500">* (min 10 chars)</span>
             </label>
             <textarea
               rows={2}
               {...register('short_description')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.short_description && (
               <p className="text-xs text-red-600 font-medium">{errors.short_description.message}</p>
@@ -592,13 +591,13 @@ export const ProjectManager: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               Full Description <span className="text-red-500">* (min 20 chars)</span>
             </label>
             <textarea
               rows={4}
               {...register('full_description')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
             />
             {errors.full_description && (
               <p className="text-xs text-red-600 font-medium">{errors.full_description.message}</p>
@@ -607,21 +606,21 @@ export const ProjectManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">GitHub Repository URL</label>
+              <label className="text-xs font-semibold text-matcha-900">GitHub Repository URL</label>
               <input
                 type="text"
                 {...register('github_url')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
               {errors.github_url && <p className="text-xs text-red-600 font-medium">{errors.github_url.message}</p>}
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+                <label className="text-xs font-semibold text-matcha-900">
                   Live Demo URL
                 </label>
-                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-matcha-800 hover:text-matcha-950 select-none">
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-matcha-800 hover:text-matcha-950 select-none">
                   <input
                     type="checkbox"
                     checked={isLiveVisible}
@@ -635,7 +634,7 @@ export const ProjectManager: React.FC = () => {
                 type="text"
                 placeholder="e.g. https://demo.example.com"
                 {...register('live_url')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 text-xs font-mono font-medium"
               />
               {!isLiveVisible && (
                 <p className="text-[11px] text-amber-700 font-medium">
@@ -658,7 +657,7 @@ export const ProjectManager: React.FC = () => {
           {/* Tech stack tags with icon preview and upload option */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Technologies Used <span className="text-red-500">*</span>
               </label>
               <span className="text-[11px] font-mono text-matcha-600">
@@ -777,7 +776,7 @@ export const ProjectManager: React.FC = () => {
             {/* Quick Suggestions from existing Tech Stack */}
             {skills.length > 0 && (
               <div className="pt-2 border-t border-beige-200">
-                <span className="text-[11px] font-bold text-matcha-700 uppercase tracking-wider block mb-2">
+                <span className="text-xs font-semibold text-matcha-700 block mb-2">
                   Quick Add from Tech Stack Library:
                 </span>
                 <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto pr-1">

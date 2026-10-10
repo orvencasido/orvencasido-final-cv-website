@@ -4,13 +4,15 @@ import {
   Code2,
   ChevronRight,
 } from 'lucide-react';
-import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings } from '../../lib/services';
+import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings, getSocialLinks } from '../../lib/services';
 import { Profile, Project, Blog, Skill, SiteSettings } from '../../types';
 import { ProjectCoverImage, ProjectTechBadge } from '../../components/ui/CommonUI';
 import { HeroSkeleton, ProjectGridSkeleton } from '../../components/ui/ShimmerSkeleton';
 import { getTechIconUrl } from '../../lib/techIcons';
 import { SEOHead } from '../../seo/SEOHead';
 import { getProfilePageSchema } from '../../seo/structuredData';
+import { GitHubTiles } from '../../components/public/GitHubTiles';
+import { extractGitHubUsername } from '../../lib/githubService';
 
 export const HomePage: React.FC = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -18,17 +20,19 @@ export const HomePage: React.FC = () => {
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([]);
   const [featuredBlogs, setFeaturedBlogs] = useState<Blog[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [githubUsername, setGithubUsername] = useState<string>('orvencasido');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadHomeData() {
       try {
-        const [profData, projData, blogData, skillData, settingsData] = await Promise.all([
+        const [profData, projData, blogData, skillData, settingsData, socialLinksData] = await Promise.all([
           getProfile(),
           getProjects(),
           getBlogs(),
           getSkills(),
           getSiteSettings(),
+          getSocialLinks(),
         ]);
 
         setProfile(profData);
@@ -37,6 +41,11 @@ export const HomePage: React.FC = () => {
         setFeaturedProjects(featured.length > 0 ? featured : projData.slice(0, 4));
         setFeaturedBlogs(blogData.filter((b) => b.is_featured && b.status === 'published').slice(0, 2));
         setSkills(skillData.filter((s) => s.is_visible));
+
+        const githubSocial = socialLinksData.find(
+          (link) => link.platform.toLowerCase().includes('github') || link.url.toLowerCase().includes('github.com')
+        );
+        setGithubUsername(extractGitHubUsername(githubSocial?.url));
       } catch (err) {
         console.error('Failed to load home data:', err);
       } finally {
@@ -50,7 +59,7 @@ export const HomePage: React.FC = () => {
     return (
       <div className="w-full flex flex-col min-h-screen">
         <HeroSkeleton />
-        <div className="max-w-6xl mx-auto px-6 md:px-10 py-16 w-full space-y-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-12 sm:py-16 w-full space-y-12">
           <ProjectGridSkeleton count={2} />
         </div>
       </div>
@@ -92,29 +101,26 @@ export const HomePage: React.FC = () => {
       />
 
       {/* 1. Hero Section (Warm Beige Base) */}
-      <section className="w-full bg-beige-100 py-16 md:py-24">
-        <div className="max-w-6xl mx-auto px-6 md:px-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-12 lg:gap-16">
+      <section className="w-full bg-beige-100 pt-10 sm:pt-16 md:pt-24 pb-10 sm:pb-12 md:pb-16">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 flex flex-col-reverse lg:flex-row items-center justify-between gap-10 sm:gap-12 lg:gap-16">
           {/* Left Column */}
-          <div className="flex-1 space-y-8 w-full">
-            <div className="space-y-3">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-matcha-950 leading-[1.1]">
+          <div className="flex-1 space-y-6 sm:space-y-8 w-full text-center lg:text-left">
+            <div className="space-y-2 sm:space-y-3">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-matcha-950 leading-[1.1] break-words">
                 {profile.full_name}
               </h1>
-              <p className="text-2xl sm:text-3xl text-matcha-700 font-medium">
+              <p className="text-xl sm:text-2xl lg:text-3xl text-matcha-700 font-medium">
                 {profile.professional_title}
               </p>
             </div>
 
-            <p className="text-matcha-800 text-lg sm:text-xl max-w-2xl leading-relaxed font-normal">
+            <p className="text-matcha-800 text-base sm:text-lg lg:text-xl max-w-2xl leading-relaxed font-normal mx-auto lg:mx-0">
               {profile.introduction}
             </p>
 
             {/* Tech Stack */}
-            <div className="pt-4 space-y-4">
-              {/* <h3 className="text-xs font-extrabold text-matcha-700 uppercase tracking-widest">
-                Tech Stack & Expertise
-              </h3> */}
-              <div className="flex flex-wrap gap-4 items-center">
+            <div className="pt-2 sm:pt-4 space-y-4">
+              <div className="flex flex-wrap gap-2.5 sm:gap-3.5 items-center justify-center lg:justify-start">
                 {skills
                   .filter((s) => s && s.name && s.name.trim().length > 0 && s.name !== ',')
                   .map((skill) => {
@@ -122,19 +128,20 @@ export const HomePage: React.FC = () => {
                     return (
                       <div
                         key={skill.id}
-                        className="relative group/tech flex items-center justify-center p-1.5 cursor-default transition-all duration-200"
+                        className="relative group/tech min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-xl hover:bg-beige-200/60 cursor-default transition-all duration-200"
+                        title={skill.name}
                       >
                         <img
                           src={iconUrl}
                           alt={skill.name}
-                          className="w-7 h-7 sm:w-8 sm:h-8 object-contain select-none opacity-40 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
+                          className="w-7 h-7 sm:w-8 sm:h-8 object-contain select-none opacity-50 group-hover/tech:opacity-100 group-hover/tech:scale-110 transition-all duration-200"
                           onError={(e) => {
                             (e.currentTarget as HTMLElement).style.display = 'none';
                             const parent = (e.currentTarget as HTMLElement).parentElement;
                             if (parent && !parent.querySelector('.fallback-text')) {
                               const span = document.createElement('span');
                               span.className =
-                                'fallback-text text-xs font-bold font-mono text-matcha-900 opacity-40 group-hover/tech:opacity-100 transition-all duration-200';
+                                'fallback-text text-xs font-bold font-mono text-matcha-900 opacity-50 group-hover/tech:opacity-100 transition-all duration-200';
                               span.innerText = skill.name;
                               parent.appendChild(span);
                             }
@@ -156,7 +163,7 @@ export const HomePage: React.FC = () => {
 
           {/* Right Column: Avatar */}
           <div className="shrink-0 flex items-center justify-center">
-            <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[360px] lg:h-[360px] rounded-full overflow-hidden flex items-center justify-center shadow-xl">
+            <div className="relative w-52 h-52 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-[360px] lg:h-[360px] rounded-full overflow-hidden flex items-center justify-center shadow-xl">
               {profile.profile_image_url ? (
                 <img
                   src={profile.profile_image_url}
@@ -165,7 +172,7 @@ export const HomePage: React.FC = () => {
                   className="w-full h-full object-cover object-top"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-matcha-900 text-beige-50 font-bold text-6xl">
+                <div className="w-full h-full flex items-center justify-center bg-matcha-900 text-beige-50 font-bold text-5xl sm:text-6xl">
                   {initials}
                 </div>
               )}
@@ -174,43 +181,47 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 2. Featured Projects & CTA Section (White Pastel Background) */}
+      {/* 2. GitHub Activity Section (Warm Beige Base) */}
+      <section className="w-full bg-beige-100 pb-12 sm:pb-16 md:pb-24 pt-2 md:pt-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10">
+          <GitHubTiles username={githubUsername} />
+        </div>
+      </section>
+
+      {/* 3. Featured Projects & CTA Section (White Pastel Background) */}
       {(showFeaturedProjects || showContactCta) && (
-        <section className="w-full bg-white border-y border-beige-200/80 py-16 md:py-24">
-          <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
+        <section className="w-full bg-white border-y border-beige-200/80 py-12 sm:py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 space-y-10 sm:space-y-12">
             {showFeaturedProjects && (
               <>
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-6 gap-4">
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
-                      Deployed Projects
-                    </span>
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-5 gap-3 sm:gap-4">
+                  <div>
                     <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
                       Featured Works
                     </h2>
                   </div>
                   <Link
                     to="/projects"
-                    className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
+                    className="text-sm font-semibold text-matcha-700 hover:text-matcha-950 inline-flex items-center gap-1.5 group transition-colors min-h-[44px]"
                   >
-                    <span>View all projects</span>
+                    <span>View all projects &rarr;</span>
                   </Link>
                 </div>
 
                 {featuredProjects.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
                     {featuredProjects.map((proj) => (
                       <div
                         key={proj.id}
-                        className="bg-beige-50 border border-beige-200 rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-matcha-400 group flex flex-col justify-between transition-all"
+                        className="bg-beige-50 border border-beige-200 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-matcha-300 group flex flex-col justify-between transition-all"
                       >
                         {/* Project Cover Image */}
                         <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
                           <ProjectCoverImage url={proj.cover_image_url} title={proj.title} />
                         </div>
 
-                        <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
-                          <div className="space-y-3">
+                        <div className="p-5 sm:p-6 md:p-8 flex-1 flex flex-col justify-between space-y-5 sm:space-y-6">
+                          <div className="space-y-2 sm:space-y-3">
                             <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
                               <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
                             </h3>
@@ -219,8 +230,8 @@ export const HomePage: React.FC = () => {
                             </p>
                           </div>
 
-                          <div className="space-y-5 pt-2">
-                            <div className="flex items-center gap-2.5 flex-wrap min-h-7">
+                          <div className="space-y-4 pt-2">
+                            <div className="flex items-center gap-2 flex-wrap min-h-7">
                               {proj.technologies.slice(0, 6).map((tech) => (
                                 <ProjectTechBadge key={tech} tech={tech} skills={skills} />
                               ))}
@@ -229,9 +240,9 @@ export const HomePage: React.FC = () => {
                             <div className="flex items-center justify-between text-sm pt-4 border-t border-beige-200">
                               <Link
                                 to={`/projects/${proj.slug}`}
-                                className="font-extrabold text-matcha-900 hover:text-matcha-700 flex items-center gap-1.5"
+                                className="font-bold text-matcha-900 group-hover:text-matcha-700 inline-flex items-center gap-1.5 transition-colors min-h-[44px]"
                               >
-                                See More...
+                                Explore project &rarr;
                               </Link>
                             </div>
                           </div>
@@ -240,7 +251,7 @@ export const HomePage: React.FC = () => {
                     ))}
                   </div>
                 ) : (
-                  <div className="p-10 rounded-3xl border border-dashed border-beige-300 bg-beige-50/50 flex flex-col items-center justify-center text-center space-y-2 py-12">
+                  <div className="p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-dashed border-beige-300 bg-beige-50/50 flex flex-col items-center justify-center text-center space-y-2 py-10 sm:py-12">
                     <div className="w-12 h-12 rounded-2xl bg-matcha-100 flex items-center justify-center text-matcha-800">
                       <Code2 className="w-6 h-6" />
                     </div>
@@ -256,26 +267,27 @@ export const HomePage: React.FC = () => {
             {/* CTA Banner Section */}
             {showContactCta && (
               <div
-                className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-3xl p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${showFeaturedProjects ? 'mt-12' : ''
-                  }`}
+                className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${
+                  showFeaturedProjects ? 'mt-8 sm:mt-12' : ''
+                }`}
               >
-                <div className="relative z-10 max-w-xl space-y-4">
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-beige-50 tracking-tight leading-tight">
+                <div className="relative z-10 max-w-xl space-y-3 sm:space-y-4">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-beige-50 tracking-tight leading-tight">
                     Let's build something extraordinary together.
                   </h2>
-                  <p className="text-matcha-200 text-base sm:text-lg leading-relaxed font-normal pb-2">
+                  <p className="text-matcha-200 text-sm sm:text-base md:text-lg leading-relaxed font-normal pb-1 sm:pb-2">
                     I am open for software engineering opportunities, consulting, and building high-impact platforms.
                   </p>
-                  <div className="flex flex-wrap gap-4 pt-2">
+                  <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2">
                     <Link
                       to="/contact"
-                      className="px-8 py-3.5 bg-beige-50 text-matcha-950 font-bold text-sm rounded-full hover:bg-beige-200 transition shadow-md"
+                      className="w-full sm:w-auto px-8 py-3.5 bg-beige-50 text-matcha-950 font-bold text-sm rounded-full hover:bg-beige-200 transition shadow-md min-h-[44px] flex items-center justify-center text-center"
                     >
                       Get In Touch
                     </Link>
                     <a
                       href={`mailto:${profile.email}`}
-                      className="px-8 py-3.5 border border-matcha-600 text-matcha-100 font-bold text-sm rounded-full hover:bg-matcha-800 transition"
+                      className="w-full sm:w-auto px-8 py-3.5 border border-matcha-600 text-matcha-100 font-bold text-sm rounded-full hover:bg-matcha-800 transition min-h-[44px] flex items-center justify-center text-center"
                     >
                       Send Email
                     </a>
@@ -291,39 +303,36 @@ export const HomePage: React.FC = () => {
         </section>
       )}
 
-      {/* 3. Featured Writing Section (Warm Beige Base) */}
+      {/* 4. Featured Writing Section (Warm Beige Base) */}
       {showFeaturedBlogs && featuredBlogs.length > 0 && (
-        <section className="w-full bg-beige-100 py-16 md:py-24">
-          <div className="max-w-6xl mx-auto px-6 md:px-10 space-y-12">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-300 pb-6 gap-4">
-              <div className="space-y-1.5">
-                <span className="text-[11px] font-bold font-mono tracking-[0.2em] text-amber-700 uppercase">
-                  Engineering Higlights
-                </span>
+        <section className="w-full bg-beige-100 py-12 sm:py-16 md:py-24">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 space-y-10 sm:space-y-12">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-5 gap-3 sm:gap-4">
+              <div>
                 <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-950">
-                  Latest Articles & Insights
+                  Latest Articles
                 </h2>
               </div>
               <Link
                 to="/blogs"
-                className="text-sm font-bold text-matcha-700 hover:text-matcha-950 flex items-center gap-1.5 group transition-colors"
+                className="text-sm font-semibold text-matcha-700 hover:text-matcha-950 inline-flex items-center gap-1.5 group transition-colors min-h-[44px]"
               >
-                <span>Read all articles</span>
+                <span>Read all articles &rarr;</span>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {featuredBlogs.map((blog) => (
                 <article
                   key={blog.id}
-                  className="p-8 bg-white border border-beige-300 rounded-3xl shadow-2xs hover:border-matcha-400 hover:shadow-md transition-all flex flex-col justify-between space-y-6"
+                  className="p-5 sm:p-6 md:p-8 bg-beige-50/80 border border-beige-200 rounded-2xl sm:rounded-3xl shadow-2xs hover:border-matcha-300 hover:shadow-md transition-all flex flex-col justify-between space-y-5 sm:space-y-6"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     <div className="flex items-center justify-between text-xs text-matcha-600 font-mono font-medium">
                       <span>{blog.published_at}</span>
                       <span>{blog.reading_time}</span>
                     </div>
-                    <h3 className="text-xl font-extrabold text-matcha-950 hover:text-matcha-700 transition-colors">
+                    <h3 className="text-lg sm:text-xl font-extrabold text-matcha-950 hover:text-matcha-700 transition-colors">
                       <Link to={`/blogs/${blog.slug}`}>{blog.title}</Link>
                     </h3>
                     <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
@@ -331,12 +340,12 @@ export const HomePage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-beige-200">
-                    <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-beige-200">
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {blog.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-900 border border-matcha-200"
+                          className="text-xs font-semibold px-3 py-1 rounded-full bg-matcha-100 text-matcha-800 border border-matcha-200"
                         >
                           #{tag}
                         </span>
@@ -344,9 +353,9 @@ export const HomePage: React.FC = () => {
                     </div>
                     <Link
                       to={`/blogs/${blog.slug}`}
-                      className="text-sm font-extrabold text-matcha-800 hover:text-matcha-950 flex items-center gap-1"
+                      className="text-sm font-bold text-matcha-900 hover:text-matcha-700 inline-flex items-center gap-1 min-h-[44px]"
                     >
-                      Read &rarr;
+                      Read article &rarr;
                     </Link>
                   </div>
                 </article>

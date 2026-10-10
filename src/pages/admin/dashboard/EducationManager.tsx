@@ -125,12 +125,11 @@ export const EducationManager: React.FC = () => {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Education Management"
-        description="Manage university degrees, honors, and coursework history."
+        title="Education"
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Education
           </button>
@@ -146,7 +145,7 @@ export const EducationManager: React.FC = () => {
           {eduList.map((edu) => (
             <div
               key={edu.id}
-              className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+              className="p-6 rounded-3xl border border-beige-200 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
             >
               <div className="space-y-1">
                 <h3 className="text-base font-extrabold text-matcha-950 flex items-center gap-2">
@@ -188,82 +187,82 @@ export const EducationManager: React.FC = () => {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">University / Institution</label>
+            <label className="text-xs font-semibold text-matcha-900">University / Institution</label>
             <input
               type="text"
               {...register('school')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.school && <p className="text-xs text-red-600 font-medium">{errors.school.message}</p>}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Degree</label>
+              <label className="text-xs font-semibold text-matcha-900">Degree</label>
               <input
                 type="text"
                 {...register('degree')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Field of Study</label>
+              <label className="text-xs font-semibold text-matcha-900">Field of Study</label>
               <input
                 type="text"
                 {...register('field_of_study')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Start Date</label>
+              <label className="text-xs font-semibold text-matcha-900">Start Date</label>
               <input
                 type="text"
                 placeholder="2019"
                 {...register('start_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">End Date</label>
+              <label className="text-xs font-semibold text-matcha-900">End Date</label>
               <input
                 type="text"
                 placeholder="2023"
                 {...register('end_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">GPA (Optional)</label>
+              <label className="text-xs font-semibold text-matcha-900">GPA (Optional)</label>
               <input
                 type="text"
                 placeholder="3.8/4.0"
                 {...register('gpa')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Location</label>
+            <label className="text-xs font-semibold text-matcha-900">Location</label>
             <input
               type="text"
               {...register('location')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Description</label>
+            <label className="text-xs font-semibold text-matcha-900">Description</label>
             <textarea
               rows={2}
               {...register('description')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 

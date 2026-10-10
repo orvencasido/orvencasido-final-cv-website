@@ -202,33 +202,30 @@ export const FooterManager: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <SectionHeader
-        title="Footer Management"
-        description="Control the public footer copyright text, social links, ordering, and visibility."
-      />
+      <SectionHeader title="Footer" />
 
-      <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-5 shadow-xs">
+      <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-5 shadow-2xs">
         <div className="flex items-center gap-2 border-b border-beige-200 pb-4">
           <Save className="w-5 h-5 text-matcha-600" />
-          <h2 className="text-lg font-extrabold text-matcha-950">Footer Copy</h2>
+          <h2 className="text-base sm:text-lg font-bold text-matcha-950">Footer Copy</h2>
         </div>
 
         <div className="space-y-2">
-          <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+          <label className="text-xs font-semibold text-matcha-900">
             Copyright / Footer Text
           </label>
           <input
             type="text"
             value={footerText}
             onChange={(event) => setFooterText(event.target.value)}
-            className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+            className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
           />
         </div>
       </div>
 
-      <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs space-y-6">
+      <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 shadow-2xs space-y-6">
         <div className="flex items-center justify-between gap-4 border-b border-beige-200 pb-4">
-          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2">
+          <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2">
             <LinkIcon className="w-5 h-5 text-matcha-600" />
             {editingId ? 'Edit Social Link' : 'Add Social Link'}
           </h2>
@@ -236,7 +233,7 @@ export const FooterManager: React.FC = () => {
             <button
               type="button"
               onClick={resetDraft}
-              className="inline-flex items-center gap-1 text-xs font-bold text-matcha-700 hover:text-matcha-950 cursor-pointer"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-matcha-700 hover:text-matcha-950 cursor-pointer"
             >
               <X className="w-4 h-4" /> Cancel Edit
             </button>
@@ -246,7 +243,7 @@ export const FooterManager: React.FC = () => {
         <form onSubmit={handleSubmitLink} className="space-y-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Platform
               </label>
               <input
@@ -254,12 +251,12 @@ export const FooterManager: React.FC = () => {
                 placeholder="LinkedIn"
                 value={draftLink.platform}
                 onChange={(event) => updateDraftField('platform', event.target.value)}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Label
               </label>
               <input
@@ -267,12 +264,12 @@ export const FooterManager: React.FC = () => {
                 placeholder="LinkedIn"
                 value={draftLink.label}
                 onChange={(event) => updateDraftField('label', event.target.value)}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2 lg:col-span-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 URL
               </label>
               <input
@@ -280,14 +277,14 @@ export const FooterManager: React.FC = () => {
                 placeholder="https://linkedin.com/in/..."
                 value={draftLink.url}
                 onChange={(event) => updateDraftField('url', event.target.value)}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
               />
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5">
             <div className="space-y-2 w-full sm:max-w-xs">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Icon Keyword
               </label>
               <input
@@ -295,7 +292,7 @@ export const FooterManager: React.FC = () => {
                 placeholder="mail, github, linkedin"
                 value={draftLink.icon}
                 onChange={(event) => updateDraftField('icon', event.target.value)}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono font-medium"
               />
             </div>
 

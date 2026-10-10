@@ -124,12 +124,11 @@ export const CertificationManager: React.FC = () => {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Certification Management"
-        description="Manage official vendor badges, accreditation links, and expiration schedules."
+        title="Certifications"
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Certification
           </button>
@@ -145,7 +144,7 @@ export const CertificationManager: React.FC = () => {
           {certs.map((cert) => (
             <div
               key={cert.id}
-              className="p-6 rounded-3xl border border-beige-300 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs"
+              className="p-6 rounded-3xl border border-beige-200 bg-beige-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs"
             >
               <div className="space-y-1">
                 <h3 className="text-base font-extrabold text-matcha-950 flex items-center gap-2">
@@ -197,21 +196,21 @@ export const CertificationManager: React.FC = () => {
       >
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Certification Name</label>
+            <label className="text-xs font-semibold text-matcha-900">Certification Name</label>
             <input
               type="text"
               {...register('name')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.name && <p className="text-xs text-red-600 font-medium">{errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Issuing Organization</label>
+            <label className="text-xs font-semibold text-matcha-900">Issuing Organization</label>
             <input
               type="text"
               {...register('issuing_organization')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.issuing_organization && (
               <p className="text-xs text-red-600 font-medium">{errors.issuing_organization.message}</p>
@@ -220,52 +219,52 @@ export const CertificationManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Issue Date</label>
+              <label className="text-xs font-semibold text-matcha-900">Issue Date</label>
               <input
                 type="text"
                 placeholder="2024-05"
                 {...register('issue_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Expiration Date</label>
+              <label className="text-xs font-semibold text-matcha-900">Expiration Date</label>
               <input
                 type="text"
                 placeholder="2027-05"
                 {...register('expiration_date')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Credential ID</label>
+              <label className="text-xs font-semibold text-matcha-900">Credential ID</label>
               <input
                 type="text"
                 {...register('credential_id')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Verification URL</label>
+              <label className="text-xs font-semibold text-matcha-900">Verification URL</label>
               <input
                 type="text"
                 {...register('credential_url')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Description</label>
+            <label className="text-xs font-semibold text-matcha-900">Description</label>
             <textarea
               rows={2}
               {...register('description')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
           </div>
 

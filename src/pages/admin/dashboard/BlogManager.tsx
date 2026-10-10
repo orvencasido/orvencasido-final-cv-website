@@ -169,12 +169,11 @@ export const BlogManager: React.FC = () => {
   return (
     <div className="space-y-8">
       <SectionHeader
-        title="Blog Post Management"
-        description="Write, publish, feature, or manage technical blog articles across your personal platform."
+        title="Articles"
         action={
           <button
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-6 py-3 text-xs sm:text-sm font-extrabold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-bold text-beige-50 bg-matcha-900 rounded-full hover:bg-matcha-800 transition shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Create Blog Post
           </button>
@@ -182,7 +181,7 @@ export const BlogManager: React.FC = () => {
       />
 
       {/* Search & Counter */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-6 rounded-3xl border border-beige-300 bg-beige-50 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl sm:rounded-3xl border border-beige-200 bg-beige-50 shadow-2xs">
         <div className="relative flex-1 w-full max-w-md">
           <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
           <input
@@ -190,10 +189,10 @@ export const BlogManager: React.FC = () => {
             placeholder="Search blogs by title or tag..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 text-xs sm:text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+            className="w-full pl-11 pr-4 py-2.5 text-xs sm:text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
           />
         </div>
-        <div className="text-xs text-matcha-700 font-mono font-bold">
+        <div className="text-xs text-matcha-700 font-mono font-medium">
           Showing {filteredBlogs.length} of {blogs.length} articles
         </div>
       </div>
@@ -204,10 +203,10 @@ export const BlogManager: React.FC = () => {
       ) : filteredBlogs.length === 0 ? (
         <EmptyState title="No blog posts found" />
       ) : (
-        <div className="border border-beige-300 rounded-3xl bg-beige-50 overflow-hidden shadow-xs">
+        <div className="border border-beige-200 rounded-3xl bg-beige-50 overflow-hidden shadow-2xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs sm:text-sm">
-              <thead className="bg-beige-200/80 text-matcha-900 border-b border-beige-300 font-extrabold uppercase tracking-wider text-[11px]">
+              <thead className="bg-beige-200/60 text-matcha-900 border-b border-beige-200 font-bold text-xs">
                 <tr>
                   <th className="px-6 py-4">Title & Slug</th>
                   <th className="px-6 py-4">Status</th>
@@ -311,7 +310,7 @@ export const BlogManager: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 text-xs sm:text-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Title</label>
+              <label className="text-xs font-semibold text-matcha-900">Title</label>
               <input
                 type="text"
                 {...register('title')}
@@ -327,17 +326,17 @@ export const BlogManager: React.FC = () => {
                     );
                   }
                 }}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
               {errors.title && <p className="text-xs text-red-600 font-medium">{errors.title.message}</p>}
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">URL Slug</label>
+              <label className="text-xs font-semibold text-matcha-900">URL Slug</label>
               <input
                 type="text"
                 {...register('slug')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
               />
               {errors.slug && <p className="text-xs text-red-600 font-medium">{errors.slug.message}</p>}
             </div>
@@ -345,28 +344,28 @@ export const BlogManager: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Author</label>
+              <label className="text-xs font-semibold text-matcha-900">Author</label>
               <input
                 type="text"
                 {...register('author')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Reading Time</label>
+              <label className="text-xs font-semibold text-matcha-900">Reading Time</label>
               <input
                 type="text"
                 {...register('reading_time')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Status</label>
+              <label className="text-xs font-semibold text-matcha-900">Status</label>
               <select
                 {...register('status')}
-                className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
               >
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>
@@ -375,23 +374,23 @@ export const BlogManager: React.FC = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Summary</label>
+            <label className="text-xs font-semibold text-matcha-900">Summary</label>
             <textarea
               rows={2}
               {...register('summary')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
             />
             {errors.summary && <p className="text-xs text-red-600 font-medium">{errors.summary.message}</p>}
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               Content (Markdown or Plain Text)
             </label>
             <textarea
               rows={6}
               {...register('content')}
-              className="w-full px-4 py-3 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
+              className="w-full px-4 py-3 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-mono text-xs font-medium"
             />
             {errors.content && <p className="text-xs text-red-600 font-medium">{errors.content.message}</p>}
           </div>
@@ -407,14 +406,14 @@ export const BlogManager: React.FC = () => {
 
           {/* Tags manager */}
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">Tags</label>
+            <label className="text-xs font-semibold text-matcha-900">Tags</label>
             <div className="flex items-center gap-3">
               <input
                 type="text"
                 value={tagInput}
                 onChange={(e) => setTagInput(e.target.value)}
                 placeholder="Add tag and press Add..."
-                className="flex-1 px-4 py-2.5 bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none font-medium"
+                className="flex-1 px-4 py-2.5 bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none font-medium"
               />
               <button
                 type="button"

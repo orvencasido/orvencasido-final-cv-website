@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Save, User, Globe, RefreshCw, Cpu, ArrowRight, Eye } from 'lucide-react';
+import { Save, User, Globe, RefreshCw, Eye } from 'lucide-react';
 import { profileSchema, ProfileFormData } from '../../../lib/schemas';
 import { getProfile, updateProfile, getSiteSettings, updateSiteSettings } from '../../../lib/services';
 import { Profile } from '../../../types';
@@ -91,50 +90,24 @@ export const HomeContentManager: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      <SectionHeader
-        title="Home & Profile Management"
-        description="Update your personal bio, job title, availability status, resume link, and social profiles live."
-      />
-
-      {/* Tech Stack Banner */}
-      <div className="p-6 rounded-3xl bg-beige-50 border border-beige-300 flex flex-wrap items-center justify-between gap-4 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-2xl bg-matcha-100 text-matcha-900">
-            <Cpu className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="text-base font-extrabold text-matcha-950">
-              Manage Tech Stack Icons
-            </h4>
-            <p className="text-xs text-matcha-700 font-medium">
-              Add, edit, or re-order tech icons with hover effects and tooltips on the home page.
-            </p>
-          </div>
-        </div>
-        <Link
-          to="/orven/dashboard/tech-stack"
-          className="px-5 py-2.5 bg-matcha-900 text-beige-50 hover:bg-matcha-800 text-xs font-bold rounded-full transition flex items-center gap-1.5 cursor-pointer shadow-xs"
-        >
-          Manage Tech Icons <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
+      <SectionHeader title="Home & Profile Management" />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
-          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-6 shadow-2xs">
+          <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
             <User className="w-5 h-5 text-matcha-600" /> Basic Identity
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Full Name */}
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Full Name
               </label>
               <input
                 type="text"
                 {...register('full_name')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               />
               {errors.full_name && (
                 <p className="text-xs text-red-600 font-medium">{errors.full_name.message}</p>
@@ -143,13 +116,13 @@ export const HomeContentManager: React.FC = () => {
 
             {/* Professional Title */}
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Professional Title
               </label>
               <input
                 type="text"
                 {...register('professional_title')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               />
               {errors.professional_title && (
                 <p className="text-xs text-red-600 font-medium">{errors.professional_title.message}</p>
@@ -160,12 +133,12 @@ export const HomeContentManager: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Availability Status */}
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Availability Status
               </label>
               <select
                 {...register('availability_status')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               >
                 <option value="available">Available for opportunities</option>
                 <option value="open_to_offers">Open to offers</option>
@@ -188,13 +161,13 @@ export const HomeContentManager: React.FC = () => {
 
           {/* Short Introduction */}
           <div className="space-y-2">
-            <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+            <label className="text-xs font-semibold text-matcha-900">
               Hero Introduction
             </label>
             <textarea
               rows={3}
               {...register('introduction')}
-              className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium"
+              className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 resize-none font-medium transition"
             />
             {errors.introduction && (
               <p className="text-xs text-red-600 font-medium">{errors.introduction.message}</p>
@@ -203,42 +176,42 @@ export const HomeContentManager: React.FC = () => {
         </div>
 
         {/* Contact & Links */}
-        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
-          <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
+        <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-6 shadow-2xs">
+          <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2 border-b border-beige-200 pb-4">
             <Globe className="w-5 h-5 text-matcha-600" /> Contact & Links
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Email
               </label>
               <input
                 type="email"
                 {...register('email')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Phone
               </label>
               <input
                 type="text"
                 {...register('phone')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-extrabold uppercase tracking-wider text-matcha-900">
+              <label className="text-xs font-semibold text-matcha-900">
                 Location
               </label>
               <input
                 type="text"
                 {...register('location')}
-                className="w-full px-4 py-3 text-sm bg-beige-100 border border-beige-300 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium"
+                className="w-full px-4 py-3 text-sm bg-beige-100/70 border border-beige-200 rounded-2xl text-matcha-950 focus:outline-none focus:ring-2 focus:ring-matcha-500 font-medium transition"
               />
             </div>
           </div>
@@ -256,13 +229,13 @@ export const HomeContentManager: React.FC = () => {
         </div>
 
         {/* Homepage Sections Visibility */}
-        <div className="p-8 rounded-3xl border border-beige-300 bg-beige-50 space-y-6 shadow-xs">
+        <div className="p-6 sm:p-8 rounded-3xl border border-beige-200 bg-beige-50 space-y-6 shadow-2xs">
           <div className="border-b border-beige-200 pb-4">
-            <h2 className="text-lg font-extrabold text-matcha-950 flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-matcha-950 flex items-center gap-2">
               <Eye className="w-5 h-5 text-matcha-600" /> Homepage Sections Visibility
             </h2>
-            <p className="text-xs text-matcha-700 font-medium mt-1">
-              Choose which sections are displayed or hidden on the public home page.
+            <p className="text-xs text-matcha-700 font-normal mt-1">
+              Configure visible content sections on the public home page.
             </p>
           </div>
 
@@ -270,163 +243,115 @@ export const HomeContentManager: React.FC = () => {
             {/* Highlighted Projects Toggle */}
             <div
               onClick={() => setShowFeaturedProjects(!showFeaturedProjects)}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-4 select-none ${
+              className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 select-none ${
                 showFeaturedProjects
-                  ? 'border-matcha-300 bg-matcha-100/70 shadow-2xs'
-                  : 'border-beige-300 bg-beige-100/60 opacity-85'
+                  ? 'border-matcha-300 bg-matcha-50/70 shadow-2xs'
+                  : 'border-beige-200 bg-beige-100/50'
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <span className="block text-sm font-extrabold text-matcha-950">
-                    Shipped Projects
-                  </span>
-                  <span className="block text-xs font-medium text-matcha-700">
-                    Highlighted projects showcase section
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={showFeaturedProjects}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowFeaturedProjects(!showFeaturedProjects);
-                  }}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showFeaturedProjects ? 'bg-matcha-800' : 'bg-beige-300'
-                  }`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      showFeaturedProjects ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-              <div className="pt-2 border-t border-matcha-200/50 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-matcha-800">
-                  Status
+              <div className="space-y-1">
+                <span className="block text-sm font-bold text-matcha-950">
+                  Shipped Projects
                 </span>
+                <span className="block text-xs font-normal text-matcha-700">
+                  Featured projects showcase section
+                </span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={showFeaturedProjects}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFeaturedProjects(!showFeaturedProjects);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  showFeaturedProjects ? 'bg-matcha-800' : 'bg-beige-300'
+                }`}
+              >
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    showFeaturedProjects
-                      ? 'bg-matcha-200/80 text-matcha-950'
-                      : 'bg-beige-200 text-matcha-700'
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    showFeaturedProjects ? 'translate-x-5' : 'translate-x-0'
                   }`}
-                >
-                  {showFeaturedProjects ? 'Visible' : 'Hidden'}
-                </span>
-              </div>
+                />
+              </button>
             </div>
 
             {/* Highlighted Blogs Toggle */}
             <div
               onClick={() => setShowFeaturedBlogs(!showFeaturedBlogs)}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-4 select-none ${
+              className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 select-none ${
                 showFeaturedBlogs
-                  ? 'border-matcha-300 bg-matcha-100/70 shadow-2xs'
-                  : 'border-beige-300 bg-beige-100/60 opacity-85'
+                  ? 'border-matcha-300 bg-matcha-50/70 shadow-2xs'
+                  : 'border-beige-200 bg-beige-100/50'
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <span className="block text-sm font-extrabold text-matcha-950">
-                    Latest Articles
-                  </span>
-                  <span className="block text-xs font-medium text-matcha-700">
-                    Engineering highlights & insights grid
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={showFeaturedBlogs}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowFeaturedBlogs(!showFeaturedBlogs);
-                  }}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showFeaturedBlogs ? 'bg-matcha-800' : 'bg-beige-300'
-                  }`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      showFeaturedBlogs ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-              <div className="pt-2 border-t border-matcha-200/50 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-matcha-800">
-                  Status
+              <div className="space-y-1">
+                <span className="block text-sm font-bold text-matcha-950">
+                  Latest Articles
                 </span>
+                <span className="block text-xs font-normal text-matcha-700">
+                  Engineering highlights and articles
+                </span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={showFeaturedBlogs}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFeaturedBlogs(!showFeaturedBlogs);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  showFeaturedBlogs ? 'bg-matcha-800' : 'bg-beige-300'
+                }`}
+              >
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    showFeaturedBlogs
-                      ? 'bg-matcha-200/80 text-matcha-950'
-                      : 'bg-beige-200 text-matcha-700'
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    showFeaturedBlogs ? 'translate-x-5' : 'translate-x-0'
                   }`}
-                >
-                  {showFeaturedBlogs ? 'Visible' : 'Hidden'}
-                </span>
-              </div>
+                />
+              </button>
             </div>
 
             {/* Contact Redirection CTA Toggle */}
             <div
               onClick={() => setShowContactCta(!showContactCta)}
-              className={`p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-4 select-none ${
+              className={`p-5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 select-none ${
                 showContactCta
-                  ? 'border-matcha-300 bg-matcha-100/70 shadow-2xs'
-                  : 'border-beige-300 bg-beige-100/60 opacity-85'
+                  ? 'border-matcha-300 bg-matcha-50/70 shadow-2xs'
+                  : 'border-beige-200 bg-beige-100/50'
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="space-y-1">
-                  <span className="block text-sm font-extrabold text-matcha-950">
-                    Contact Redirection CTA
-                  </span>
-                  <span className="block text-xs font-medium text-matcha-700">
-                    "Let's build together" banner & button
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={showContactCta}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowContactCta(!showContactCta);
-                  }}
-                  className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                    showContactCta ? 'bg-matcha-800' : 'bg-beige-300'
-                  }`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                      showContactCta ? 'translate-x-5' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-              <div className="pt-2 border-t border-matcha-200/50 flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-wider text-matcha-800">
-                  Status
+              <div className="space-y-1">
+                <span className="block text-sm font-bold text-matcha-950">
+                  Contact CTA Banner
                 </span>
+                <span className="block text-xs font-normal text-matcha-700">
+                  Collaboration invitation banner
+                </span>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={showContactCta}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowContactCta(!showContactCta);
+                }}
+                className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                  showContactCta ? 'bg-matcha-800' : 'bg-beige-300'
+                }`}
+              >
                 <span
-                  className={`text-xs font-bold px-2.5 py-0.5 rounded-full ${
-                    showContactCta
-                      ? 'bg-matcha-200/80 text-matcha-950'
-                      : 'bg-beige-200 text-matcha-700'
+                  aria-hidden="true"
+                  className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                    showContactCta ? 'translate-x-5' : 'translate-x-0'
                   }`}
-                >
-                  {showContactCta ? 'Visible' : 'Hidden'}
-                </span>
-              </div>
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -436,7 +361,7 @@ export const HomeContentManager: React.FC = () => {
           <button
             type="submit"
             disabled={saving}
-            className="px-8 py-3.5 text-sm font-extrabold text-beige-50 bg-matcha-900 hover:bg-matcha-800 rounded-full shadow-md transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
+            className="px-8 py-3.5 text-sm font-bold text-beige-50 bg-matcha-900 hover:bg-matcha-800 rounded-full shadow-md transition disabled:opacity-50 flex items-center gap-2 cursor-pointer"
           >
             {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Home & Profile Changes

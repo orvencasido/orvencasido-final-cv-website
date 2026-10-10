@@ -82,7 +82,7 @@ export const ProjectsPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-10 sm:py-16 md:py-20 space-y-10 sm:space-y-12">
         <SectionHeader
           title="Shipped Projects"
           description="Projects, experiments, and ideas I've brought to life—built to learn, solve problems, and occasionally break things."
@@ -93,31 +93,32 @@ export const ProjectsPage: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-6 md:px-10 py-12 md:py-20 space-y-12 animate-in fade-in duration-300">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-10 sm:py-16 md:py-20 space-y-10 sm:space-y-12 animate-in fade-in duration-300">
       <SEOHead {...PAGE_SEO_CONFIG.projects} />
 
       <SectionHeader
         title="Shipped Projects"
-        description="Projects, experiments, and ideas I've brought to life—built to learn, solve problems, and occasionally break things."
+        description="Cloud infrastructure, automated CI/CD systems, and distributed platforms."
       />
 
       {/* Search Bar */}
-      <div className="py-4">
+      <div className="py-1 sm:py-2">
         <div className="relative w-full">
-          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600" />
+          <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-matcha-600 pointer-events-none" />
           <input
             type="text"
             placeholder="Search projects by title, stack, or keywords..."
             value={searchQuery}
             onChange={handleSearchChange}
-            className="w-full pl-12 pr-12 py-4 text-base bg-beige-50 border border-beige-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-matcha-500 transition shadow-2xs placeholder:text-matcha-700/60"
+            className="w-full pl-12 pr-12 py-3.5 min-h-[48px] text-sm sm:text-base bg-beige-50 border border-beige-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-matcha-500 transition shadow-2xs placeholder:text-matcha-700/60"
           />
           {searchQuery && (
             <button
               type="button"
               onClick={handleClearSearch}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-matcha-600 hover:text-matcha-950 p-1.5 rounded-full hover:bg-beige-200 transition cursor-pointer"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-matcha-600 hover:text-matcha-950 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl hover:bg-beige-200 transition cursor-pointer"
               title="Clear search"
+              aria-label="Clear search"
             >
               <X className="w-4 h-4" />
             </button>
@@ -133,7 +134,7 @@ export const ProjectsPage: React.FC = () => {
           action={
             <button
               onClick={handleClearSearch}
-              className="px-6 py-3 text-sm font-bold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 transition cursor-pointer"
+              className="px-6 py-3 min-h-[44px] text-sm font-bold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 transition cursor-pointer"
             >
               Clear Search
             </button>
@@ -141,28 +142,28 @@ export const ProjectsPage: React.FC = () => {
         />
       ) : (
         <div className="space-y-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 md:gap-10">
             {displayedProjects.map((project) => (
               <div
                 key={project.id}
-                className="group flex flex-col rounded-3xl border border-beige-300 bg-beige-50 overflow-hidden hover:border-matcha-400 hover:shadow-md transition-all"
+                className="group flex flex-col rounded-2xl sm:rounded-3xl border border-beige-200 bg-beige-50 overflow-hidden hover:border-matcha-300 hover:shadow-md transition-all"
               >
                 <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
                   <ProjectCoverImage url={project.cover_image_url} title={project.title} />
-                  <div className="absolute top-4 right-4">
+                  <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                     <StatusBadge status={project.status} type="project" />
                   </div>
                 </div>
 
-                <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
-                  <div className="space-y-3">
+                <div className="p-5 sm:p-6 md:p-8 flex-1 flex flex-col justify-between space-y-5 sm:space-y-6">
+                  <div className="space-y-2 sm:space-y-3">
                     {project.completion_date && (
                       <div className="flex items-center gap-1.5 text-xs text-matcha-600 font-mono font-medium">
                         <Calendar className="w-3.5 h-3.5 text-matcha-600 shrink-0" />
                         <span>{project.completion_date}</span>
                       </div>
                     )}
-                    <h2 className="text-2xl font-extrabold text-matcha-950 group-hover:text-matcha-700 transition">
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-matcha-950 group-hover:text-matcha-700 transition">
                       <Link to={`/projects/${project.slug}`}>{project.title}</Link>
                     </h2>
                     <p className="text-sm sm:text-base text-matcha-700 leading-relaxed font-normal">
@@ -170,29 +171,30 @@ export const ProjectsPage: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-5 pt-2">
-                    <div className="flex items-center gap-2.5 flex-wrap min-h-7">
+                  <div className="space-y-4 pt-2">
+                    <div className="flex items-center gap-2 flex-wrap min-h-7">
                       {project.technologies.map((tech) => (
                         <ProjectTechBadge key={tech} tech={tech} skills={skills} />
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between text-sm pt-4 border-t border-beige-200">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm pt-4 border-t border-beige-200">
                       <Link
                         to={`/projects/${project.slug}`}
-                        className="font-extrabold text-matcha-900 hover:text-matcha-700 flex items-center gap-1.5"
+                        className="font-bold text-matcha-900 group-hover:text-matcha-700 inline-flex items-center gap-1.5 transition-colors min-h-[44px]"
                       >
-                        See More...
+                        Explore project &rarr;
                       </Link>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         {project.github_url && (
                           <a
                             href={project.github_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-matcha-700 hover:text-matcha-950 flex items-center gap-1 font-semibold"
+                            className="text-matcha-700 hover:text-matcha-950 min-h-[44px] min-w-[44px] flex items-center justify-center font-semibold rounded-xl hover:bg-beige-200 transition"
                             title="Source Code"
+                            aria-label="View source code on GitHub"
                           >
                             <Github className="w-4 h-4" />
                           </a>
@@ -202,9 +204,9 @@ export const ProjectsPage: React.FC = () => {
                             href={getCleanLiveUrl(project.live_url)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-matcha-900 hover:underline flex items-center gap-1 font-extrabold"
+                            className="text-matcha-900 hover:underline inline-flex items-center gap-1 font-extrabold min-h-[44px] px-3 rounded-xl hover:bg-beige-200 transition"
                           >
-                            Preview <ExternalLink className="w-4 h-4" />
+                            Preview <ExternalLink className="w-3.5 h-3.5" />
                           </a>
                         )}
                       </div>
@@ -221,7 +223,7 @@ export const ProjectsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSeeMore}
-                className="inline-flex items-center gap-2.5 px-8 py-3.5 text-sm font-bold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 active:scale-[0.98] transition-all shadow-sm cursor-pointer group"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 min-h-[48px] text-sm font-bold bg-matcha-900 text-beige-50 rounded-full hover:bg-matcha-800 active:scale-[0.98] transition-all shadow-sm cursor-pointer group"
               >
                 <span>See More Projects</span>
                 <ChevronDown className="w-4 h-4 group-hover:translate-y-0.5 transition-transform" />
