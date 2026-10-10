@@ -1,5 +1,6 @@
 import { supabase, isSupabaseConfigured } from './supabaseClient';
 import { getCached, setCached, invalidateCache, CacheKeys } from './cache';
+import { initialProfile } from './mockData';
 import {
   Profile,
   SocialLink,
@@ -560,4 +561,51 @@ export async function updateSocialLinks(links: SocialLink[]): Promise<SocialLink
 
   invalidateCache(CacheKeys.SOCIAL_LINKS);
   return links;
+}
+
+/* ==========================================================================
+   PORTFOLIO RAG BUNDLE
+   ========================================================================== */
+export interface PortfolioRAGBundle {
+  profile: Profile | null;
+  skills: Skill[];
+  experiences: Experience[];
+  projects: Project[];
+  certifications: Certification[];
+  education: Education[];
+  siteSettings: SiteSettings | null;
+}
+
+/**
+ * Aggregates all verified portfolio knowledge assets into a single RAG bundle.
+ * Falls back safely to initial mock data or empty structures if calls fail or are offline.
+ */
+export async function getPortfolioRAGBundle(): Promise<PortfolioRAGBundle> {
+  const [
+    profileRes,
+    skillsRes,
+    experiencesRes,
+    projectsRes,
+    certificationsRes,
+    educationRes,
+    siteSettingsRes,
+  ] = await Promise.allSettled([
+    getProfile(),
+    getSkills(),
+    getExperiences(),
+    getProjects(),
+    getCertifications(),
+    getEducation(),
+    getSiteSettings(),
+  ]);
+
+  return {
+    profile: profileRes.status === 'fulfilled' && profileRes.value ? profileRes.value : initialProfile,
+    skills: skillsRes.status === 'fulfilled' ? skillsRes.value : [],
+    experiences: experiencesRes.status === 'fulfilled' ? experiencesRes.value : [],
+    projects: projectsRes.status === 'fulfilled' ? projectsRes.value : [],
+    certifications: certificationsRes.status === 'fulfilled' ? certificationsRes.value : [],
+    education: educationRes.status === 'fulfilled' ? educationRes.value : [],
+    siteSettings: siteSettingsRes.status === 'fulfilled' ? siteSettingsRes.value : null,
+  };
 }

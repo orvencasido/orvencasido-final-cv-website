@@ -42,10 +42,15 @@ A high-performance personal developer portfolio and administrative Content Manag
   - Optimizes all public portfolio and administrative views for compact viewports and mobile screens (down to 320px).
   - Enforces Modern UI Japanese Minimalist Organic tokens (`--color-matcha-*`, `--color-beige-*`, `Plus Jakarta Sans`) tailored to mobile ergonomics.
   - Follows `.agent/rules/mobile.md`: ensures accessible touch targets ($\ge 44$px), zero horizontal overflow, responsive bottom sheets, and fluid layout scaling.
-- **Database & Backend Agent (`supabase/`, `src/types/index.ts`)**:
-  - Maintains `supabase/schema.sql` and Edge Functions.
+- **Gemini AI Specialist Agent (`supabase/functions/portfolio-chat/`, `src/lib/geminiChatService.ts`)**:
+  - Manages serverless Google Gemini 1.5 Flash streaming RAG integration via Supabase Edge Function (`portfolio-chat`).
+  - Follows `.agent/rules/gemini-agent.md` and `.agent/skills/gemini-chat/SKILL.md`.
+- **Backend & Supabase Agent (`supabase/`, `src/lib/services.ts`, `src/types/index.ts`)**:
+  - Target Project Reference: `razkqzmzqdjbhjwyagnt` (`orvencasido-final-cv-website`).
+  - Directly queries and manages the remote Supabase PostgreSQL database using `npx supabase db query --linked --project-ref razkqzmzqdjbhjwyagnt`.
+  - Maintains `supabase/schema.sql`, Edge Functions, and storage buckets.
   - Synchronizes TypeScript interfaces in `src/types/index.ts` and mock fixtures in `src/lib/mockData.ts`.
-  - Follows `.agent/rules/database.md`.
+  - Follows `.agent/rules/backend.md` and `.agent/skills/supabase-ops/SKILL.md`.
 - **Quality & Verification Agent**:
   - Runs `npm run lint` (`tsc --noEmit`) to verify zero TypeScript errors.
   - Runs `npm run build` (`node seo/generate-sitemap.mjs && vite build`) to verify bundle stability.

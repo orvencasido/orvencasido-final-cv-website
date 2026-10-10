@@ -4,6 +4,7 @@ import { PublicNavbar } from './PublicNavbar';
 import { PublicFooter } from './PublicFooter';
 import { TopProgressBar } from './TopProgressBar';
 import { FloatingPhonePlayer } from './FloatingPhonePlayer';
+import { PortfolioAIChat } from './PortfolioAIChat';
 
 export const PublicLayout: React.FC = () => {
   return (
@@ -15,6 +16,7 @@ export const PublicLayout: React.FC = () => {
       </main>
       <PublicFooter />
       <FloatingPhonePlayer />
+      <PortfolioAIChat />
     </div>
   );
 };
