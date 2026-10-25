@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Code2,
   ChevronRight,
 } from 'lucide-react';
 import { getProfile, getProjects, getBlogs, getSkills, getSiteSettings, getSocialLinks } from '../../lib/services';
@@ -38,7 +37,7 @@ export const HomePage: React.FC = () => {
         setProfile(profData);
         setSiteSettings(settingsData);
         const featured = projData.filter((p) => p.is_featured);
-        setFeaturedProjects(featured.length > 0 ? featured : projData.slice(0, 4));
+        setFeaturedProjects(featured);
         setFeaturedBlogs(blogData.filter((b) => b.is_featured && b.status === 'published').slice(0, 2));
         setSkills(skillData.filter((s) => s.is_visible));
 
@@ -189,10 +188,10 @@ export const HomePage: React.FC = () => {
       </section>
 
       {/* 3. Featured Projects & CTA Section (White Pastel Background) */}
-      {(showFeaturedProjects || showContactCta) && (
+      {((showFeaturedProjects && featuredProjects.length > 0) || showContactCta) && (
         <section className="w-full bg-white border-y border-beige-200/80 py-12 sm:py-16 md:py-24">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-10 space-y-10 sm:space-y-12">
-            {showFeaturedProjects && (
+            {showFeaturedProjects && featuredProjects.length > 0 && (
               <>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b border-beige-200 pb-5 gap-3 sm:gap-4">
                   <div>
@@ -208,59 +207,47 @@ export const HomePage: React.FC = () => {
                   </Link>
                 </div>
 
-                {featuredProjects.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
-                    {featuredProjects.map((proj) => (
-                      <div
-                        key={proj.id}
-                        className="bg-beige-50 border border-beige-200 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-matcha-300 group flex flex-col justify-between transition-all"
-                      >
-                        {/* Project Cover Image */}
-                        <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
-                          <ProjectCoverImage url={proj.cover_image_url} title={proj.title} />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+                  {featuredProjects.map((proj) => (
+                    <div
+                      key={proj.id}
+                      className="bg-beige-50 border border-beige-200 rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xs hover:shadow-md hover:border-matcha-300 group flex flex-col justify-between transition-all"
+                    >
+                      {/* Project Cover Image */}
+                      <div className="aspect-video w-full overflow-hidden bg-beige-200 relative flex items-center justify-center">
+                        <ProjectCoverImage url={proj.cover_image_url} title={proj.title} />
+                      </div>
+
+                      <div className="p-5 sm:p-6 md:p-8 flex-1 flex flex-col justify-between space-y-5 sm:space-y-6">
+                        <div className="space-y-2 sm:space-y-3">
+                          <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
+                            <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
+                          </h3>
+                          <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
+                            {proj.short_description}
+                          </p>
                         </div>
 
-                        <div className="p-5 sm:p-6 md:p-8 flex-1 flex flex-col justify-between space-y-5 sm:space-y-6">
-                          <div className="space-y-2 sm:space-y-3">
-                            <h3 className="font-extrabold text-xl sm:text-2xl text-matcha-950 group-hover:text-matcha-700 transition-colors">
-                              <Link to={`/projects/${proj.slug}`}>{proj.title}</Link>
-                            </h3>
-                            <p className="text-sm sm:text-base text-matcha-700 line-clamp-3 leading-relaxed font-normal">
-                              {proj.short_description}
-                            </p>
+                        <div className="space-y-4 pt-2">
+                          <div className="flex items-center gap-2 flex-wrap min-h-7">
+                            {proj.technologies.slice(0, 6).map((tech) => (
+                              <ProjectTechBadge key={tech} tech={tech} skills={skills} />
+                            ))}
                           </div>
 
-                          <div className="space-y-4 pt-2">
-                            <div className="flex items-center gap-2 flex-wrap min-h-7">
-                              {proj.technologies.slice(0, 6).map((tech) => (
-                                <ProjectTechBadge key={tech} tech={tech} skills={skills} />
-                              ))}
-                            </div>
-
-                            <div className="flex items-center justify-between text-sm pt-4 border-t border-beige-200">
-                              <Link
-                                to={`/projects/${proj.slug}`}
-                                className="font-bold text-matcha-900 group-hover:text-matcha-700 inline-flex items-center gap-1.5 transition-colors min-h-[44px]"
-                              >
-                                Explore project &rarr;
-                              </Link>
-                            </div>
+                          <div className="flex items-center justify-between text-sm pt-4 border-t border-beige-200">
+                            <Link
+                              to={`/projects/${proj.slug}`}
+                              className="font-bold text-matcha-900 group-hover:text-matcha-700 inline-flex items-center gap-1.5 transition-colors min-h-[44px]"
+                            >
+                              Explore project &rarr;
+                            </Link>
                           </div>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="p-6 sm:p-10 rounded-2xl sm:rounded-3xl border border-dashed border-beige-300 bg-beige-50/50 flex flex-col items-center justify-center text-center space-y-2 py-10 sm:py-12">
-                    <div className="w-12 h-12 rounded-2xl bg-matcha-100 flex items-center justify-center text-matcha-800">
-                      <Code2 className="w-6 h-6" />
                     </div>
-                    <h3 className="text-base font-bold text-matcha-950">No projects in database yet</h3>
-                    <p className="text-xs sm:text-sm text-matcha-700 max-w-md font-normal">
-                      Any projects created in your Admin Dashboard or Supabase database will appear here.
-                    </p>
-                  </div>
-                )}
+                  ))}
+                </div>
               </>
             )}
 
@@ -268,7 +255,7 @@ export const HomePage: React.FC = () => {
             {showContactCta && (
               <div
                 className={`bg-matcha-900 text-beige-50 border border-matcha-800 rounded-2xl sm:rounded-3xl p-6 sm:p-10 md:p-14 flex flex-col justify-center relative overflow-hidden shadow-xl ${
-                  showFeaturedProjects ? 'mt-8 sm:mt-12' : ''
+                  showFeaturedProjects && featuredProjects.length > 0 ? 'mt-8 sm:mt-12' : ''
                 }`}
               >
                 <div className="relative z-10 max-w-xl space-y-3 sm:space-y-4">
